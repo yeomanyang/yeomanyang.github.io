@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Talk is cheap, show me the code.">
+    <meta name="keyword"  content="">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>
+        
+          npm进阶学习 - Yeoman的博客 | Yeoman&#39;s Blog
+        
+    </title>
+
+    <link rel="canonical" href="http://yeomanyang.github.io/2017/01/16/npm进阶学习/">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/hux-blog.min.css">
+
+    <!-- Pygments Highlight CSS -->
+    <link rel="stylesheet" href="/css/highlight.css">
+
+    <!-- Custom Fonts -->
+    <!-- <link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="http://cdn.staticfile.org/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- Hux Delete, sad but pending in China
+    <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/
+    css'>
+    -->
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">Yeoman&#39;s Blog</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archives/">Archives</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">Tags</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    
+<!-- Image to hack wechat -->
+<!-- <img src="http://yeomanyang.github.io/img/icon_wechat.png" width="0" height="0"> -->
+<!-- <img src="{{ site.baseurl }}/{% if page.header-img %}{{ page.header-img }}{% else %}{{ site.header-img }}{% endif %}" width="0" height="0"> -->
+
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        background-image: url('/img/home-bg.jpg')
+    }
+</style>
+<header class="intro-header" >
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                          <a class="tag" href="/tags/#technique" title="technique">technique</a>
+                        
+                    </div>
+                    <h1>npm进阶学习</h1>
+                    <h2 class="subheading"></h2>
+                    <span class="meta">
+                        Posted by Yeoman on
+                        2017-01-16
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+    <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                <h2 id="npm的由来"><a href="#npm的由来" class="headerlink" title="npm的由来"></a>npm的由来</h2><p>前端开发的依赖越来越重，去下载源码进行引用的方式已经过于繁琐，于是<a href="https://github.com/isaacs" target="_blank" rel="external">Isaac Z. Schlueter</a> 大神就用JavaScript（node.js）写了一个npm（Node Package Manager）。  </p>
+<p>npm的发展和Node.js发展相辅相成，Node.js也缺少一个包管理工具，于是Node.js作者和npm作者达成合作，Node.js内置了npm。之后npm的作者成立了一家<a href="https://www.npmjs.com/about#about-npm-inc" target="_blank" rel="external">公司</a>专门维护npm上的registry。  </p>
+<p>npm本质就是一个代码仓库<a href="https://registry.npmjs.org/" target="_blank" rel="external">(registry)</a>。开发者可以发布自己的代码到这个服务器，其他开发者都可以在这个服务器上统一下载需要的依赖。<br><a id="more"></a><br><br></p>
+<h2 id="npm的常见使用"><a href="#npm的常见使用" class="headerlink" title="npm的常见使用"></a>npm的常见使用</h2><p>刚才讲到，npm的<a href="https://registry.npmjs.org/" target="_blank" rel="external">(registry)</a>本身就是一台托管代码的服务器，那么如何确定我们下载的代码就是来自于这里呢？npm提供了一个查询的指令：    </p>
+<pre><code>npm view vue
+</code></pre><p>这个命令可以查看这个仓库的包管理信息，其中有一个json字段：</p>
+<pre><code> dist:
+ { shasum: &apos;ae30aa86024fccf5535292ce414e7b4c221a1756&apos;,
+tarball: &apos;https://registry.npmjs.org/vue/-/vue-2.1.8.tgz&apos; }
+</code></pre><p>这个看到这是仓库的最新版本的压缩包的网址就是在npm的registry下。<br><br><br><br>  </p>
+<h4 id="npm-install"><a href="#npm-install" class="headerlink" title="npm install"></a><code>npm install</code></h4><p>  现在我们回到最常用的命令<code>npm install &lt;packageName&gt;</code>和<code>npm update &lt;packageName&gt;</code>。第一个命令大致做了哪些事呢？  </p>
+<blockquote>
+<ol>
+<li>从当前目录向上检查node_modules目录，如果发现了相同的包，则停止安装。</li>
+<li>从registry上下载压缩包到～/.npm目录下（缓存目录）。</li>
+<li>解压缩到当前node_modules目录。</li>
+</ol>
+</blockquote>
+<p><br><br>然后介绍几种常用的<code>npm install</code>的参数。  </p>
+<ul>
+<li><p><code>npm install &lt;packageName&gt; --save</code> 安装完依赖之后会在 <em>package.json</em> 中的 <em>dependencies</em> 字段中。<br><code>npm install &lt;packageName&gt; --save-dev</code>则在 <em>devDependencies</em> 字段中添加。<br>这样只要保证你和别人用相同的一份配置文件就可以安装相同的依赖环境。 </p>
+</li>
+<li><p><code>npm install --only=prod</code> 和 <code>npm install --only=dev</code> 分别只下载 <em>dependencies</em> 和 <em>devDependencies</em> 中的依赖。</p>
+</li>
+<li><code>npm install &lt;packageName&gt; --force</code> 不管本地只否已经安装依赖，npm都会强制重新安装。</li>
+<li><code>npm install &lt;packageName&gt; --global</code> 把依赖安装到全局，通常适用于安装一些需要在全局使用的<a href="https://zh.wikipedia.org/wiki/%E5%91%BD%E4%BB%A4%E8%A1%8C%E7%95%8C%E9%9D%A2" target="_blank" rel="external">CLI</a>工具。可以通过<code>npm root -g</code>查看npm全局路径，macOS下默认在<code>/usr/local/lib/node_modules</code>。<em>^</em> 符号，允许第一位版本号不为零情况下更新到最新版本，当第一位版本号为零则保持第一位版本号不变，更新后面的版本号。 <em>～</em> 符号，只能更新最右版本号。 </li>
+<li><code>npm install &lt;packageName&gt;@&lt;version&gt;</code> 可以安装指定版本的依赖。</li>
+</ul>
+<p>以上大致上已经讲明白npm是如何干活的，再简单讲几个常用的指令。<br><br><br><br> </p>
+<h3 id="npm-update"><a href="#npm-update" class="headerlink" title="npm update"></a><code>npm update</code></h3><p>这个指令做的事情类似于安装的指令。</p>
+<blockquote>
+<ol>
+<li>检查registry和本地的仓库版本</li>
+<li>如果发现有新版本，则下载压缩包到～/.npm下，<em>注意，这个操作并不会删除~/.npm下老的版本，而是保留多个版本</em>。</li>
+<li>解压缩并<em>替换</em>掉当前目录下的老版本依赖。</li>
+</ol>
+</blockquote>
+<p>同时在用这个更新命令的时候，应该注意几点：  </p>
+<ul>
+<li>在update的时候尽量带上–save参数，保持<em>package.json</em>信息同步。</li>
+<li>在<em>package.json</em>中指定版本的时候有<em>Caret Dependencies</em>和<em>Tilde Dependencies</em>的<a href="https://docs.npmjs.com/cli/update#caret-dependencies" target="_blank" rel="external">区别</a>。</li>
+</ul>
+<h3 id="npm-uninstall-lt-packageName-gt"><a href="#npm-uninstall-lt-packageName-gt" class="headerlink" title="npm uninstall &lt;packageName&gt;"></a><code>npm uninstall &lt;packageName&gt;</code></h3><p>卸载依赖包，这个命令同样不会删除～/.npm/中的cache包。  </p>
+<h3 id="npm-outdated"><a href="#npm-outdated" class="headerlink" title="npm outdated"></a><code>npm outdated</code></h3><p>可以查看所有依赖的当前／需要／最新版本情况。</p>
+<h3 id="npm-cache-clean"><a href="#npm-cache-clean" class="headerlink" title="npm cache clean"></a><code>npm cache clean</code></h3><p>清除npm缓存文件。</p>
+<h3 id="npm-run-scripts"><a href="#npm-run-scripts" class="headerlink" title="npm run-scripts"></a><code>npm run-scripts</code></h3><p>可以在<em>package.json</em>中的<em>scripts</em>配置shell脚本。</p>
+<pre><code>&quot;scripts&quot;: {
+&quot;test&quot;: &quot;node ***/app.js&quot;
+}
+</code></pre><p>然后在shell中可以直接运行<code>npm run test</code>，就相当于<code>node ***/app.js</code>，可以把和这个项目的shell命令统一交给npm来管理。</p>
+<h3 id="创建和发布"><a href="#创建和发布" class="headerlink" title="创建和发布"></a>创建和发布</h3><p>目前还没什么轮子或者好玩的东西可以发布到仓库的，就不浪费服务器空间了Σ(・ω・`|||)（嫌弃脸）<br><br><br><br> </p>
+<h2 id="npm的配置"><a href="#npm的配置" class="headerlink" title="npm的配置"></a>npm的配置</h2><p>首先，npm默认是没有生成一个配置文件的，但是已经存在很多默认配置。运行</p>
+<pre><code>npm config list
+</code></pre><p>可以查看当前配置情况  </p>
+<pre><code>npm config list -l
+</code></pre><p>可以查看所有默认配置，如果没有添加配置文件，这些默认配置就会生效，但是这些默认配置的优先级是最低的。<br><br><br><br><br>那么除了这些默认配置，npm可以有不同的优先级来修改配置信息。</p>
+<ul>
+<li>per-project config file (/path/to/my/project/.npmrc)  <p style="color:gray">// 项目目录，优先级最高</p></li>
+<li>per-user config file (~/.npmrc)<p style="color:gray">// 当前用户目录，优先级次之</p></li>
+<li>global config file ($PREFIX/etc/npmrc)<p style="color:gray">// npm全局目录，优先级再次之</p></li>
+<li>npm builtin config file (/path/to/npm/npmrc)<p style="color:gray">// npm安装目录，默认在/usr/local/lib/node_modules/npm，优先级仅高于默认配置</p>
+
+</li>
+</ul>
+<p>我们可以通过命令行来设置一个参数，例如：</p>
+<pre><code>npm config set cache {$HOME}/.npm/.cache/cnpm
+</code></pre><p>这个指令是修改npm的cache路径，这时候运行</p>
+<pre><code>cat ~/.npmrc
+</code></pre><p>发现在用户目录下生成了一个<em>.npmrc</em>文件，并且打印<code>cache=/Users/yeoman/.npm/.cache/cnpm</code>，由此可见，这个config指令默认会配置在用户目录下，而带上–global参数之后就会在全局目录下生效。<br>这时候再通过<code>npm config list -l</code>查看，发现其一项配置变成：</p>
+<pre><code>; cache = &quot;/Users/yeoman/.npm&quot; (overridden)
+</code></pre><p>由此默认配置被覆盖，修改成功。<br>其他的配置都可以通过</p>
+<pre><code>npm config set key value
+</code></pre><p>已及</p>
+<pre><code>npm config get key
+</code></pre><p>进行设置和获取。</p>
+<p><br></p>
+<h2 id="Tips"><a href="#Tips" class="headerlink" title="Tips:"></a>Tips:</h2><ul>
+<li>之前提到的npm的仓库地址是<a href="https://registry.npmjs.org/" target="_blank" rel="external">https://registry.npmjs.org/</a>，这个服务器是在美国，所以在国内访问速度非常慢。现在比较通用的做法是用<a href="https://cnpmjs.org/" target="_blank" rel="external">淘宝的npm镜像源</a>，目前是十分钟就会同步一次npm的源。这个源是在阿里云服务器，速度杠杠的。<br>以下是几种常见解决方式：</li>
+</ul>
+<p>第一种方式就是把npm指向的源改成淘宝的源</p>
+<pre><code>$ npm config set registry https://registry.npm.taobao.org
+</code></pre><p><br><br>第二种方式是直接安装cnpm，然后cnpm基本上支持npm所有的功能。</p>
+<pre><code>$ npm install -g cnpm --registry=https://registry.npm.taobao.org
+</code></pre><p><br><br>但是最推荐的方式还是用<em>alias</em>给npm参数定一个别名</p>
+<pre><code>$ alias cnpm=&quot;npm --registry=https://registry.npm.taobao.org \
+--cache=$HOME/.npm/.cache/cnpm \
+--disturl=https://npm.taobao.org/dist \
+--userconfig=$HOME/.cnpmrc&quot;
+</code></pre><p>这么做的好处是既可以用npm原有的所有命令，也可以用cnpm的源，并且不影响原来的npm设置。<br><br><br><br></p>
+<ul>
+<li>离线下载（也就是从~/.npm/的cache中下载）<br>这个功能个人感觉应该绝大部分情况用不到。如果是为了提升速度，还是直接换源的方式比较直接。  </li>
+</ul>
+<p>方式如下：</p>
+<pre><code>$ npm --cache-min 9999999 install &lt;package-name&gt;
+</code></pre><p>这种方式也存在一些问题，解决方式看这篇<a href="https://addyosmani.com/blog/using-npm-offline/" target="_blank" rel="external">文章</a>。</p>
+<p><em>参考:</em><br><a href="https://docs.npmjs.com/cli/install" target="_blank" rel="external">npm官方文档</a><br><a href="http://www.ruanyifeng.com/blog/2016/01/npm-install.html" target="_blank" rel="external">阮叔叔的文章</a>  </p>
+
+
+                <hr>
+
+                
+                <!-- 多说 Share start -->
+                </style>
+                <div class="ds-share"
+                    style="text-align: right"
+                    data-thread-key="2017/01/16/npm进阶学习/"
+                    data-title="npm进阶学习"
+                    data-url="http://yeomanyang.github.io/2017/01/16/npm进阶学习/"
+                    data-images=""
+                    data-content="npm的由来前端开发的依赖越来越重，去下载源码进行引用的方式已经过于繁琐，于是Isaac Z.... | Yeoman的博客 | Yeoman&#39;s Blog " >
+                    <div class="ds-share-inline">
+                      <ul  class="ds-share-icons-16">
+                        <li data-toggle="ds-share-icons-more"><a class="ds-more" href="#">分享到：</a></li>
+                        <li><a class="ds-wechat flat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+                        <li><a class="ds-weibo flat" href="javascript:void(0);" data-service="weibo">微博</a></li>
+                        <li><a class="ds-douban flat" href="javascript:void(0);" data-service="douban">豆瓣</a></li>
+                      </ul>
+                      <div class="ds-share-icons-more">
+                      </div>
+                    </div>
+                <hr>
+                </div>
+                <!-- 多说 Share end-->
+                
+
+                <ul class="pager">
+                    
+                    
+                        <li class="next">
+                            <a href="/2016/11/24/VPS搭建翻墙服务详细攻略/" data-toggle="tooltip" data-placement="top" title="VPS搭建翻墙服务详细攻略">Next Post &rarr;</a>
+                        </li>
+                    
+                </ul>
+
+                
+                <!-- 多说评论框 start -->
+                <div class="comment">
+                    <div class="ds-thread"
+                        data-thread-key="2017/01/16/npm进阶学习/"
+                        data-title="npm进阶学习"
+                        data-url="http://yeomanyang.github.io/2017/01/16/npm进阶学习/" >
+                    </div>
+                </div>
+                <!-- 多说评论框 end -->
+                
+
+                
+
+            </div>
+    <!-- Side Catalog Container -->
+        
+
+    <!-- Sidebar Container -->
+
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                       
+                          <a class="tag" href="/tags/#technique" title="technique">technique</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+            </div>
+
+        </div>
+    </div>
+</article>
+
+
+<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+<script type="text/javascript">
+    // dynamic User by Hux
+    var _user = 'yeomanyang';
+
+    // duoshuo comment query.
+    var duoshuoQuery = {short_name: _user };
+    (function() {
+        var ds = document.createElement('script');
+        ds.type = 'text/javascript';ds.async = true;
+        ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+        ds.charset = 'UTF-8';
+        (document.getElementsByTagName('head')[0]
+         || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+</script>
+<!-- 多说公共JS代码 end -->
+
+
+
+
+
+
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                
+                
+                
+                    <li>
+                        <a target="_blank" href="https://www.zhihu.com/people/yeomanyang">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa  fa-stack-1x fa-inverse">知</i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank" href="http://weibo.com/2858185810">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-weibo fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/yeomanyang">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; Yeoman&#39;s Blog 2017 
+                    <br>
+                    Theme by <a href="http://huangxuan.me">Hux</a> 
+                    <span style="display: inline-block; margin: 0 5px;">
+                        <i class="fa fa-heart"></i>
+                    </span> 
+                    Ported by <a href="http://blog.kaijun.rocks">Kaijun</a> | 
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="91px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=kaijun&repo=hexo-theme-huxblog&type=star&count=true" >
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="/js/jquery.min.js"></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="/js/bootstrap.min.js"></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/hux-blog.min.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- 
+     Because of the native support for backtick-style fenced code blocks 
+     right within the Markdown is landed in Github Pages, 
+     From V1.6, There is no need for Highlight.js, 
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0  
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/    
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("http://yeomanyang.github.io/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("http://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+
+<script>
+    // dynamic User by Hux
+    var _gaId = 'UA-90487102-1';
+    var _gaDomain = 'undefined';
+
+    // Originial
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', _gaId, _gaDomain);
+    ga('send', 'pageview');
+</script>
+
+
+
+
+<!-- Baidu Tongji -->
+
+<script>
+    // dynamic User by Hux
+    var _baId = 'c7f7936268a976be71b91508db530dfa';
+
+    // Originial
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?" + _baId;
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+</script>
+
+
+<!-- Side Catalog -->
+
+
+
+
+
+<!-- Image to hack wechat -->
+<img src="http://yeomanyang.github.io/img/icon_wechat.png" width="0" height="0" />
+<!-- Migrate from head to bottom, no longer block render and still work -->
+
+</body>
+
+</html>
