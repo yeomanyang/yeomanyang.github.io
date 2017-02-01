@@ -13,11 +13,11 @@
 
     <title>
         
-          Yeoman的博客 | Yeoman&#39;s Blog
+          写好一篇博客之我见 - Yeoman的博客 | Yeoman&#39;s Blog
         
     </title>
 
-    <link rel="canonical" href="https://yeomanyang.github.io/">
+    <link rel="canonical" href="https://yeomanyang.github.io/2016/11/24/写好一篇博客之我见/">
 
     <!-- Bootstrap Core CSS -->
     <link rel="stylesheet" href="/css/bootstrap.min.css">
@@ -147,220 +147,179 @@
 
 
     <!-- Main Content -->
-    <!-- Page Header -->
-<header class="intro-header" style="background-image: url('/img/home-bg.jpg')">
+    
+<!-- Image to hack wechat -->
+<!-- <img src="https://yeomanyang.github.io/img/icon_wechat.png" width="0" height="0"> -->
+<!-- <img src="{{ site.baseurl }}/{% if page.header-img %}{{ page.header-img }}{% else %}{{ site.header-img }}{% endif %}" width="0" height="0"> -->
+
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        background-image: url('/img/home-bg.jpg')
+    }
+</style>
+<header class="intro-header" >
     <div class="container">
         <div class="row">
-            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1 ">
-                <div class="site-heading">
-                    <h1>Yeoman&#39;s Blog</h1>
-                    <!--<hr class="small">-->
-                    <span class="subheading"></span>
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                          <a class="tag" href="/tags/#technique" title="technique">technique</a>
+                        
+                    </div>
+                    <h1>写好一篇博客之我见</h1>
+                    <h2 class="subheading"></h2>
+                    <span class="meta">
+                        Posted by Yeoman on
+                        2016-11-24
+                    </span>
                 </div>
             </div>
         </div>
     </div>
 </header>
 
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
 
-
-<!-- Main Content -->
-<div class="container">
-    <div class="row">
-        
-
-<!-- USE SIDEBAR -->
     <!-- Post Container -->
             <div class="
-                col-lg-8 col-lg-offset-1
-                col-md-8 col-md-offset-1
-                col-sm-12
-                col-xs-12
-                post-container
-            ">
-            
-                <!-- Main Content -->
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                <h2 id="写好一篇博客之我见"><a href="#写好一篇博客之我见" class="headerlink" title="写好一篇博客之我见"></a>写好一篇博客之我见</h2><h3 id="写在前面"><a href="#写在前面" class="headerlink" title="写在前面"></a>写在前面</h3><p>这是个人的第一篇博客，想想还有点小激动呢ヾ(｡･ω･｡)</p>
+<p>想开始写博客也有一段时间了，也积累了一些内容。听了一些技术大大的观点，越发觉得坚持写博客是一件非常值得做的事（这里就不立flag了），主要基于几个原因。</p>
+<blockquote>
+<ol>
+<li><em>沉淀</em>：学习是一件需要反复重复的事情，写博客来备忘是其次，但是对原有知识的第二次整理归纳对于自我提升是非常重要的。  </li>
+<li><em>分享</em>：技术的发展离不开社区的发展，社区的发展离不开每一个developer的贡献，多写多分享，你好我好大家好。 </li>
+<li><em>走上人生巅峰</em>：程序员经常自黑的一句话，<em>【钱多话少死的早】</em>，平时也没什么交朋友的时间。如果自己写的内容可以被认可，从而结交到一些志同道合的朋友，那也是极好的。  </li>
+</ol>
+</blockquote>
+<p><br></p>
+<h3 id="讲一讲我对于博客的态度"><a href="#讲一讲我对于博客的态度" class="headerlink" title="讲一讲我对于博客的态度"></a>讲一讲我对于博客的态度</h3><p>写 <em>博客/文章</em>，<em>做开源项目</em> 几乎已经成为大部分技术人自我沉淀和对外分享的最好途径。但就博客而言，网上的内容良莠不齐，讲一讲我认为一篇合格的技术博客需要做到以下几点，以此自我勉励。  </p>
+<blockquote>
+<ol>
+<li>所介绍的技术必须是自己成功实践过，并且踩过一些坑的。在踩坑的过程中，可以向读者介绍自己的思考过程以及解决问题的方法。  </li>
+<li>在用到一些和话题相关技术概念的时候可以简单介绍或者提供超链接。  </li>
+<li>尽可能系统地介绍博客想要讲的内容，而不是简单的提供方法或者罗列概念。  </li>
+<li>良好的排版，清晰的逻辑。</li>
+<li>以上这些我写的文章都不会遵守。</li>
+</ol>
+</blockquote>
 
 
-<div class="post-preview">
+                <hr>
 
-    <a href="/2017/01/16/npm进阶学习/">
-        <h2 class="post-title">
-            npm进阶学习
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            npm的由来前端开发的依赖越来越重，去下载源码进行引用的方式已经过于繁琐，于是Isaac Z. Schlueter 大神就用JavaScript（node.js）写了一个npm（Node Package Manager）。  
-npm的发展和Node.js发展相辅相成，Node.js也缺少一个包管理工具，于是Node.js作者和npm作者达成合作，Node.js内置了npm。之后npm的作者......
-        </div>
-    </a>
-    <p class="post-meta">
-        Posted by Yeoman on
-        2017-01-16
-    </p>
+                
+                <!-- 多说 Share start -->
+                </style>
+                <div class="ds-share"
+                    style="text-align: right"
+                    data-thread-key="2016/11/24/写好一篇博客之我见/"
+                    data-title="写好一篇博客之我见"
+                    data-url="https://yeomanyang.github.io/2016/11/24/写好一篇博客之我见/"
+                    data-images=""
+                    data-content="写好一篇博客之我见写在前面这是个人的第一篇博客，想想还有点小激动呢ヾ(｡･ω･｡)
+想开始写博... | Yeoman的博客 | Yeoman&#39;s Blog " >
+                    <div class="ds-share-inline">
+                      <ul  class="ds-share-icons-16">
+                        <li data-toggle="ds-share-icons-more"><a class="ds-more" href="#">分享到：</a></li>
+                        <li><a class="ds-wechat flat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+                        <li><a class="ds-weibo flat" href="javascript:void(0);" data-service="weibo">微博</a></li>
+                        <li><a class="ds-douban flat" href="javascript:void(0);" data-service="douban">豆瓣</a></li>
+                      </ul>
+                      <div class="ds-share-icons-more">
+                      </div>
+                    </div>
+                <hr>
+                </div>
+                <!-- 多说 Share end-->
+                
 
-</div>
-<hr>
+                <ul class="pager">
+                    
+                        <li class="previous">
+                            <a href="/2016/12/12/FQ的正确打开方式/" data-toggle="tooltip" data-placement="top" title="FQ的正确打开方式">&larr; Previous Post</a>
+                        </li>
+                    
+                    
+                </ul>
 
-<div class="post-preview">
+                
+                <!-- 多说评论框 start -->
+                <div class="comment">
+                    <div class="ds-thread"
+                        data-thread-key="2016/11/24/写好一篇博客之我见/"
+                        data-title="写好一篇博客之我见"
+                        data-url="https://yeomanyang.github.io/2016/11/24/写好一篇博客之我见/" >
+                    </div>
+                </div>
+                <!-- 多说评论框 end -->
+                
 
-    <a href="/2016/12/12/FQ的正确打开方式/">
-        <h2 class="post-title">
-            FQ的正确打开方式
-        </h2>
-        <h3 class="post-subtitle">
-            天才第一步
-        </h3>
-        <div class="post-content-preview">
-            写在前面刚开始工作的时候老大给了一个支持PPTP协议的VPN账号，听说墙外的世界还是比较美（zhen）好（shi）的。那个时候虽然可以成功FQ，但是有几个问题一直比较困扰我：  
-
-
-VPN访问网页的速度非常有限。
-每次在切换网络状态（从4G到wifi）的时候，VPN必须断线重连。
-所有的请求都会被代理，导致访问国内的站点速度也非常慢。  
-
-
-自iOS 10和OS X –&gt; macO......
-        </div>
-    </a>
-    <p class="post-meta">
-        Posted by Yeoman on
-        2016-12-12
-    </p>
-
-</div>
-<hr>
-
-<div class="post-preview">
-
-    <a href="/2016/11/24/写好一篇博客之我见/">
-        <h2 class="post-title">
-            写好一篇博客之我见
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            写好一篇博客之我见写在前面这是个人的第一篇博客，想想还有点小激动呢ヾ(｡･ω･｡)
-想开始写博客也有一段时间了，也积累了一些内容。听了一些技术大大的观点，越发觉得坚持写博客是一件非常值得做的事（这里就不立flag了），主要基于几个原因。
-
-
-沉淀：学习是一件需要反复重复的事情，写博客来备忘是其次，但是对原有知识的第二次整理归纳对于自我提升是非常重要的。  
-分享：技术的发展离不开社区的发展，......
-        </div>
-    </a>
-    <p class="post-meta">
-        Posted by Yeoman on
-        2016-11-24
-    </p>
-
-</div>
-<hr>
-
-
-
-<!-- Pager -->
-
-<ul class="pager">
-    
-    
-</ul>
-
-
-
-                <!-- 如果开启评论功能 -->
                 
 
             </div>
+    <!-- Side Catalog Container -->
+        
+
     <!-- Sidebar Container -->
+
             <div class="
-                col-lg-3 col-lg-offset-0
-                col-md-3 col-md-offset-0
-                col-sm-12
-                col-xs-12
-                sidebar-container
-            ">
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
                 <!-- Featured Tags -->
                 
                 <section>
                     <!-- no hr -->
                     <h5><a href="/tags/">FEATURED TAGS</a></h5>
                     <div class="tags">
-                        
-                            
-                            <a href="/tags/#technique" title="technique" rel="3">technique</a>
-                            
+                       
+                          <a class="tag" href="/tags/#technique" title="technique">technique</a>
                         
                     </div>
                 </section>
                 
 
-                <!-- Short About -->
-                <section class="visible-md visible-lg">
-                    <hr><h5><a href="/about/">ABOUT ME</a></h5>
-                    <div class="short-about">
-
-                        
-                            <img src="/img/avatar_yeoman.jpg" />
-                        
-
-                        
-                            <p>任何人都可以成为英雄，哪怕是做了某件不起眼事的普通人，为一个无助的男孩披上一件外套，告诉他，人生还可以继续下去。</p>
-                        
-
-                        <!-- SNS Link -->
-                        <ul class="list-inline">
-                            
-                            
-                            
-                                <li>
-                                    <a target="_blank" href="https://www.zhihu.com/people/yeomanyang">
-                                        <span class="fa-stack fa-lg">
-                                            <i class="fa fa-circle fa-stack-2x"></i>
-                                            <i class="fa  fa-stack-1x fa-inverse">知</i>
-                                        </span>
-                                    </a>
-                                </li>
-                            
-
-                            
-                                <li>
-                                    <a target="_blank" href="http://weibo.com/2858185810">
-                                        <span class="fa-stack fa-lg">
-                                            <i class="fa fa-circle fa-stack-2x"></i>
-                                            <i class="fa fa-weibo fa-stack-1x fa-inverse"></i>
-                                        </span>
-                                    </a>
-                                </li>
-                            
-
-                            
-
-                            
-                                <li>
-                                    <a target="_blank"  href="https://github.com/yeomanyang">
-                                        <span class="fa-stack fa-lg">
-                                            <i class="fa fa-circle fa-stack-2x"></i>
-                                            <i class="fa fa-github fa-stack-1x fa-inverse"></i>
-                                        </span>
-                                    </a>
-                                </li>
-                            
-                            
-                            
-                            
-                        </ul>
-                    </div>
-                </section>
-                
                 <!-- Friends Blog -->
                 
             </div>
-        
+
+        </div>
     </div>
-</div>
+</article>
+
+
+<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+<script type="text/javascript">
+    // dynamic User by Hux
+    var _user = 'yeomanyang';
+
+    // duoshuo comment query.
+    var duoshuoQuery = {short_name: _user };
+    (function() {
+        var ds = document.createElement('script');
+        ds.type = 'text/javascript';ds.async = true;
+        ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+        ds.charset = 'UTF-8';
+        (document.getElementsByTagName('head')[0]
+         || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+</script>
+<!-- 多说公共JS代码 end -->
+
+
+
+
+
+
 
 
     <!-- Footer -->
