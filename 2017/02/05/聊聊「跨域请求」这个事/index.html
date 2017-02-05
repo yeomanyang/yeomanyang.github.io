@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Talk is cheap, show me the code.">
+    <meta name="keyword"  content="">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>
+        
+          聊聊「跨域请求」这个事 - Yeoman的博客 | Yeoman&#39;s Blog
+        
+    </title>
+
+    <link rel="canonical" href="https://yeomanyang.github.io/2017/02/05/聊聊「跨域请求」这个事/">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/hux-blog.min.css">
+
+    <!-- Pygments Highlight CSS -->
+    <link rel="stylesheet" href="/css/highlight.css">
+
+    <!-- Custom Fonts -->
+    <!-- <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="https://cdn.staticfile.org/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- Hux Delete, sad but pending in China
+    <link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/
+    css'>
+    -->
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">Yeoman&#39;s Blog</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archives/">Archives</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">Tags</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    
+<!-- Image to hack wechat -->
+<!-- <img src="https://yeomanyang.github.io/img/icon_wechat.png" width="0" height="0"> -->
+<!-- <img src="{{ site.baseurl }}/{% if page.header-img %}{{ page.header-img }}{% else %}{{ site.header-img }}{% endif %}" width="0" height="0"> -->
+
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        background-image: url('/img/home-bg.jpg')
+    }
+</style>
+<header class="intro-header" >
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                          <a class="tag" href="/tags/#technique" title="technique">technique</a>
+                        
+                    </div>
+                    <h1>聊聊「跨域请求」这个事</h1>
+                    <h2 class="subheading"></h2>
+                    <span class="meta">
+                        Posted by Yeoman on
+                        2017-02-05
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+    <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                <p>这篇文章的目的就是讲清楚跨域网络请求这件事情。</p>
+<h2 id="浏览器的同源策略"><a href="#浏览器的同源策略" class="headerlink" title="浏览器的同源策略"></a>浏览器的同源策略</h2><p>浏览器的同源策略是引发跨域问题的根本原因，同源策略限制从一个 <em>源</em> 加载的文档或脚本如何与来自另一个 <em>源</em> 的资源进行交互。<br>那么如何来判断两个URL是否是属于同一个 <em>源</em> 呢？<br>假设我们当前的URL为：<a href="http://blog.yangmingming.me/" target="_blank" rel="external">http://blog.yangmingming.me/</a>  ，对应下面URL的同源检测结果如下</p>
+<table>
+<thead>
+<tr>
+<th>URL</th>
+<th>结果</th>
+<th>原因</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="http://blog.yangmingming.me/index.html" target="_blank" rel="external">http://blog.yangmingming.me/index.html</a></td>
+<td>成功</td>
+<td>同源</td>
+</tr>
+<tr>
+<td><a href="https://blog.yangmingming.me" target="_blank" rel="external">https://blog.yangmingming.me</a></td>
+<td>失败</td>
+<td>协议不同（https）</td>
+</tr>
+<tr>
+<td><a href="http://blog.yangmingming.me:3000" target="_blank" rel="external">http://blog.yangmingming.me:3000</a></td>
+<td>失败</td>
+<td>不同端口</td>
+</tr>
+<tr>
+<td><a href="http://about.yangmingming.me" target="_blank" rel="external">http://about.yangmingming.me</a></td>
+<td>失败</td>
+<td>不同主机</td>
+</tr>
+</tbody>
+</table>
+<h2 id="搭建测试环境"><a href="#搭建测试环境" class="headerlink" title="搭建测试环境"></a>搭建测试环境</h2><p>为了方便进行测试各种跨域的方法，我新建了两个Express工程，直接在localhost下进行测试。<br>jsonp-backend-demo模仿后端环境，对应3000端口；jsonp-front-demo模仿前端环境，对应3001端口。</p>
+<h4 id="跨源网络请求-cross-origin-HTTP-request"><a href="#跨源网络请求-cross-origin-HTTP-request" class="headerlink" title="跨源网络请求(cross-origin HTTP request)"></a>跨源网络请求(cross-origin HTTP request)</h4><p>对于前端而言，讲到HTTP请求，就必须得提到 <a href="https://developer.mozilla.org/en/DOM/XMLHttpRequest" target="_blank" rel="external">XMLHttpRequest</a> 对象，但是现在是2017年了，还得提一提 <a href="https://developer.mozilla.org/zh-CN/docs/Web/API/Fetch_API" target="_blank" rel="external">Fetch</a> 对象，作为XHR的替代方案，Fetch的API友好了很多。而不管是 <em>XMLHttpRequest</em> 还是 <em>Fetch</em>  请求都必须遵守同源策略。上代码：  </p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">cross_origin_request</span>(<span class="params">url</span>) </span>&#123;</div><div class="line">   <span class="keyword">if</span>(<span class="built_in">window</span>.fetch) &#123;</div><div class="line">		fetch(url).then(<span class="function"><span class="params">response</span> =&gt;</span> response.json())</div><div class="line">		  	.then(<span class="function"><span class="params">data</span> =&gt;</span> <span class="built_in">console</span>.log(data))</div><div class="line">		  	.catch(<span class="function"><span class="params">e</span> =&gt;</span> <span class="built_in">console</span>.log(<span class="string">"error"</span>, e))</div><div class="line">	&#125; <span class="keyword">else</span> &#123;</div><div class="line">	   alert(<span class="string">'大兄弟，该换个现代浏览器了～'</span>)</div><div class="line">	&#125;		</div><div class="line">&#125;</div><div class="line"><span class="keyword">var</span> backend_url = <span class="string">'http://'</span> + <span class="built_in">window</span>.location.hostname + <span class="string">':3000'</span></div><div class="line">cross_origin_request(backend_url)</div></pre></td></tr></table></figure>
+<blockquote>
+<p>注：本文会用Fetch对象和ES6语法来进行测试演示。  </p>
+</blockquote>
+<p>会看到浏览器打印如下信息:<br><img src="http://oksj4hknl.bkt.clouddn.com/cross-origin.png"><br>可以看到，在localhost:3001去请求localhost:3000出现了跨域错误，验证了上面的同源策略。接下来会同样用代码的形式验证不同方式去进行跨域网络请求。</p>
+<h2 id="JSONP（JSON-with-Padding）"><a href="#JSONP（JSON-with-Padding）" class="headerlink" title="JSONP（JSON with Padding）"></a>JSONP（JSON with Padding）</h2><p><em>JSONP（JSON with Padding）是数据格式JSON的一种“使用模式”，可以让网页从别的网域要数据。另一个解决这个问题的新方法是跨来源资源共享。</em><br>这是维基百科对于JSONP的解释，而JSONP确实是一种解决跨域请求的方式。JSONP的实现原理就是利用&lt;script&gt;标签引入其他源的脚本的时候是不存在跨域问题这个特性。有聪明的开发者想到，可以添加一个script标签，&lt;script src=”yangmingming.me/users?callback=jsonp”&gt;，通过url参数把回调函数名传递给后端，后端再响应一个JSON数据+回调函数，如：<code>jsonp({name: yeoman})</code>。这样前端就会回调这个函数，并且拿到后端传递的JSON数据。从而达到跨域请求的目的。上代码：<br>前端部分：添加一个script标签用来请求后端API，同时传递<code>callback=jsonp</code>参数。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">appendScript</span>(<span class="params">src</span>) </span>&#123;</div><div class="line">    <span class="keyword">var</span> script = <span class="built_in">document</span>.createElement(<span class="string">'script'</span>);</div><div class="line">    script.setAttribute(<span class="string">"type"</span>,<span class="string">"text/javascript"</span>);</div><div class="line">    script.src = src;</div><div class="line">    <span class="built_in">document</span>.body.appendChild(script);</div><div class="line">&#125;</div><div class="line"></div><div class="line">appendScript(<span class="string">'http://'</span> + <span class="built_in">window</span>.location.hostname + <span class="string">'/users?callback=jsonp'</span>);</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">jsonp</span>(<span class="params">data</span>) </span>&#123;</div><div class="line">    <span class="built_in">console</span>.log(data);</div><div class="line">&#125;;</div></pre></td></tr></table></figure>
+<p>后端部分：响应请求，并返回参数。这里的<code>res.jsonp</code>是Express的API，可以看<a href="http://www.expressjs.com.cn/4x/api.html#res.jsonp" target="_blank" rel="external">这里</a>。</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">app.<span class="keyword">use</span>(<span class="string">'/users'</span>, <span class="function"><span class="keyword">function</span><span class="params">(req, res, next)</span> </span>&#123;</div><div class="line">    res.jsonp(&#123;name: <span class="string">'yeoman'</span>&#125;)</div><div class="line">&#125;);</div></pre></td></tr></table></figure>
+<p>查看浏览器console窗口，信息如下：<br><img src="http://oksj4hknl.bkt.clouddn.com/jsonp.png"><br>呀比～成功跨域请求到了后端的response。</p>
+<blockquote>
+<ol>
+<li>不难发现，JSONP这种跨域请求的方式其实就是一种hack手段。从它的原理看，JSONP也只能支持GET请求。</li>
+<li>除了JSONP之外，还有一些比较hack的做法可以实现跨域，比如利用 <code>document.domain</code>或者是<code>iframe</code>配合<code>window.name, location.hash</code>等等，但这些方法都有很大的局限性，随着Web技术的发展和W3C标准的普及，会慢慢退出历史舞台。</li>
+</ol>
+</blockquote>
+<p><br></p>
+<h2 id="CORS-Cross-Origin-Resource-Sharing"><a href="#CORS-Cross-Origin-Resource-Sharing" class="headerlink" title="CORS(Cross-Origin Resource Sharing)"></a>CORS(Cross-Origin Resource Sharing)</h2><p><em>跨域资源共享</em> 可以说是目前来讲解决跨域问题的终极杀器了，因为这种方式一步到位，无副作用。更重要的是，你要问W3C对CORS支持不支持，他肯定支持啊！<br>CORS是把跨域问题放到服务端端去解决，由服务端端来决定是否允许本次请求。</p>
+<blockquote>
+<p>client端的CORS部分由浏览器自动完成，当下主流浏览器都已支持CORS。</p>
+</blockquote>
+<h3 id="HTTP-请求头-和-HTTP-响应头-以及-「预请求」"><a href="#HTTP-请求头-和-HTTP-响应头-以及-「预请求」" class="headerlink" title="HTTP 请求头 和 HTTP 响应头 以及 「预请求」"></a>HTTP 请求头 和 HTTP 响应头 以及 「预请求」</h3><p><em>跨域资源共享</em> 新增了一系列HTTP头用来让客户端和服务端约定可以发送哪些请求。但是对于某些对服务器可能产生破坏性的请求，比如<code>PUT和DELETE请求</code>，CORS标准要求必须先发送一个预请求（OPTIONS请求），在服务器确认允许之后才发送真正的请求。<br>不符合以下条件均会发送OPTIONS请求：</p>
+<ul>
+<li>只使用 GET, HEAD 或者 POST 请求方法。如果使用 POST 向服务器端传送数据，则数据类型(Content-Type)只能是 application/x-www-form-urlencoded, multipart/form-data 或 text/plain中的一种。</li>
+<li>不会使用自定义请求头（类似于 X-Modified 这种）。</li>
+</ul>
+<h4 id="HTTP-请求头"><a href="#HTTP-请求头" class="headerlink" title="HTTP 请求头"></a>HTTP 请求头</h4><blockquote>
+<p><code>Origin: &lt;origin&gt;</code><br>// 用来告诉服务器请求来自于哪里，这个字段浏览器会自动设置<br><code>Access-Control-Request-Method: &lt;method&gt;</code><br>// 用来告诉服务器使用的请求方式<br><code>Access-Control-Request-Headers: &lt;field-name&gt;[, &lt;field-name&gt;]*</code><br>// 一些自定义的头信息</p>
+</blockquote>
+<h4 id="HTTP-响应头"><a href="#HTTP-响应头" class="headerlink" title="HTTP 响应头"></a>HTTP 响应头</h4><blockquote>
+<p><code>Access-Control-Allow-Origin: &lt;origin&gt; | *</code><br>// *代表允许所有请求，<origin>可以指定一个域名<br><code>Access-Control-Expose-Headers: X-My-Custom-Header, X-Another-Custom-Header</code><br>// 设置浏览器允许访问的服务器的头信息的白名单<br><code>Access-Control-Allow-Methods: &lt;method&gt;</code><br>// 设置可以被允许的请求方式<br><code>Access-Control-Allow-Headers</code><br>// 设置可以被允许的自定义请求头<br><code>Access-Control-Max-Age: &lt;delta-seconds&gt;</code><br>// 设置预请求的有效期<br><code>Access-Control-Allow-Credentials: true | false</code><br>// 当请求参数带上<code>{credentials: &#39;include&#39;}</code>的时候，设置响应是否可以被得到</origin></p>
+</blockquote>
+<p>关键概念就到这，上代码：</p>
+<p>服务端：</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">app.all(<span class="string">'*'</span>,<span class="function"><span class="keyword">function</span> <span class="params">(req, res, next)</span></span> &#123;</div><div class="line">    res.header(<span class="string">'Access-Control-Allow-Origin'</span>, <span class="string">'*'</span>);</div><div class="line">    res.header(<span class="string">'Access-Control-Allow-Methods'</span>, <span class="string">'PUT, POST, GET, DELETE, OPTIONS'</span>);</div><div class="line">    <span class="keyword">if</span> (req.method == <span class="string">'OPTIONS'</span>) &#123;</div><div class="line">        res.send(<span class="string">'OPTIONS PASSED'</span>);</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">else</span> &#123;</div><div class="line">        <span class="built_in">next</span>();</div><div class="line">    &#125;</div><div class="line">&#125;);</div></pre></td></tr></table></figure>
+<p>用户端还是发送之前那个返回跨域错误的GET请求。返回200，成功返回～<br><img src="http://oksj4hknl.bkt.clouddn.com/cors-get.png"><br>同时可以看到在Response Headers里有在服务端设置的两个HTTP头字段，<code>Access-Control-Allow-Methods:PUT, POST, GET, DELETE, OPTIONS</code>,<code>Access-Control-Allow-Origin:*</code></p>
+<p>接着我们发一个<code>PUT请求</code>：</p>
+<p>前端：</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="selector-tag">cross_origin_request</span>(<span class="selector-tag">backend_url</span>, &#123;<span class="attribute">method</span>: <span class="string">'PUT'</span>&#125;)</div></pre></td></tr></table></figure>
+<p>同时服务端设置预请求有效期：</p>
+<figure class="highlight lasso"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">res.<span class="keyword">header</span>(<span class="string">'Access-Control-Max-Age'</span>, <span class="number">3600</span>)</div></pre></td></tr></table></figure>
+<p>可以看到确实先发送了OPTIONS请求并多了Access-Control-Max-Age字段：<br><img src="http://oksj4hknl.bkt.clouddn.com/cors-options.png"></p>
+<blockquote>
+<p>但是我在测试的时候发现第二次请求的时候还是会先发送OPTIONS请求，难道<code>Access-Control-Max-Age</code>字段无效？Google之后，发现也有朋友遇到这个问题，是因为勾选了Chrome的<code>Disable cache</code> 选项。启动缓存，在一个小时之内就不会发送OPTIONS请求了～</p>
+</blockquote>
+<p><br></p>
+<h2 id="服务端代理"><a href="#服务端代理" class="headerlink" title="服务端代理"></a>服务端代理</h2><p>服务端代理同样可以解决跨域的问题，这种方式则是完全在服务端解决，与浏览器端无关。<br>也就是先请求相同域下的API容器，然后这个API容器作为代理去请求真正的服务器端再返回给客户端。</p>
+<h2 id="Tips"><a href="#Tips" class="headerlink" title="Tips"></a>Tips</h2><p>本文的Demo代码放在了<a href="https://github.com/yeomanyang/Cross-Origin-Demo" target="_blank" rel="external">Github上</a>。</p>
+
+
+                <hr>
+
+                
+                <!-- 多说 Share start -->
+                </style>
+                <div class="ds-share"
+                    style="text-align: right"
+                    data-thread-key="2017/02/05/聊聊「跨域请求」这个事/"
+                    data-title="聊聊「跨域请求」这个事"
+                    data-url="https://yeomanyang.github.io/2017/02/05/聊聊「跨域请求」这个事/"
+                    data-images=""
+                    data-content="这篇文章的目的就是讲清楚跨域网络请求这件事情。
+浏览器的同源策略浏览器的同源策略是引发跨域问题... | Yeoman的博客 | Yeoman&#39;s Blog " >
+                    <div class="ds-share-inline">
+                      <ul  class="ds-share-icons-16">
+                        <li data-toggle="ds-share-icons-more"><a class="ds-more" href="#">分享到：</a></li>
+                        <li><a class="ds-wechat flat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+                        <li><a class="ds-weibo flat" href="javascript:void(0);" data-service="weibo">微博</a></li>
+                        <li><a class="ds-douban flat" href="javascript:void(0);" data-service="douban">豆瓣</a></li>
+                      </ul>
+                      <div class="ds-share-icons-more">
+                      </div>
+                    </div>
+                <hr>
+                </div>
+                <!-- 多说 Share end-->
+                
+
+                <ul class="pager">
+                    
+                    
+                        <li class="next">
+                            <a href="/2017/01/16/npm进阶学习/" data-toggle="tooltip" data-placement="top" title="npm进阶学习">Next Post &rarr;</a>
+                        </li>
+                    
+                </ul>
+
+                
+                <!-- 多说评论框 start -->
+                <div class="comment">
+                    <div class="ds-thread"
+                        data-thread-key="2017/02/05/聊聊「跨域请求」这个事/"
+                        data-title="聊聊「跨域请求」这个事"
+                        data-url="https://yeomanyang.github.io/2017/02/05/聊聊「跨域请求」这个事/" >
+                    </div>
+                </div>
+                <!-- 多说评论框 end -->
+                
+
+                
+
+            </div>
+    <!-- Side Catalog Container -->
+        
+
+    <!-- Sidebar Container -->
+
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                       
+                          <a class="tag" href="/tags/#technique" title="technique">technique</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+            </div>
+
+        </div>
+    </div>
+</article>
+
+
+<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+<script type="text/javascript">
+    // dynamic User by Hux
+    var _user = 'yeomanyang';
+
+    // duoshuo comment query.
+    var duoshuoQuery = {short_name: _user };
+    (function() {
+        var ds = document.createElement('script');
+        ds.type = 'text/javascript';ds.async = true;
+        ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+        ds.charset = 'UTF-8';
+        (document.getElementsByTagName('head')[0]
+         || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+</script>
+<!-- 多说公共JS代码 end -->
+
+
+
+
+
+
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                
+                
+                
+                    <li>
+                        <a target="_blank" href="https://www.zhihu.com/people/yeomanyang">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa  fa-stack-1x fa-inverse">知</i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank" href="http://weibo.com/2858185810">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-weibo fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/yeomanyang">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; Yeoman&#39;s Blog 2017 
+                    <br>
+                    Theme by <a href="http://huangxuan.me">Hux</a> 
+                    <span style="display: inline-block; margin: 0 5px;">
+                        <i class="fa fa-heart"></i>
+                    </span> 
+                    Ported by <a href="http://blog.kaijun.rocks">Kaijun</a> | 
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="91px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=kaijun&repo=hexo-theme-huxblog&type=star&count=true" >
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="/js/jquery.min.js"></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="/js/bootstrap.min.js"></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/hux-blog.min.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- 
+     Because of the native support for backtick-style fenced code blocks 
+     right within the Markdown is landed in Github Pages, 
+     From V1.6, There is no need for Highlight.js, 
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0  
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/    
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("https://yeomanyang.github.io/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+
+<script>
+    // dynamic User by Hux
+    var _gaId = 'UA-90487102-1';
+    var _gaDomain = 'undefined';
+
+    // Originial
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', _gaId, _gaDomain);
+    ga('send', 'pageview');
+</script>
+
+
+
+
+<!-- Baidu Tongji -->
+
+<script>
+    // dynamic User by Hux
+    var _baId = 'c7f7936268a976be71b91508db530dfa';
+
+    // Originial
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?" + _baId;
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+</script>
+
+
+<!-- Side Catalog -->
+
+
+
+
+
+<!-- Image to hack wechat -->
+<img src="https://yeomanyang.github.io/img/icon_wechat.png" width="0" height="0" />
+<!-- Migrate from head to bottom, no longer block render and still work -->
+
+</body>
+
+</html>

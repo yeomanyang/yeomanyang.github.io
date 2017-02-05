@@ -13,11 +13,11 @@
 
     <title>
         
-          FQ的正确打开方式 - Yeoman的博客 | Yeoman&#39;s Blog
+          翻越GFW的正确姿势 - Yeoman的博客 | Yeoman&#39;s Blog
         
     </title>
 
-    <link rel="canonical" href="https://yeomanyang.github.io/2016/12/12/FQ的正确打开方式/">
+    <link rel="canonical" href="https://yeomanyang.github.io/2016/12/12/翻越GFW的正确姿势/">
 
     <!-- Bootstrap Core CSS -->
     <link rel="stylesheet" href="/css/bootstrap.min.css">
@@ -168,7 +168,7 @@
                           <a class="tag" href="/tags/#technique" title="technique">technique</a>
                         
                     </div>
-                    <h1>FQ的正确打开方式</h1>
+                    <h1>翻越GFW的正确姿势</h1>
                     <h2 class="subheading">天才第一步</h2>
                     <span class="meta">
                         Posted by Yeoman on
@@ -211,7 +211,7 @@
 <li><a href="https://zh.wikipedia.org/wiki/%E8%99%9B%E6%93%AC%E7%A7%81%E4%BA%BA%E7%B6%B2%E8%B7%AF" target="_blank" rel="external">VPN</a>（Virtual Private Network），基于PPTP，L2TP，IPSec，IKEv2等协议。</li>
 <li><a href="https://zh.wikipedia.org/wiki/Secure_Shell" target="_blank" rel="external">SSH</a>（Secure Shell），目前最好用的应该是 <a href="https://github.com/clowwindy" target="_blank" rel="external">clowwindy</a> 开源的Socks5代理。</li>
 </ul>
-<h4 id="VPN原理简介"><a href="#VPN原理简介" class="headerlink" title="VPN原理简介"></a>VPN原理简介</h4><p>VPN方式下，必须让客户端和VPN服务器先建立连接。这个时候本地VPN客户端会通过 <em>操作系统</em> 的接口创建一个虚拟的网卡，后续整个操作系统的网络通讯都可以通过这张虚拟网卡进行收发。<img src="/2016/12/12/FQ的正确打开方式/vpn.png" alt="vpn" title="vpn">   </p>
+<h4 id="VPN原理简介"><a href="#VPN原理简介" class="headerlink" title="VPN原理简介"></a>VPN原理简介</h4><p>VPN方式下，必须让客户端和VPN服务器先建立连接。这个时候本地VPN客户端会通过 <em>操作系统</em> 的接口创建一个虚拟的网卡，后续整个操作系统的网络通讯都可以通过这张虚拟网卡进行收发。<img src="/2016/12/12/翻越GFW的正确姿势/vpn.png" alt="vpn" title="vpn">   </p>
 <blockquote>
 <ol>
 <li>VPN客户端启动成功之后，操作系统的缺省路由就被改成了VPN本身。</li>
@@ -219,7 +219,7 @@
 <li>再由VPN服务器解密，来转发给目标服务器。这样通过VPN协议的加密通讯和一台没有被墙的VPN服务器就绕过了GFW而实现了FQ的效果。  </li>
 </ol>
 </blockquote>
-<h4 id="shadowsocks原理简介"><a href="#shadowsocks原理简介" class="headerlink" title="shadowsocks原理简介"></a>shadowsocks原理简介</h4><p><a href="https://github.com/shadowsocks/shadowsocks" target="_blank" rel="external">shadowsocks</a> 基于ssh协议，将Socks5协议拆分成Server端和Client端。<br>工作原理如图：<br><img src="/2016/12/12/FQ的正确打开方式/shadowsocks.png" alt="vpn" title="vpn"><br>可以看出，shadowsocks是在Local和Server端同时代理的。</p>
+<h4 id="shadowsocks原理简介"><a href="#shadowsocks原理简介" class="headerlink" title="shadowsocks原理简介"></a>shadowsocks原理简介</h4><p><a href="https://github.com/shadowsocks/shadowsocks" target="_blank" rel="external">shadowsocks</a> 基于ssh协议，将Socks5协议拆分成Server端和Client端。<br>工作原理如图：<br><img src="/2016/12/12/翻越GFW的正确姿势/shadowsocks.png" alt="vpn" title="vpn"><br>可以看出，shadowsocks是在Local和Server端同时代理的。</p>
 <blockquote>
 <ol>
 <li>客户端发出的请求基于 Socks5 协议跟 Local 端进行通讯</li>
@@ -235,7 +235,7 @@
 <li>开头提到的第三点，也是在我看来一个VPN方案选择最重要的一点，在需要FQ的时候走代理，而访问国内站点的时候走本地网络。<br>从上述原理简介来看，VPN其实是接管了整个系统的网络通讯，是在IP层工作的，因此VPN方式只能通过筛选IP来选择使用哪一张网卡。而shadowsocks可以在URL的级别上筛选网址走加密通道。<br>shadowsocks本身就是支持 <a href="https://zh.wikipedia.org/wiki/%E4%BB%A3%E7%90%86%E8%87%AA%E5%8A%A8%E9%85%8D%E7%BD%AE" target="_blank" rel="external">PAC</a>（Proxy auto-config）方式代理的。一个PAC文件就是一个JSON白名单对象，像 <a href="https://raw.githubusercontent.com/breakwa11/gfw_whitelist/master/whitelist.pac" target="_blank" rel="external">这样</a>。  </li>
 </ol>
 </blockquote>
-<h2 id="如何在自己的VPS上搭建FQ服务器"><a href="#如何在自己的VPS上搭建FQ服务器" class="headerlink" title="如何在自己的VPS上搭建FQ服务器"></a><span id="deploy">如何在自己的VPS上搭建FQ服务器</span></h2><h4 id="1-购买一台VPS"><a href="#1-购买一台VPS" class="headerlink" title="1. 购买一台VPS"></a>1. 购买一台VPS</h4><p>VPS的选择有很多，比如 <a href="https://www.digitalocean.com/" target="_blank" rel="external">DigitalOcean</a>，<a href="http://banwagong.cn/" target="_blank" rel="external">搬瓦工</a>，AWS还有12个月的 <a href="https://aws.amazon.com/cn/free/?sc_channel=PS&amp;sc_campaign=acquisition_CN&amp;sc_publisher=baidu&amp;sc_medium=cloud_computing_b&amp;sc_content=aws_e&amp;sc_detail=aws_708&amp;sc_category=cloud_computing_b&amp;sc_segment=708&amp;sc_matchtype=phrase&amp;sc_country=CN&amp;s_kwcid=AL!4422!88!5293109925!!16914971671&amp;ef_id=WEPo5wAAAQNf@E@1:20170201075929:s" target="_blank" rel="external">免费服务</a>。我目前用的就是AWS的EC2。购买完成之后，通过ssh的方式连接到服务器。<img src="/2016/12/12/FQ的正确打开方式/ssh-server.png" alt="ssh-server" title="ssh-server">   </p>
+<h2 id="如何在自己的VPS上搭建FQ服务器"><a href="#如何在自己的VPS上搭建FQ服务器" class="headerlink" title="如何在自己的VPS上搭建FQ服务器"></a><span id="deploy">如何在自己的VPS上搭建FQ服务器</span></h2><h4 id="1-购买一台VPS"><a href="#1-购买一台VPS" class="headerlink" title="1. 购买一台VPS"></a>1. 购买一台VPS</h4><p>VPS的选择有很多，比如 <a href="https://www.digitalocean.com/" target="_blank" rel="external">DigitalOcean</a>，<a href="http://banwagong.cn/" target="_blank" rel="external">搬瓦工</a>，AWS还有12个月的 <a href="https://aws.amazon.com/cn/free/?sc_channel=PS&amp;sc_campaign=acquisition_CN&amp;sc_publisher=baidu&amp;sc_medium=cloud_computing_b&amp;sc_content=aws_e&amp;sc_detail=aws_708&amp;sc_category=cloud_computing_b&amp;sc_segment=708&amp;sc_matchtype=phrase&amp;sc_country=CN&amp;s_kwcid=AL!4422!88!5293109925!!16914971671&amp;ef_id=WEPo5wAAAQNf@E@1:20170201075929:s" target="_blank" rel="external">免费服务</a>。我目前用的就是AWS的EC2。购买完成之后，通过ssh的方式连接到服务器。<img src="/2016/12/12/翻越GFW的正确姿势/ssh-server.png" alt="ssh-server" title="ssh-server">   </p>
 <h4 id="2-部署VPN服务"><a href="#2-部署VPN服务" class="headerlink" title="2. 部署VPN服务"></a>2. 部署VPN服务</h4><p><a href="https://zh.wikipedia.org/wiki/StrongSwan" target="_blank" rel="external">strongSwan</a> 是在Linux系统下IPsec协议的实现。因此我们要在Linux下部署VPN服务就需要用到strongSwan。<br>这里给一个我找到的，使用strongSwan，并适用于Ubuntu/CentOS的IKEV2/L2TP的 <a href="https://github.com/quericy/one-key-ikev2-vpn" target="_blank" rel="external">VPN部署脚本</a>。脚本的作者已经详细介绍了脚本的使用方法。<br>这里需要注意一点，如果要用ikeV2的协议，需要将生成的证书导入到需要FQ的设备中并且信任。如果是iOS设备，可以通过发送到自己的邮箱，然后手机在邮箱中打开，系统会自动添加证书到设备。  </p>
 <h4 id="3-部署shadowsocks服务"><a href="#3-部署shadowsocks服务" class="headerlink" title="3. 部署shadowsocks服务"></a>3. 部署shadowsocks服务</h4><p>shadowsocks的部署相对要简单一些，直接看官网 <a href="https://github.com/shadowsocks/shadowsocks/wiki/Shadowsocks-%E4%BD%BF%E7%94%A8%E8%AF%B4%E6%98%8E" target="_blank" rel="external">教程</a> 就可以完成部署了。下面是我的shadowsocks的配置文件：  </p>
 <pre><code>{
@@ -255,7 +255,7 @@ lsof -i:port
 </code></pre><p>本地端口正常工作，再检查服务器端口，在服务器上输入：</p>
 <pre><code>// port 就是上面文件中的server_port
 sudo netstat -anp|grep port
-</code></pre><p>我发现服务器端口也已经正常工作了，这时候可能出问题的环节就是 <em>ss-local</em> 访问 <em>ss-server</em> 出现问题了。然后马上检查了AWS的安全组设置，发现确实是只打开了ssh端口，设置成允许全部流量和全部端口。<img src="/2016/12/12/FQ的正确打开方式/aws.png" alt="aws" title="aws"><br>自此，成功FQ，Google大法好唉【唱】。<br><img src="/2016/12/12/FQ的正确打开方式/google.png" alt="aws" title="aws"></p>
+</code></pre><p>我发现服务器端口也已经正常工作了，这时候可能出问题的环节就是 <em>ss-local</em> 访问 <em>ss-server</em> 出现问题了。然后马上检查了AWS的安全组设置，发现确实是只打开了ssh端口，设置成允许全部流量和全部端口。<img src="/2016/12/12/翻越GFW的正确姿势/aws.png" alt="aws" title="aws"><br>自此，成功FQ，Google大法好唉【唱】。<br><img src="/2016/12/12/翻越GFW的正确姿势/google.png" alt="aws" title="aws"></p>
 <h4 id="Tips"><a href="#Tips" class="headerlink" title="Tips"></a>Tips</h4><blockquote>
 <p>iOS平台的shadowsocks客户端已经被强制要求下架了，目前我用的是wingy。</p>
 </blockquote>
@@ -268,9 +268,9 @@ sudo netstat -anp|grep port
                 </style>
                 <div class="ds-share"
                     style="text-align: right"
-                    data-thread-key="2016/12/12/FQ的正确打开方式/"
-                    data-title="FQ的正确打开方式"
-                    data-url="https://yeomanyang.github.io/2016/12/12/FQ的正确打开方式/"
+                    data-thread-key="2016/12/12/翻越GFW的正确姿势/"
+                    data-title="翻越GFW的正确姿势"
+                    data-url="https://yeomanyang.github.io/2016/12/12/翻越GFW的正确姿势/"
                     data-images=""
                     data-content="写在前面刚开始工作的时候老大给了一个支持PPTP协议的VPN账号，听说墙外的世界还是比较美（z... | Yeoman的博客 | Yeoman&#39;s Blog " >
                     <div class="ds-share-inline">
@@ -305,9 +305,9 @@ sudo netstat -anp|grep port
                 <!-- 多说评论框 start -->
                 <div class="comment">
                     <div class="ds-thread"
-                        data-thread-key="2016/12/12/FQ的正确打开方式/"
-                        data-title="FQ的正确打开方式"
-                        data-url="https://yeomanyang.github.io/2016/12/12/FQ的正确打开方式/" >
+                        data-thread-key="2016/12/12/翻越GFW的正确姿势/"
+                        data-title="翻越GFW的正确姿势"
+                        data-url="https://yeomanyang.github.io/2016/12/12/翻越GFW的正确姿势/" >
                     </div>
                 </div>
                 <!-- 多说评论框 end -->
