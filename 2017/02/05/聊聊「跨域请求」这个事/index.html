@@ -286,6 +286,30 @@
 <p>backend：</p>
 <figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">type</span>=<span class="string">"text/javascript"</span>&gt;</span><span class="javascript"></span></div><div class="line">    <span class="built_in">window</span>.onload = <span class="function"><span class="params">()</span> =&gt;</span> &#123;	</div><div class="line">        onmessage = <span class="function">(<span class="params">e</span>) =&gt;</span> &#123;</div><div class="line">            e = e || event;</div><div class="line">            <span class="built_in">document</span>.write(<span class="built_in">JSON</span>.stringify(e.data));</div><div class="line">            <span class="keyword">var</span> window_parent = <span class="built_in">window</span>.parent;</div><div class="line">            window_parent.postMessage(<span class="string">'我肯定是支持的'</span>, <span class="string">'http://'</span> + <span class="built_in">window</span>.location.hostname + <span class="string">':3001'</span>)</div><div class="line">        &#125;;</div><div class="line">    &#125;</div><div class="line"><span class="tag">&lt;/<span class="name">script</span>&gt;</span></div></pre></td></tr></table></figure>
 <p>可以看下如下的输出，成功跨域通信：<br><img src="http://oksj4hknl.bkt.clouddn.com/postMessage.png"></p>
+<p><br></p>
+<h2 id="WebSocket"><a href="#WebSocket" class="headerlink" title="WebSocket"></a>WebSocket</h2><p><em>WebSocket一种在单个 TCP 连接上进行全双工通讯的协议。</em>    –《维基百科》  </p>
+<p>WebSocket的出现背景是因为目前实现服务器和客户端推送服务的解决方案都存在问题，因此HTML5定义了WebSocket协议。  </p>
+<p>WebSocket使用和HTTP相同的TCP端口，也就是默认是80端口，加上TLS是在443端口。  </p>
+<p>值得一提的是，WebSocket并不遵守浏览器的同源策略！这里我们用 <a href="http://socket.io/" target="_blank" rel="external">socket.io</a>来进行测试。</p>
+<p>front：<br>引入socket.io。<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">type</span>=<span class="string">"text/javascript"</span> <span class="attr">src</span>=<span class="string">"https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.2/socket.io.js"</span>&gt;</span><span class="undefined"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></div></pre></td></tr></table></figure></p>
+<p>往backend发送消息。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> socket = io(<span class="string">'http://localhost:3000'</span>);</div><div class="line">socket.on(<span class="string">'news'</span>, <span class="function"><span class="keyword">function</span> (<span class="params">data</span>) </span>&#123;</div><div class="line">    <span class="built_in">console</span>.log(data);</div><div class="line">    socket.emit(<span class="string">'my other event'</span>, &#123; <span class="attr">my</span>: <span class="string">'data'</span> &#125;);</div><div class="line">&#125;);</div></pre></td></tr></table></figure>
+<p>backend：<br>安装socket.io。  </p>
+<figure class="highlight livecodeserver"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">npm install <span class="built_in">socket</span>.io <span class="comment">--save</span></div></pre></td></tr></table></figure>
+<p>链接server，发送消息：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> app = <span class="built_in">require</span>(<span class="string">'../app'</span>);</div><div class="line"><span class="keyword">var</span> server = http.createServer(app);</div><div class="line"><span class="keyword">var</span> io = <span class="built_in">require</span>(<span class="string">'socket.io'</span>)(server);</div><div class="line">io.on(<span class="string">'connection'</span>, <span class="function"><span class="keyword">function</span> (<span class="params">socket</span>) </span>&#123;</div><div class="line">    socket.emit(<span class="string">'news'</span>, &#123; <span class="attr">hello</span>: <span class="string">'world'</span> &#125;);</div><div class="line">    socket.on(<span class="string">'my other event'</span>, <span class="function"><span class="keyword">function</span> (<span class="params">data</span>) </span>&#123;</div><div class="line">        <span class="built_in">console</span>.log(data);</div><div class="line">    &#125;);</div><div class="line">&#125;);</div></pre></td></tr></table></figure>
+<p>查看调试工具，看看发生了什么：  </p>
+<p>front成功打印<code>Object {hello: &quot;world&quot;}</code>，backend成功打印<code>{ my: &#39;data&#39; }</code>，成功跨域通信！  </p>
+<p>但是！！！当我再查看Network的时候，如图：</p>
+<p><img src="http://oksj4hknl.bkt.clouddn.com/websocket-http.png"><br>这，这，这这这，这不还是发送了HTTP请求么，说好的WebSocket呢？？？<br><img src="http://oksj4hknl.bkt.clouddn.com/yilianmengbi.jpeg">  </p>
+<p>我猜测是 <em>socket.io</em> 为了提升响应速度，在WebSocket成功建立链接之前，会先发送HTTP请求。于是我加上延时调用：</p>
+<figure class="highlight coffeescript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">setTimeout(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</div><div class="line">    socket.emit(<span class="string">'my other event'</span>, &#123; my:<span class="string">'data'</span> &#125;);</div><div class="line">&#125;, <span class="number">2000</span>)</div></pre></td></tr></table></figure>
+<p>果然不再发送刚才的HTTP请求，而是如下：<br><img src="http://oksj4hknl.bkt.clouddn.com/websocket-101.png"><br><img src="http://oksj4hknl.bkt.clouddn.com/websocket-frames.png"></p>
+<p><code>wx://</code>建立连接之后，会一直保持，之后的请求都是在这个连接中完成。</p>
+<blockquote>
+<p>101状态码表示客户端要求服务器根据请求转换HTTP协议版本，这里也就是<code>Upgrade:websocket</code>，升级为WebSocket连接。</p>
+</blockquote>
+<p><br></p>
 <h2 id="服务端代理"><a href="#服务端代理" class="headerlink" title="服务端代理"></a>服务端代理</h2><p>服务端代理同样可以解决跨域的问题，这种方式则是完全在服务端解决，与浏览器端无关。<br>也就是先请求相同域下的API容器，然后这个API容器作为代理去请求真正的服务器端再返回给客户端。</p>
 <h2 id="Tips"><a href="#Tips" class="headerlink" title="Tips"></a>Tips</h2><p>本文的Demo代码放在了<a href="https://github.com/yeomanyang/Cross-Origin-Demo" target="_blank" rel="external">Github上</a>。</p>
 
@@ -366,6 +390,15 @@
                 
 
                 <!-- Friends Blog -->
+                
+                <hr>
+                <h5>FRIENDS</h5>
+                <ul class="list-inline">
+
+                    
+                        <li><a href="https://palmerye.github.io/palmer-blog/" target="_blank">Palmer Blog</a></li>
+                    
+                </ul>
                 
             </div>
 
