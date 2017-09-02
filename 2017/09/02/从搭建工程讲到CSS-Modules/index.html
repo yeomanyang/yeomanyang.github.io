@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Talk is cheap, show me the code.">
+    <meta name="keyword"  content="">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>
+        
+          从搭建工程讲到CSS Modules - Yeoman的博客 | Yeoman&#39;s Blog
+        
+    </title>
+
+    <link rel="canonical" href="https://yeomanyang.github.io/2017/09/02/从搭建工程讲到CSS-Modules/">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/hux-blog.min.css">
+
+    <!-- Pygments Highlight CSS -->
+    <link rel="stylesheet" href="/css/highlight.css">
+
+    <!-- Custom Fonts -->
+    <!-- <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="https://cdn.staticfile.org/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- Hux Delete, sad but pending in China
+    <link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/
+    css'>
+    -->
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">Yeoman&#39;s Blog</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archives/">Archives</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">Tags</a>
+                        </li>
+                        
+                    
+
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    
+<!-- Image to hack wechat -->
+<!-- <img src="https://yeomanyang.github.io/img/icon_wechat.png" width="0" height="0"> -->
+<!-- <img src="{{ site.baseurl }}/{% if page.header-img %}{{ page.header-img }}{% else %}{{ site.header-img }}{% endif %}" width="0" height="0"> -->
+
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        background-image: url('/img/home-bg.jpg')
+    }
+</style>
+<header class="intro-header" >
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                          <a class="tag" href="/tags/#technique" title="technique">technique</a>
+                        
+                    </div>
+                    <h1>从搭建工程讲到CSS Modules</h1>
+                    <h2 class="subheading"></h2>
+                    <span class="meta">
+                        Posted by Yeoman on
+                        2017-09-02
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+    <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                <h3 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h3><p>这周的主要的工作就是搭建新工程的架子，项目基于<a href="https://github.com/vuejs/vue-cli" target="_blank" rel="external">vue-cli</a>构建。基本的功能在脚手架里都已经具备，但是还是需要针对具体的业务场景来做一些定制。</p>
+<h3 id="mock"><a href="#mock" class="headerlink" title="mock"></a>mock</h3><p>以现在前后端分离的开发模式来讲，一个正常的开发流程大概是这样：<br><img src="http://oksj4hknl.bkt.clouddn.com/develop-liucheng.png"></p>
+<p>这样前端可以不用等后端接口完全写完才可以开发，前后端并行开发，提高团队效率。</p>
+<p>而脚手架提供的功能只有一个<em>proxy</em>，不能满足我们的需求。所以需要我们自己写一个<code>mock-middleware</code>。大概是这样的一个功能，就不贴<code>mock-middleware</code>的代码了：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">module</span>.exports = <span class="function"><span class="params">()</span> =&gt;</span> &#123;</div><div class="line">    <span class="keyword">const</span> argv = <span class="built_in">Array</span>.prototype.slice.call(process.argv, <span class="number">2</span>);</div><div class="line">    <span class="keyword">const</span> proxyAddress = argv[<span class="number">0</span>];</div><div class="line">    <span class="keyword">if</span> (!argv.length || proxyAddress === <span class="string">'mock'</span>) &#123;</div><div class="line">        <span class="keyword">return</span> mockMiddleware;</div><div class="line">    &#125; <span class="keyword">else</span> &#123;</div><div class="line">        <span class="keyword">return</span> proxyMiddleware(proxyAddress);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>最终的效果就是运行 <code>npm run dev mock</code> ，会将api请求（注意：这里只会代理api请求，而不代理静态资源）转发到mock数据。在前后端开发完成之后，可以运行<code>npm run dev {proxy_ip}</code>将api请求代理到某台开发服务器进行联调。</p>
+<p>当然这篇文章的重点不是这个，而是想总结下在SPA应用里如何规范的写CSS。</p>
+<h3 id="CSS模块化"><a href="#CSS模块化" class="headerlink" title="CSS模块化"></a>CSS模块化</h3><p>故事的起点从组件库的选择说起，项目选择了开源的<a href="https://github.com/ElemeFE/element" target="_blank" rel="external">element</a> 作为组件库。而这套组件库并不符合考拉前端组的视觉规范，而目前也没有计划fork一条分支来维护，于是就采取了比较简单粗暴的做法，样式覆盖。先来看一段element中的样式：</p>
+<figure class="highlight less"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line"><span class="variable">@component-namespace</span> el &#123;</div><div class="line">  <span class="variable">@b</span> progress &#123;</div><div class="line">    <span class="attribute">position</span>: relative;</div><div class="line">    <span class="attribute">line-height</span>: <span class="number">1</span>;</div><div class="line"></div><div class="line">    <span class="variable">@e</span> text &#123;</div><div class="line">      <span class="attribute">font-size</span>:<span class="number">14px</span>;</div><div class="line">      <span class="attribute">display</span>: inline-block;</div><div class="line">      <span class="attribute">vertical-align</span>: middle;</div><div class="line">      <span class="attribute">margin-left</span>: <span class="number">10px</span>;</div><div class="line">      <span class="attribute">line-height</span>: <span class="number">1</span>;</div><div class="line">    &#125;</div><div class="line">    <span class="variable">@m</span> circle &#123;</div><div class="line">      <span class="attribute">display</span>: inline-block;</div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>可能有同学在刚看到这段样式的时候会有点蒙，但是仔细看@b，@e，@m，不就是bem规范么。<br><img src="http://oksj4hknl.bkt.clouddn.com/yilianmengbi.jpeg"></p>
+<h4 id="BEM规范"><a href="#BEM规范" class="headerlink" title="BEM规范"></a>BEM规范</h4><p>关于BEM规范，网上有很多文章介绍。知乎上也有一篇<a href="https://www.zhihu.com/question/21935157" target="_blank" rel="external">文章</a>来讨论其优劣，这里不去讨论BEM规范的好处和坏处，我觉得只要在一个工程里约定好一种规范并严格执行，这样总是不会错的。</p>
+<p>一方面为了和组件库的CSS规范保持统一，另一方面我个人觉得BEM的优点还是大于缺点，因此在项目里也准备按照这个规范来写。</p>
+<p>那么问题来了，浏览器是不认识上面这些@b，@e，@m的语法的，这个时候就需要<a href="https://github.com/postcss/postcss" target="_blank" rel="external">postcss</a>来帮忙了。</p>
+<h4 id="postcss"><a href="#postcss" class="headerlink" title="postcss"></a>postcss</h4><p>postcss和gulp，webpack等工具一样，他本身并不是一种预处理器或者后处理器，而是通过各种插件来完成转换（比如很流行的Autoprefixer就是它的一个插件）。</p>
+<p><a href="https://github.com/ElemeFE/postcss-salad" target="_blank" rel="external">postcss-salad</a>可以认为是一个postcss插件的集合，支持最新的css语法，一些sass嵌套的语法以及bem转化。这时候先来一份配置文件<code>postcss.config.js</code>：</p>
+<figure class="highlight vim"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line">module.exports = &#123;</div><div class="line">  plugin<span class="variable">s:</span> [</div><div class="line">    require(<span class="string">'postcss-salad'</span>)(&#123;</div><div class="line">      browser<span class="variable">s:</span> [<span class="string">'ie &gt; 9'</span>, <span class="string">'last 2 versions'</span>],</div><div class="line">      feature<span class="variable">s:</span> &#123;</div><div class="line">        bem: &#123;</div><div class="line">          shortcut<span class="variable">s:</span> &#123;</div><div class="line">            componen<span class="variable">t:</span> <span class="string">'b'</span>,</div><div class="line">            descenden<span class="variable">t:</span> <span class="string">'e'</span>,</div><div class="line">            modifier: <span class="string">'m'</span></div><div class="line">          &#125;,</div><div class="line">          separator<span class="variable">s:</span> &#123;</div><div class="line">            descenden<span class="variable">t:</span> <span class="string">'__'</span>,</div><div class="line">            modifier: <span class="string">'--'</span></div><div class="line">          &#125;</div><div class="line">        &#125;</div><div class="line">      &#125;</div><div class="line">    &#125;)</div><div class="line">  ]</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>bem之间的连接符可以自定义，这边是为了和element的组件保持一致。这时候我们可以先通过<a href="https://github.com/postcss/postcss-cli#context" target="_blank" rel="external">postcss-cli</a>这个工具来看一下效果。我们就用上述那段css来用postcss+postcss-salad进行转换，得到结果如下：</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"><span class="selector-class">.el-progress</span> &#123;</div><div class="line">    <span class="attribute">position</span>: relative;</div><div class="line">    <span class="attribute">line-height</span>: <span class="number">1</span></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="selector-class">.el-progress__text</span> &#123;</div><div class="line">    <span class="attribute">font-size</span>: <span class="number">14px</span>;</div><div class="line">    <span class="attribute">display</span>: inline-block;</div><div class="line">    <span class="attribute">vertical-align</span>: middle;</div><div class="line">    <span class="attribute">margin-left</span>: <span class="number">10px</span>;</div><div class="line">    <span class="attribute">line-height</span>: <span class="number">1</span></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="selector-class">.el-progress--circle</span> &#123;</div><div class="line">    <span class="attribute">display</span>: inline-block</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>已经达到了我们预想的效果，那么接下来要想在webpack中使用postcss肯定会需要一个loader，也就是<a href="https://github.com/postcss/postcss-loader" target="_blank" rel="external">postcss-loader</a>。</p>
+<p>然后将刚才的postcss.config.js作为postcss-loader的配置文件导入。</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">&#123;</div><div class="line">  <span class="attribute">loader</span>: <span class="string">'postcss-loader'</span>,</div><div class="line">  options: &#123;</div><div class="line">    config: &#123;</div><div class="line">      path: <span class="string">'path/to/postcss.config.js'</span></div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>至此，就可以在webpack项目中，用这种嵌套的bem语法来进行css的书写了。</p>
+<h4 id="CSS-Modules"><a href="#CSS-Modules" class="headerlink" title="CSS Modules"></a>CSS Modules</h4><p>故事还没有结束，大家都知道在写单页面应用的时候，一个常见的需求是希望组件间的css作用域是互相隔离的。这时候第一反应想到就是<em>Scoped CSS</em>，vue-loader也是支持Scoped CSS的（实际上对CSS进行转换的还是postcss）。那么Scoped CSS是如何来处理这个问题的呢：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">style</span> <span class="attr">scoped</span>&gt;</span><span class="css"></span></div><div class="line"><span class="selector-class">.example</span> &#123;</div><div class="line">  <span class="attribute">color</span>: red;</div><div class="line">&#125;</div><div class="line"><span class="tag">&lt;/<span class="name">style</span>&gt;</span></div><div class="line"></div><div class="line">=&gt;</div><div class="line"></div><div class="line"><span class="tag">&lt;<span class="name">style</span>&gt;</span><span class="css"></span></div><div class="line"><span class="selector-class">.example</span><span class="selector-attr">[_v-f3f3eg9]</span> &#123;</div><div class="line">  <span class="attribute">color</span>: red;</div><div class="line">&#125;</div><div class="line"><span class="tag">&lt;/<span class="name">style</span>&gt;</span></div></pre></td></tr></table></figure>
+<p>可以看到Scoped CSS会在class后面加上一段hash，从而来实现CSS作用域的隔离，但是在实践过程中，会发现几个问题：</p>
+<ol>
+<li>Scoped CSS将同时作用在父组件和子组件上，也就是无法做到父子组件样式的隔离。</li>
+<li>由于Scoped CSS改变了DOM中的class，因此就无法在组件内去覆盖element组件的全局样式了。</li>
+</ol>
+<p>这时候就需要<a href="https://github.com/css-modules/css-modules" target="_blank" rel="external">CSS Modules</a>出场了，CSS Modules是目前CSS模块化方案中被接受度较高的一种方案，网上也有很多的文章去介绍它。同样的，我们需要先看下CSS Modules能做什么事情呢？</p>
+<p>刚才讲到，postcss有很多的插件，那么肯定也会有CSS Modules的<a href="https://github.com/css-modules/postcss-modules" target="_blank" rel="external">插件</a>了。我们同样通过之前的postcss-cli来进行测试，首先配置上这个插件：</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="title">require</span><span class="params">(<span class="string">'postcss-modules'</span>)</span><span class="params">(&#123;</span></span></div><div class="line">  generateScopedName: <span class="string">'[local]--[hash:base64:5]'</span></div><div class="line">&#125;)</div></pre></td></tr></table></figure>
+<blockquote>
+<p>这里的[local]代表类名，[hash:base64:5]按照给定规则生成的hash值，还可以用的变量有[name]代表标签名，[path]代表路径等<br>CSS Modules 生成的class可以自定义规则，因此也可以用自定义的规则，而不用bem规范，可以看项目的具体情况来定</p>
+</blockquote>
+<p>还是同样那段css代码，看下转换的结果：</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"><span class="selector-class">.el-progress--3tuDF</span> &#123;</div><div class="line">    <span class="attribute">position</span>: relative;</div><div class="line">    <span class="attribute">line-height</span>: <span class="number">1</span></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="selector-class">.el-progress__text--1W8n3</span> &#123;</div><div class="line">    <span class="attribute">font-size</span>: <span class="number">14px</span>;</div><div class="line">    <span class="attribute">display</span>: inline-block;</div><div class="line">    <span class="attribute">vertical-align</span>: middle;</div><div class="line">    <span class="attribute">margin-left</span>: <span class="number">10px</span>;</div><div class="line">    <span class="attribute">line-height</span>: <span class="number">1</span></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="selector-class">.el-progress--circle--3OD0E</span> &#123;</div><div class="line">    <span class="attribute">display</span>: inline-block</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>跟我们预设的样式规则一致，这样就可以解决上述的第一个问题，做到每个组件内的样式是唯一的。</p>
+<p>但是我们发现CSS Modules同样会改变class，那么也同样无法在组件内覆盖element组件的全局样式，这时候可以用CSS Modules的全局样式写法，<code>:global{.class}</code>：</p>
+<figure class="highlight excel"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">:gl</span>obal(.el-progress) &#123;</div><div class="line">  positi<span class="symbol">on:</span> relative;</div><div class="line">  line-heig<span class="symbol">ht:</span> <span class="number">1</span>;</div><div class="line">&#125;</div><div class="line"></div><div class="line">=&gt;</div><div class="line"></div><div class="line">.el-progress &#123;</div><div class="line">  positi<span class="symbol">on:</span> relative;</div><div class="line">  line-heig<span class="symbol">ht:</span> <span class="number">1</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>这样就不会在class上加上hash后缀，从而可以达到覆盖全局样式的目的。</p>
+<h4 id="CSS-Modules-在Vue-webpack项目中的实践"><a href="#CSS-Modules-在Vue-webpack项目中的实践" class="headerlink" title="CSS Modules 在Vue+webpack项目中的实践"></a>CSS Modules 在Vue+webpack项目中的实践</h4><p>首先在Vue-loader的配置文件中配置生成class规则：</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="selector-tag">cssModules</span>: &#123;</div><div class="line">    <span class="attribute">localIdentName</span>: <span class="string">'[local]--[hash:base64:5]'</span>,</div><div class="line">    camelCase: true</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>然后在组件内通过在style上添加module打开CSS Modules。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">style</span> <span class="attr">module</span>&gt;</span><span class="undefined"></span></div><div class="line"><span class="tag">&lt;/<span class="name">style</span>&gt;</span></div></pre></td></tr></table></figure>
+<p>css-loader 会将一个 <code>$style</code>对象注入到当前组件。所以在实际中使用大概是这个样子：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">&lt;header :<span class="class"><span class="keyword">class</span></span>=<span class="string">"$style['titan-header']"</span>&gt;</div><div class="line"><span class="xml"><span class="tag">&lt;/<span class="name">header</span>&gt;</span></span></div></pre></td></tr></table></figure>
+<p>有时候我们会有这样的用法：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">&lt;div :<span class="class"><span class="keyword">class</span></span>=<span class="string">"&#123; 'active': selectedIndex == index&#125; "</span>&gt;</div><div class="line"><span class="xml"><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></div></pre></td></tr></table></figure>
+<p>这时候样式就会作为对象的属性名，而我们知道用了CSS Modules，就必须用<code>$style.active</code>来替换<code>&#39;active&#39;</code>，还好我们有ES6！<br>ES6有一个特性是用双括号支持用计算属性作为属性名，也就是这样：<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">&lt;div :<span class="class"><span class="keyword">class</span></span>=<span class="string">"&#123; [$style.active]: selectedIndex == index&#125; "</span>&gt;</div><div class="line"><span class="xml"><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></div></pre></td></tr></table></figure></p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>bem+CSS Modules在新项目的实践已经有一周的时间，并没有发现什么问题，才写下这篇文章来总结。以上只是我在本次工程搭建过程中的一些总结，并不保证观点完全正确，供大家参考。</p>
+
+
+                <hr>
+
+                
+                <!-- 多说 Share start -->
+                </style>
+                <div class="ds-share"
+                    style="text-align: right"
+                    data-thread-key="2017/09/02/从搭建工程讲到CSS-Modules/"
+                    data-title="从搭建工程讲到CSS Modules"
+                    data-url="https://yeomanyang.github.io/2017/09/02/从搭建工程讲到CSS-Modules/"
+                    data-images=""
+                    data-content="背景这周的主要的工作就是搭建新工程的架子，项目基于vue-cli构建。基本的功能在脚手架里都已... | Yeoman的博客 | Yeoman&#39;s Blog " >
+                    <div class="ds-share-inline">
+                      <ul  class="ds-share-icons-16">
+                        <li data-toggle="ds-share-icons-more"><a class="ds-more" href="#">分享到：</a></li>
+                        <li><a class="ds-wechat flat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+                        <li><a class="ds-weibo flat" href="javascript:void(0);" data-service="weibo">微博</a></li>
+                        <li><a class="ds-douban flat" href="javascript:void(0);" data-service="douban">豆瓣</a></li>
+                      </ul>
+                      <div class="ds-share-icons-more">
+                      </div>
+                    </div>
+                <hr>
+                </div>
+                <!-- 多说 Share end-->
+                
+
+                <ul class="pager">
+                    
+                    
+                        <li class="next">
+                            <a href="/2017/08/11/2017-08-11/" data-toggle="tooltip" data-placement="top" title="">Next Post &rarr;</a>
+                        </li>
+                    
+                </ul>
+
+                
+                <!-- 多说评论框 start -->
+                <div class="comment">
+                    <div class="ds-thread"
+                        data-thread-key="2017/09/02/从搭建工程讲到CSS-Modules/"
+                        data-title="从搭建工程讲到CSS Modules"
+                        data-url="https://yeomanyang.github.io/2017/09/02/从搭建工程讲到CSS-Modules/" >
+                    </div>
+                </div>
+                <!-- 多说评论框 end -->
+                
+
+                
+
+            </div>
+    <!-- Side Catalog Container -->
+        
+
+    <!-- Sidebar Container -->
+
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                       
+                          <a class="tag" href="/tags/#technique" title="technique">technique</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+                <hr>
+                <h5>FRIENDS</h5>
+                <ul class="list-inline">
+
+                    
+                        <li><a href="https://palmerye.github.io/palmer-blog/" target="_blank">Palmer Blog</a></li>
+                    
+                </ul>
+                
+            </div>
+
+        </div>
+    </div>
+</article>
+
+
+<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+<script type="text/javascript">
+    // dynamic User by Hux
+    var _user = 'yeomanyang';
+
+    // duoshuo comment query.
+    var duoshuoQuery = {short_name: _user };
+    (function() {
+        var ds = document.createElement('script');
+        ds.type = 'text/javascript';ds.async = true;
+        ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+        ds.charset = 'UTF-8';
+        (document.getElementsByTagName('head')[0]
+         || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+</script>
+<!-- 多说公共JS代码 end -->
+
+
+
+
+
+
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                
+                
+                
+                    <li>
+                        <a target="_blank" href="https://www.zhihu.com/people/yeomanyang">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa  fa-stack-1x fa-inverse">知</i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank" href="http://weibo.com/2858185810">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-weibo fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/yeomanyang">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; Yeoman&#39;s Blog 2017 
+                    <br>
+                    Theme by <a href="http://huangxuan.me">Hux</a> 
+                    <span style="display: inline-block; margin: 0 5px;">
+                        <i class="fa fa-heart"></i>
+                    </span> 
+                    Ported by <a href="http://blog.kaijun.rocks">Kaijun</a> | 
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="91px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=kaijun&repo=hexo-theme-huxblog&type=star&count=true" >
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="/js/jquery.min.js"></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="/js/bootstrap.min.js"></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/hux-blog.min.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- 
+     Because of the native support for backtick-style fenced code blocks 
+     right within the Markdown is landed in Github Pages, 
+     From V1.6, There is no need for Highlight.js, 
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0  
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/    
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("https://yeomanyang.github.io/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+
+<script>
+    // dynamic User by Hux
+    var _gaId = 'UA-90487102-1';
+    var _gaDomain = 'undefined';
+
+    // Originial
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', _gaId, _gaDomain);
+    ga('send', 'pageview');
+</script>
+
+
+
+
+<!-- Baidu Tongji -->
+
+<script>
+    // dynamic User by Hux
+    var _baId = 'c7f7936268a976be71b91508db530dfa';
+
+    // Originial
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?" + _baId;
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+</script>
+
+
+<!-- Side Catalog -->
+
+
+
+
+
+<!-- Image to hack wechat -->
+<img src="https://yeomanyang.github.io/img/icon_wechat.png" width="0" height="0" />
+<!-- Migrate from head to bottom, no longer block render and still work -->
+
+</body>
+
+</html>
