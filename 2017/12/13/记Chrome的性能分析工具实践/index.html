@@ -13,11 +13,11 @@
 
     <title>
         
-          写好一篇博客之我见 - Yeoman的博客 | Yeoman&#39;s Blog
+          记Chrome的性能分析工具实践 - Yeoman的博客 | Yeoman&#39;s Blog
         
     </title>
 
-    <link rel="canonical" href="https://yeomanyang.github.io/2016/11/24/写好一篇博客之我见/">
+    <link rel="canonical" href="https://yeomanyang.github.io/2017/12/13/记Chrome的性能分析工具实践/">
 
     <!-- Bootstrap Core CSS -->
     <link rel="stylesheet" href="/css/bootstrap.min.css">
@@ -171,11 +171,11 @@
                           <a class="tag" href="/tags/#technique" title="technique">technique</a>
                         
                     </div>
-                    <h1>写好一篇博客之我见</h1>
+                    <h1>记Chrome的性能分析工具实践</h1>
                     <h2 class="subheading"></h2>
                     <span class="meta">
                         Posted by Yeoman on
-                        2016-11-24
+                        2017-12-13
                     </span>
                 </div>
             </div>
@@ -194,26 +194,38 @@
                 col-md-10 col-md-offset-1
                 post-container">
 
-                <h2 id="写好一篇博客之我见"><a href="#写好一篇博客之我见" class="headerlink" title="写好一篇博客之我见"></a>写好一篇博客之我见</h2><h3 id="写在前面"><a href="#写在前面" class="headerlink" title="写在前面"></a>写在前面</h3><p>这是个人的第一篇博客，想想还有点小激动呢ヾ(｡･ω･｡)</p>
-<p>想开始写博客也有一段时间了，也积累了一些内容。听了一些技术大大的观点，越发觉得坚持写博客是一件非常值得做的事（这里就不立flag了），主要基于几个原因。</p>
-<blockquote>
+                <h3 id="业务场景"><a href="#业务场景" class="headerlink" title="业务场景"></a>业务场景</h3><p>事情的起因是我们WMS系统内有一个批量打印的功能，今天仓库反应第一次打印的速度大概是2s，但是之后每次都越来越慢，到后面页面基本就直接卡死了。</p>
+<p>从这个表现来看，这个问题基本可以定位成性能问题，而不是比较容易定位到的exception。</p>
+<p>想到的解决方案有两种：</p>
 <ol>
-<li><em>沉淀</em>：学习是一件需要反复重复的事情，写博客来备忘是其次，但是对原有知识的第二次整理归纳对于自我提升是非常重要的。  </li>
-<li><em>分享</em>：技术的发展离不开社区的发展，社区的发展离不开每一个developer的贡献，多写多分享，你好我好大家好。 </li>
-<li><em>走上人生巅峰</em>：程序员经常自黑的一句话，<em>【钱多话少死的早】</em>，平时也没什么交朋友的时间。如果自己写的内容可以被认可，从而结交到一些志同道合的朋友，那也是极好的。  </li>
+<li>一行行review这部分相关的代码，console+debugger来逐步排查问题。</li>
+<li>使用Chrome自带的性能分析工具来定位问题。</li>
 </ol>
-</blockquote>
-<p><br></p>
-<h3 id="讲一讲我对于博客的态度"><a href="#讲一讲我对于博客的态度" class="headerlink" title="讲一讲我对于博客的态度"></a>讲一讲我对于博客的态度</h3><p>写 <em>博客/文章</em>，<em>做开源项目</em> 几乎已经成为大部分技术人自我沉淀和对外分享的最好途径。但就博客而言，网上的内容良莠不齐，讲一讲我认为一篇合格的技术博客需要做到以下几点，以此自我勉励。  </p>
-<blockquote>
-<ol>
-<li>所介绍的技术必须是自己成功实践过，并且踩过一些坑的。在踩坑的过程中，可以向读者介绍自己的思考过程以及解决问题的方法。  </li>
-<li>在用到一些和话题相关技术概念的时候可以简单介绍或者提供超链接。  </li>
-<li>尽可能系统地介绍博客想要讲的内容，而不是简单的提供方法或者罗列概念。  </li>
-<li>良好的排版，清晰的逻辑。</li>
-<li>以上这些我写的文章都不会遵守。</li>
-</ol>
-</blockquote>
+<p>一直没找到什么实践机会来使用这部分功能来定位问题，这次有了真实的业务场景，果断希望能用第二种方案来准确定位到问题。</p>
+<h3 id="内存泄露？"><a href="#内存泄露？" class="headerlink" title="内存泄露？"></a>内存泄露？</h3><p>从表现上来看，感觉像是每次批量打印的时候导致了一部分内存泄漏，然后内存占比越来越高导致浏览器卡死。</p>
+<p>这时候就需要用Chrome的Memory功能来统计下内存占比。在Memory下选择<em>Take heap snapshop</em>，分析完成之后可以看到当前页面的各种对象的内存占比。当前我关注的不用那么细，只需要关注到页面的总内存，我在每次批量打印完成后都重新统计了页面占的内存，可以发现：每次内存占用有轻微上升，但肯定不会导致页面卡死。至此，可以排除掉是内存泄漏导致的问题。</p>
+<p><img src="http://oksj4hknl.bkt.clouddn.com/memory.jpeg"></p>
+<h3 id="使用Timeline分析"><a href="#使用Timeline分析" class="headerlink" title="使用Timeline分析"></a>使用Timeline分析</h3><p>排除到内存泄漏的问题后，我能想到的页面被卡住的原因是JS脚本的执行时间过长。因为浏览器的渲染是单线程的，如果当前浏览器在进行JS脚本计算，那么在这个过程中UI线程是没法同时进行渲染改变的，所以看起来就是页面卡顿了。</p>
+<p>这时候就需要用Chrome的Timeline分析工具（新版本Chrome里改成Performance）来查看每一个函数调用的时长，来定位出问题的具体函数。</p>
+<p>点击<em>record</em>按钮之后，然后多次调用批量打印功能，结束录制。得到了如图的分析结果：</p>
+<p><img src="http://oksj4hknl.bkt.clouddn.com/timeline1.jpeg"></p>
+<p>从图中可以明显看出第一次打印到第三次打印耗时增加很多，其中黄色部分代表脚本执行时间，紫色部分代表渲染时间。增加的时间部分主要是脚本执行时间导致的，这时候需要定位具体是哪个函数导致的脚本执行时间增加。</p>
+<p>这时候可以查看火焰图部分，横坐标代表了消耗时间，纵坐标是调用栈关系，上面的栈调用下面的栈。一直从上往下找到最内层的函数调用，发现了导致耗时增加的函数是<code>JsBarcode</code>，一个生成条形码的函数。</p>
+<p><img src="http://oksj4hknl.bkt.clouddn.com/jabarcode.jpeg"></p>
+<p>为了验证这个结论，在代码里先注释掉这个函数，重新执行Timeline分析。得到如图的分析结果：</p>
+<p><img src="http://oksj4hknl.bkt.clouddn.com/timeline2.jpeg"></p>
+<p>可以看到因为脚本执行导致的时间增加问题已经解决了，但是渲染的时间还是随着每一次的打印都会增加，这时候开始分析渲染的问题。查看渲染部分详情可以看到右上角的一个三角形，这个三角形代表这里存在异常，并且Chrome给出了相应的警告（Forced reflow）：</p>
+<p><img src="http://oksj4hknl.bkt.clouddn.com/sanjiaoxing.jpeg"></p>
+<p>也就是说这里强制重绘了界面，但是至此还是没理解为什么会重新绘制页面，这里强大的Chrome直接给出了影响渲染的代码片段，scrollbar-width这个文件是element-ui的一个工具函数。</p>
+<p>这时候查看element-ui源码对这个文件的引用情况，一层层往上定位发现在当前页面使用到的table组件和message-box组件里都引用到了这个文件。table组件会在列表数据刷新的时候调用到这个函数，而message-box会在弹出的时候调用到这个函数。</p>
+<p>为了验证这个猜想，注释掉列表更新和弹框的代码，重新使用Timeline分析，发现刚才的三角形不见了，这时候页面被重新绘制的问题也找到了。</p>
+<p><img src="http://oksj4hknl.bkt.clouddn.com/timeline3.jpeg"></p>
+<p>至此，导致增加打印时长的两个问题 1. 脚本执行和 2. 页面渲染 都已经被定位到了，但是导致问题的业务代码还没改呢！也就是为什么绘制条形码的函数和重绘页面的时间会越来越长呢？</p>
+<h3 id="解决问题"><a href="#解决问题" class="headerlink" title="解决问题"></a>解决问题</h3><p>问题已经分析到这了，很轻易想到了这部分功能里唯一一句相关的DOM操作代码，在每次打印一张快递单的时候都会appendChild一段DOM到body上（为了绘制二维码以及转canvas导出图片），但是每次appendChild之后并没有去remove掉这段冗余的DOM（逃。</p>
+<p>回滚debugger的时候的修改代码，添加removeChild操作。重新执行Timeline分析，可以看到三次打印的耗时已经一致了。明天让QA小哥哥测试一下可以上线了～</p>
+<p><img src="http://oksj4hknl.bkt.clouddn.com/yabi.jpeg"></p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>这次实践基本是从Chrome强大的性能分析工具定位到了问题，虽然如果采用方案1去review code来排查最终也能定位到问题。但是可以想象，当业务代码足够复杂，函数调用层级很深的时候，去review code来排查的效率就会远不如利用Timeline分析的效率高了。</p>
+<p>今天听了云音乐的校园十佳，写了一篇博客，忽然想吟诗一首，苟利国家生死以（逃</p>
 
 
                 <hr>
@@ -223,12 +235,11 @@
                 </style>
                 <div class="ds-share"
                     style="text-align: right"
-                    data-thread-key="2016/11/24/写好一篇博客之我见/"
-                    data-title="写好一篇博客之我见"
-                    data-url="https://yeomanyang.github.io/2016/11/24/写好一篇博客之我见/"
+                    data-thread-key="2017/12/13/记Chrome的性能分析工具实践/"
+                    data-title="记Chrome的性能分析工具实践"
+                    data-url="https://yeomanyang.github.io/2017/12/13/记Chrome的性能分析工具实践/"
                     data-images=""
-                    data-content="写好一篇博客之我见写在前面这是个人的第一篇博客，想想还有点小激动呢ヾ(｡･ω･｡)
-想开始写博... | Yeoman的博客 | Yeoman&#39;s Blog " >
+                    data-content="业务场景事情的起因是我们WMS系统内有一个批量打印的功能，今天仓库反应第一次打印的速度大概是2... | Yeoman的博客 | Yeoman&#39;s Blog " >
                     <div class="ds-share-inline">
                       <ul  class="ds-share-icons-16">
                         <li data-toggle="ds-share-icons-more"><a class="ds-more" href="#">分享到：</a></li>
@@ -246,10 +257,10 @@
 
                 <ul class="pager">
                     
-                        <li class="previous">
-                            <a href="/2016/12/12/翻越GFW的正确姿势/" data-toggle="tooltip" data-placement="top" title="翻越GFW的正确姿势">&larr; Previous Post</a>
-                        </li>
                     
+                        <li class="next">
+                            <a href="/2017/09/02/从搭建工程讲到CSS-Modules/" data-toggle="tooltip" data-placement="top" title="从搭建工程讲到CSS Modules">Next Post &rarr;</a>
+                        </li>
                     
                 </ul>
 
@@ -257,9 +268,9 @@
                 <!-- 多说评论框 start -->
                 <div class="comment">
                     <div class="ds-thread"
-                        data-thread-key="2016/11/24/写好一篇博客之我见/"
-                        data-title="写好一篇博客之我见"
-                        data-url="https://yeomanyang.github.io/2016/11/24/写好一篇博客之我见/" >
+                        data-thread-key="2017/12/13/记Chrome的性能分析工具实践/"
+                        data-title="记Chrome的性能分析工具实践"
+                        data-url="https://yeomanyang.github.io/2017/12/13/记Chrome的性能分析工具实践/" >
                     </div>
                 </div>
                 <!-- 多说评论框 end -->
