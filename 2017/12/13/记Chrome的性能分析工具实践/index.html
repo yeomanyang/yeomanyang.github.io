@@ -195,7 +195,7 @@
                 post-container">
 
                 <h3 id="业务场景"><a href="#业务场景" class="headerlink" title="业务场景"></a>业务场景</h3><p>事情的起因是我们WMS系统内有一个批量打印的功能，今天仓库反应第一次打印的速度大概是2s，但是之后每次都越来越慢，到后面页面基本就直接卡死了。</p>
-<p>从这个表现来看，这个问题基本可以定位成性能问题，而不是比较容易定位到的exception。</p>
+<p>从这个表现来看，这个问题基本可以定位成性能问题，而不是可以被try…catch到的异常。</p>
 <p>想到的解决方案有两种：</p>
 <ol>
 <li>一行行review这部分相关的代码，console+debugger来逐步排查问题。</li>
@@ -220,11 +220,11 @@
 <p>这时候查看element-ui源码对这个文件的引用情况，一层层往上定位发现在当前页面使用到的table组件和message-box组件里都引用到了这个文件。table组件会在列表数据刷新的时候调用到这个函数，而message-box会在弹出的时候调用到这个函数。</p>
 <p>为了验证这个猜想，注释掉列表更新和弹框的代码，重新使用Timeline分析，发现刚才的三角形不见了，这时候页面被重新绘制的问题也找到了。</p>
 <p><img src="http://oksj4hknl.bkt.clouddn.com/timeline3.jpeg"></p>
-<p>至此，导致增加打印时长的两个问题 1. 脚本执行和 2. 页面渲染 都已经被定位到了，但是导致问题的业务代码还没改呢！也就是为什么绘制条形码的函数和重绘页面的时间会越来越长呢？</p>
+<p>至此，导致增加打印时长的两个问题 1. 脚本执行 2. 页面渲染 都已经被定位到了，但是导致问题的业务代码还没改呢！也就是为什么绘制条形码的函数和重绘页面的时间会越来越长呢？</p>
 <h3 id="解决问题"><a href="#解决问题" class="headerlink" title="解决问题"></a>解决问题</h3><p>问题已经分析到这了，很轻易想到了这部分功能里唯一一句相关的DOM操作代码，在每次打印一张快递单的时候都会appendChild一段DOM到body上（为了绘制二维码以及转canvas导出图片），但是每次appendChild之后并没有去remove掉这段冗余的DOM（逃。</p>
 <p>回滚debugger的时候的修改代码，添加removeChild操作。重新执行Timeline分析，可以看到三次打印的耗时已经一致了。明天让QA小哥哥测试一下可以上线了～</p>
 <p><img src="http://oksj4hknl.bkt.clouddn.com/yabi.jpeg"></p>
-<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>这次实践基本是从Chrome强大的性能分析工具定位到了问题，虽然如果采用方案1去review code来排查最终也能定位到问题。但是可以想象，当业务代码足够复杂，函数调用层级很深的时候，去review code来排查的效率就会远不如利用Timeline分析的效率高了。</p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>最终定位到错误比较低级，不过这次实践基本是从Chrome强大的性能分析工具定位到了问题，虽然如果采用方案1去review code来排查最终也能定位到问题。但是可以想象，当业务代码足够复杂，函数调用层级很深的时候，去review code来排查的效率就会远不如利用Timeline分析的效率高了。</p>
 <p>今天听了云音乐的校园十佳，写了一篇博客，忽然想吟诗一首，苟利国家生死以（逃</p>
 <h3 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h3><p><a href="https://developers.google.com/web/tools/chrome-devtools/evaluate-performance/timeline-tool?hl=zh-cn" target="_blank" rel="external">developers.google.com</a><br><a href="https://zhuanlan.zhihu.com/p/29879682" target="_blank" rel="external">全新Chrome Devtool Performance使用指南</a></p>
 
