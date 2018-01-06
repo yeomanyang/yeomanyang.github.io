@@ -13,11 +13,11 @@
 
     <title>
         
-          写好一篇博客之我见 - Yeoman的博客 | Yeoman&#39;s Blog
+          记组件库工程搭建 - Yeoman的博客 | Yeoman&#39;s Blog
         
     </title>
 
-    <link rel="canonical" href="https://yeomanyang.github.io/2016/11/24/写好一篇博客之我见/">
+    <link rel="canonical" href="https://yeomanyang.github.io/2017/12/10/记组件库工程搭建/">
 
     <!-- Bootstrap Core CSS -->
     <link rel="stylesheet" href="/css/bootstrap.min.css">
@@ -171,11 +171,11 @@
                           <a class="tag" href="/tags/#technique" title="technique">technique</a>
                         
                     </div>
-                    <h1>写好一篇博客之我见</h1>
+                    <h1>记组件库工程搭建</h1>
                     <h2 class="subheading"></h2>
                     <span class="meta">
                         Posted by Yeoman on
-                        2016-11-24
+                        2017-12-10
                     </span>
                 </div>
             </div>
@@ -194,24 +194,23 @@
                 col-md-10 col-md-offset-1
                 post-container">
 
-                <h2 id="写好一篇博客之我见"><a href="#写好一篇博客之我见" class="headerlink" title="写好一篇博客之我见"></a>写好一篇博客之我见</h2><h3 id="写在前面"><a href="#写在前面" class="headerlink" title="写在前面"></a>写在前面</h3><p>这是个人的第一篇博客，想想还有点小激动呢ヾ(｡･ω･｡)</p>
-<p>想开始写博客也有一段时间了，也积累了一些内容。听了一些技术大大的观点，越发觉得坚持写博客是一件非常值得做的事（这里就不立flag了），主要基于几个原因。</p>
+                <p>最近团队内准备维护一套vue的组件库，为了和nek-ui保持一样的交互设计。在搭建一个vue的组件库（nek-vue）的工程，其中有一个平时业务工程中不会遇到的需求，就是组件的按需引入。</p>
+<h2 id="需求：组件按需引入"><a href="#需求：组件按需引入" class="headerlink" title="需求：组件按需引入"></a>需求：组件按需引入</h2><p>功能点拆分：JavaScript和CSS分别需要按需引入，也就意味着每一个组件必须单独打包成对应的脚本和CSS</p>
+<h3 id="JavaScript打包"><a href="#JavaScript打包" class="headerlink" title="JavaScript打包"></a>JavaScript打包</h3><p>对于开发环境来讲，webpack的entry可以配成单入口，也就是SPA模式：</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="selector-tag">entry</span>: &#123;</div><div class="line">   <span class="attribute">main</span>: <span class="string">'./examples/main'</span>,</div><div class="line">   vendors: [<span class="string">'vue'</span>, <span class="string">'vue-router'</span>]</div><div class="line">&#125;,</div><div class="line"><span class="selector-tag">output</span>: &#123;</div><div class="line">   <span class="attribute">path</span>: path.<span class="built_in">join</span>(__dirname, <span class="string">'../examples/lib'</span>),</div><div class="line">   publicPath: <span class="string">''</span>,</div><div class="line">   filename: <span class="string">'[name].js'</span>,</div><div class="line">   chunkFilename: <span class="string">'[name].chunk.js'</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>而对于生成环境，为了满足分开打包的需求，则需要配成多入口，也就是MPA模式：</p>
+<figure class="highlight less"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line"><span class="attribute">entry</span>: components,  <span class="comment">// 组件列表config文件</span></div><div class="line"><span class="attribute">output</span>: &#123;</div><div class="line">   <span class="attribute">path</span>: path.resolve(__dirname, <span class="string">'../lib'</span>),</div><div class="line">   <span class="attribute">publicPath</span>: <span class="string">'/lib/'</span>,</div><div class="line">   <span class="attribute">filename</span>: <span class="string">'[name].js'</span>,</div><div class="line">   <span class="comment">// 公开出来的包名</span></div><div class="line">   <span class="attribute">library</span>: <span class="string">'nek-vue'</span>,</div><div class="line">   <span class="attribute">libraryTarget</span>: <span class="string">'umd'</span>,</div><div class="line">   <span class="attribute">umdNamedDefine</span>: true <span class="comment">//会对 UMD 的构建过程中的 AMD 模块进行命名。否则就使用匿名的 define。</span></div><div class="line">&#125;,</div><div class="line"><span class="attribute">externals</span>: &#123;</div><div class="line">   <span class="attribute">vue</span>: &#123;</div><div class="line">       <span class="attribute">root</span>: <span class="string">'Vue'</span>,</div><div class="line">       <span class="attribute">commonjs</span>: <span class="string">'vue'</span>,</div><div class="line">       <span class="attribute">commonjs2</span>: <span class="string">'vue'</span>,</div><div class="line">       <span class="attribute">amd</span>: <span class="string">'vue'</span></div><div class="line">   &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p> 这里会使用到两个配置参数，<code>library</code>和<code>libraryTarget</code>，<code>library</code>是暴露的变量名，而<code>libraryTarget</code>可以理解为<code>library</code>暴露的方式。上面的配置的输出结果如下：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">(<span class="function"><span class="keyword">function</span> <span class="title">webpackUniversalModuleDefinition</span>(<span class="params">root, factory</span>) </span>&#123;</div><div class="line">  <span class="keyword">if</span>(<span class="keyword">typeof</span> exports === <span class="string">'object'</span> &amp;&amp; <span class="keyword">typeof</span> <span class="built_in">module</span> === <span class="string">'object'</span>)</div><div class="line">    <span class="built_in">module</span>.exports = factory();</div><div class="line">  <span class="keyword">else</span> <span class="keyword">if</span>(<span class="keyword">typeof</span> define === <span class="string">'function'</span> &amp;&amp; define.amd)</div><div class="line">    define([], factory);</div><div class="line">  <span class="keyword">else</span> <span class="keyword">if</span>(<span class="keyword">typeof</span> exports === <span class="string">'object'</span>)</div><div class="line">    exports[<span class="string">"nek-vue"</span>] = factory();</div><div class="line">  <span class="keyword">else</span></div><div class="line">    root[<span class="string">"nek-vue"</span>] = factory();</div><div class="line">&#125;)(<span class="keyword">this</span>, <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</div><div class="line">  <span class="comment">// 这个模块会返回你的入口文件返回的对象</span></div><div class="line">&#125;);</div></pre></td></tr></table></figure>
+<p>还有一点要注意的是，因为在组件开发阶段我们会引入Vue，但是在生产环境中我们并不希望将Vue打包进bundle中，而是让用户在运行时（runtime）去获取，这时候可以配置<code>externals</code>选项，这个选项支持从多个方式从外部引入这个依赖。</p>
+<h3 id="CSS打包"><a href="#CSS打包" class="headerlink" title="CSS打包"></a>CSS打包</h3><p>CSS部分使用gulp来处理打包：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> gulp = <span class="built_in">require</span>(<span class="string">'gulp'</span>);</div><div class="line"><span class="keyword">var</span> postcss = <span class="built_in">require</span>(<span class="string">'gulp-postcss'</span>);</div><div class="line"><span class="keyword">var</span> cssmin = <span class="built_in">require</span>(<span class="string">'gulp-cssmin'</span>);</div><div class="line"><span class="keyword">var</span> salad = <span class="built_in">require</span>(<span class="string">'postcss-salad'</span>)(<span class="built_in">require</span>(<span class="string">'./salad.config.json'</span>));</div><div class="line"></div><div class="line">gulp.task(<span class="string">'compile'</span>, <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</div><div class="line">  <span class="keyword">return</span> gulp.src([<span class="string">'../components/**/*.css'</span>, <span class="string">'!&#123;style&#125;/**'</span>])</div><div class="line">    .pipe(postcss([salad]))</div><div class="line">    .pipe(cssmin())</div><div class="line">    .pipe(gulp.dest(<span class="string">'../lib'</span>));</div><div class="line">&#125;);</div><div class="line"></div><div class="line"><span class="comment">// 拷贝字体文件</span></div><div class="line">gulp.task(<span class="string">'copyfonts'</span>, <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</div><div class="line">    gulp.src(<span class="string">'../components/style/iconfonts/fonts/*.*'</span>)</div><div class="line">        .pipe(gulp.dest(<span class="string">'../lib/style/fonts'</span>));</div><div class="line">&#125;);</div><div class="line"></div><div class="line"><span class="comment">// 拷贝base</span></div><div class="line">gulp.task(<span class="string">'copyfonts'</span>, <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</div><div class="line">    gulp.src(<span class="string">'../components/style/core/base.css'</span>)</div><div class="line">        .pipe(gulp.dest(<span class="string">'../lib/'</span>));</div><div class="line">&#125;);</div><div class="line"></div><div class="line">gulp.task(<span class="string">'default'</span>, [<span class="string">'compile'</span>, <span class="string">'copyfonts'</span>]);</div></pre></td></tr></table></figure>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>最后打包的结果如下图：<br><img style="width: 200px;" src="http://oksj4hknl.bkt.clouddn.com/gulpcss.png"></p>
 <blockquote>
 <ol>
-<li><em>沉淀</em>：学习是一件需要反复重复的事情，写博客来备忘是其次，但是对原有知识的第二次整理归纳对于自我提升是非常重要的。  </li>
-<li><em>分享</em>：技术的发展离不开社区的发展，社区的发展离不开每一个developer的贡献，多写多分享，你好我好大家好。 </li>
-<li><em>走上人生巅峰</em>：程序员经常自黑的一句话，<em>【钱多话少死的早】</em>，平时也没什么交朋友的时间。如果自己写的内容可以被认可，从而结交到一些志同道合的朋友，那也是极好的。  </li>
-</ol>
-</blockquote>
-<p><br></p>
-<h3 id="讲一讲我对于博客的态度"><a href="#讲一讲我对于博客的态度" class="headerlink" title="讲一讲我对于博客的态度"></a>讲一讲我对于博客的态度</h3><p>写 <em>博客/文章</em>，<em>做开源项目</em> 几乎已经成为大部分技术人自我沉淀和对外分享的最好途径。但就博客而言，网上的内容良莠不齐，讲一讲我认为一篇合格的技术博客需要做到以下几点，以此自我勉励。  </p>
-<blockquote>
-<ol>
-<li>所介绍的技术必须是自己成功实践过，并且踩过一些坑的。在踩坑的过程中，可以向读者介绍自己的思考过程以及解决问题的方法。  </li>
-<li>在用到一些和话题相关技术概念的时候可以简单介绍或者提供超链接。  </li>
-<li>尽可能系统地介绍博客想要讲的内容，而不是简单的提供方法或者罗列概念。  </li>
-<li>良好的排版，清晰的逻辑。</li>
-<li>以上这些我写的文章都不会遵守。</li>
+<li>在项目中使用的时候可以借助<code>babel-plugin-component</code>这个babel插件，来<code>import { Button } from &#39;nek-vue&#39;</code>这样引入，他的实际引用其实会转换成这样：<code>var button = require(&#39;nek-vue/lib/button&#39;);
+require(&#39;nek-vue/lib/styles/button.css&#39;)</code></li>
+<li>在工程搭建的时候，参考了iView和element-ui两个工程，iView对按需引入的处理方式是直接在工程中引入源码，通过babel编译。然后CSS并没有拆分引入，这种做法显然不够优雅。而我上述讲的方式正是参考的element-ui的处理方式，区别在于我把每个组件的样式和脚本打包在一起，这样更方便维护。</li>
 </ol>
 </blockquote>
 
@@ -223,12 +222,11 @@
                 </style>
                 <div class="ds-share"
                     style="text-align: right"
-                    data-thread-key="2016/11/24/写好一篇博客之我见/"
-                    data-title="写好一篇博客之我见"
-                    data-url="https://yeomanyang.github.io/2016/11/24/写好一篇博客之我见/"
+                    data-thread-key="2017/12/10/记组件库工程搭建/"
+                    data-title="记组件库工程搭建"
+                    data-url="https://yeomanyang.github.io/2017/12/10/记组件库工程搭建/"
                     data-images=""
-                    data-content="写好一篇博客之我见写在前面这是个人的第一篇博客，想想还有点小激动呢ヾ(｡･ω･｡)
-想开始写博... | Yeoman的博客 | Yeoman&#39;s Blog " >
+                    data-content="最近团队内准备维护一套vue的组件库，为了和nek-ui保持一样的交互设计。在搭建一个vue的... | Yeoman的博客 | Yeoman&#39;s Blog " >
                     <div class="ds-share-inline">
                       <ul  class="ds-share-icons-16">
                         <li data-toggle="ds-share-icons-more"><a class="ds-more" href="#">分享到：</a></li>
@@ -247,9 +245,13 @@
                 <ul class="pager">
                     
                         <li class="previous">
-                            <a href="/2016/12/12/翻越GFW的正确姿势/" data-toggle="tooltip" data-placement="top" title="翻越GFW的正确姿势">&larr; Previous Post</a>
+                            <a href="/2017/12/13/记Chrome的性能分析工具实践/" data-toggle="tooltip" data-placement="top" title="记Chrome的性能分析工具实践">&larr; Previous Post</a>
                         </li>
                     
+                    
+                        <li class="next">
+                            <a href="/2017/09/02/从搭建工程讲到CSS-Modules/" data-toggle="tooltip" data-placement="top" title="从搭建工程讲到CSS Modules">Next Post &rarr;</a>
+                        </li>
                     
                 </ul>
 
@@ -257,9 +259,9 @@
                 <!-- 多说评论框 start -->
                 <div class="comment">
                     <div class="ds-thread"
-                        data-thread-key="2016/11/24/写好一篇博客之我见/"
-                        data-title="写好一篇博客之我见"
-                        data-url="https://yeomanyang.github.io/2016/11/24/写好一篇博客之我见/" >
+                        data-thread-key="2017/12/10/记组件库工程搭建/"
+                        data-title="记组件库工程搭建"
+                        data-url="https://yeomanyang.github.io/2017/12/10/记组件库工程搭建/" >
                     </div>
                 </div>
                 <!-- 多说评论框 end -->
