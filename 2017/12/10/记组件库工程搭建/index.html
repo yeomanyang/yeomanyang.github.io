@@ -210,7 +210,7 @@
 <ol>
 <li>在项目中使用的时候可以借助<code>babel-plugin-component</code>这个babel插件，来<code>import { Button } from &#39;nek-vue&#39;</code>这样引入，他的实际引用其实会转换成这样：<code>var button = require(&#39;nek-vue/lib/button&#39;);
 require(&#39;nek-vue/lib/styles/button.css&#39;)</code></li>
-<li>在工程搭建的时候，参考了iView和element-ui两个工程，iView对按需引入的处理方式是直接在工程中引入源码，通过babel编译。然后CSS并没有拆分引入，这种做法显然不够优雅。而我上述讲的方式正是参考的element-ui的处理方式，区别在于我把每个组件的样式和脚本打包在一起，这样更方便维护。</li>
+<li>在工程搭建的时候，参考了iView和element-ui两个工程，老版本的iView对按需引入的处理方式是直接在工程中引入源码，通过babel编译。然后CSS并没有拆分引入，这种做法显然不够优雅。而我上述讲的方式正是参考的element-ui的处理方式，区别在于我把每个组件的样式和脚本打包在一起，这样更方便维护。</li>
 </ol>
 </blockquote>
 
