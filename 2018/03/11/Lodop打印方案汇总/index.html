@@ -13,11 +13,11 @@
 
     <title>
         
-          记组件库工程搭建 - Yeoman的博客 | Yeoman&#39;s Blog
+          Lodop打印方案汇总 - Yeoman的博客 | Yeoman&#39;s Blog
         
     </title>
 
-    <link rel="canonical" href="https://yeomanyang.github.io/2017/12/10/记组件库工程搭建/">
+    <link rel="canonical" href="https://yeomanyang.github.io/2018/03/11/Lodop打印方案汇总/">
 
     <!-- Bootstrap Core CSS -->
     <link rel="stylesheet" href="/css/bootstrap.min.css">
@@ -168,14 +168,12 @@
                 <div class="post-heading">
                     <div class="tags">
                         
-                          <a class="tag" href="/tags/#technique" title="technique">technique</a>
-                        
                     </div>
-                    <h1>记组件库工程搭建</h1>
+                    <h1>Lodop打印方案汇总</h1>
                     <h2 class="subheading"></h2>
                     <span class="meta">
                         Posted by Yeoman on
-                        2017-12-10
+                        2018-03-11
                     </span>
                 </div>
             </div>
@@ -194,25 +192,32 @@
                 col-md-10 col-md-offset-1
                 post-container">
 
-                <p>最近团队内准备维护一套vue的组件库，为了和nek-ui保持一样的交互设计。在搭建一个vue的组件库（nek-vue）的工程，其中有一个平时业务工程中不会遇到的需求，就是组件的按需引入。</p>
-<h2 id="需求：组件按需引入"><a href="#需求：组件按需引入" class="headerlink" title="需求：组件按需引入"></a>需求：组件按需引入</h2><p>功能点拆分：JavaScript和CSS分别需要按需引入，也就意味着每一个组件必须单独打包成对应的脚本和CSS</p>
-<h3 id="JavaScript打包"><a href="#JavaScript打包" class="headerlink" title="JavaScript打包"></a>JavaScript打包</h3><p>对于开发环境来讲，webpack的entry可以配成单入口，也就是SPA模式：</p>
-<figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="selector-tag">entry</span>: &#123;</div><div class="line">   <span class="attribute">main</span>: <span class="string">'./examples/main'</span>,</div><div class="line">   vendors: [<span class="string">'vue'</span>, <span class="string">'vue-router'</span>]</div><div class="line">&#125;,</div><div class="line"><span class="selector-tag">output</span>: &#123;</div><div class="line">   <span class="attribute">path</span>: path.<span class="built_in">join</span>(__dirname, <span class="string">'../examples/lib'</span>),</div><div class="line">   publicPath: <span class="string">''</span>,</div><div class="line">   filename: <span class="string">'[name].js'</span>,</div><div class="line">   chunkFilename: <span class="string">'[name].chunk.js'</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>而对于生成环境，为了满足分开打包的需求，则需要配成多入口，也就是MPA模式：</p>
-<figure class="highlight less"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line"><span class="attribute">entry</span>: components,  <span class="comment">// 组件列表config文件</span></div><div class="line"><span class="attribute">output</span>: &#123;</div><div class="line">   <span class="attribute">path</span>: path.resolve(__dirname, <span class="string">'../lib'</span>),</div><div class="line">   <span class="attribute">publicPath</span>: <span class="string">'/lib/'</span>,</div><div class="line">   <span class="attribute">filename</span>: <span class="string">'[name].js'</span>,</div><div class="line">   <span class="comment">// 公开出来的包名</span></div><div class="line">   <span class="attribute">library</span>: <span class="string">'nek-vue'</span>,</div><div class="line">   <span class="attribute">libraryTarget</span>: <span class="string">'umd'</span>,</div><div class="line">   <span class="attribute">umdNamedDefine</span>: true <span class="comment">//会对 UMD 的构建过程中的 AMD 模块进行命名。否则就使用匿名的 define。</span></div><div class="line">&#125;,</div><div class="line"><span class="attribute">externals</span>: &#123;</div><div class="line">   <span class="attribute">vue</span>: &#123;</div><div class="line">       <span class="attribute">root</span>: <span class="string">'Vue'</span>,</div><div class="line">       <span class="attribute">commonjs</span>: <span class="string">'vue'</span>,</div><div class="line">       <span class="attribute">commonjs2</span>: <span class="string">'vue'</span>,</div><div class="line">       <span class="attribute">amd</span>: <span class="string">'vue'</span></div><div class="line">   &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p> 这里会使用到两个配置参数，<code>library</code>和<code>libraryTarget</code>，<code>library</code>是暴露的变量名，而<code>libraryTarget</code>可以理解为<code>library</code>暴露的方式。上面的配置的输出结果如下：</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">(<span class="function"><span class="keyword">function</span> <span class="title">webpackUniversalModuleDefinition</span>(<span class="params">root, factory</span>) </span>&#123;</div><div class="line">  <span class="keyword">if</span>(<span class="keyword">typeof</span> exports === <span class="string">'object'</span> &amp;&amp; <span class="keyword">typeof</span> <span class="built_in">module</span> === <span class="string">'object'</span>)</div><div class="line">    <span class="built_in">module</span>.exports = factory();</div><div class="line">  <span class="keyword">else</span> <span class="keyword">if</span>(<span class="keyword">typeof</span> define === <span class="string">'function'</span> &amp;&amp; define.amd)</div><div class="line">    define([], factory);</div><div class="line">  <span class="keyword">else</span> <span class="keyword">if</span>(<span class="keyword">typeof</span> exports === <span class="string">'object'</span>)</div><div class="line">    exports[<span class="string">"nek-vue"</span>] = factory();</div><div class="line">  <span class="keyword">else</span></div><div class="line">    root[<span class="string">"nek-vue"</span>] = factory();</div><div class="line">&#125;)(<span class="keyword">this</span>, <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</div><div class="line">  <span class="comment">// 这个模块会返回你的入口文件返回的对象</span></div><div class="line">&#125;);</div></pre></td></tr></table></figure>
-<p>还有一点要注意的是，因为在组件开发阶段我们会引入Vue，但是在生产环境中我们并不希望将Vue打包进bundle中，而是让用户在运行时（runtime）去获取，这时候可以配置<code>externals</code>选项，这个选项支持从多个方式从外部引入这个依赖。</p>
-<h3 id="CSS打包"><a href="#CSS打包" class="headerlink" title="CSS打包"></a>CSS打包</h3><p>CSS部分使用gulp来处理打包：</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> gulp = <span class="built_in">require</span>(<span class="string">'gulp'</span>);</div><div class="line"><span class="keyword">var</span> postcss = <span class="built_in">require</span>(<span class="string">'gulp-postcss'</span>);</div><div class="line"><span class="keyword">var</span> cssmin = <span class="built_in">require</span>(<span class="string">'gulp-cssmin'</span>);</div><div class="line"><span class="keyword">var</span> salad = <span class="built_in">require</span>(<span class="string">'postcss-salad'</span>)(<span class="built_in">require</span>(<span class="string">'./salad.config.json'</span>));</div><div class="line"></div><div class="line">gulp.task(<span class="string">'compile'</span>, <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</div><div class="line">  <span class="keyword">return</span> gulp.src([<span class="string">'../components/**/*.css'</span>, <span class="string">'!&#123;style&#125;/**'</span>])</div><div class="line">    .pipe(postcss([salad]))</div><div class="line">    .pipe(cssmin())</div><div class="line">    .pipe(gulp.dest(<span class="string">'../lib'</span>));</div><div class="line">&#125;);</div><div class="line"></div><div class="line"><span class="comment">// 拷贝字体文件</span></div><div class="line">gulp.task(<span class="string">'copyfonts'</span>, <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</div><div class="line">    gulp.src(<span class="string">'../components/style/iconfonts/fonts/*.*'</span>)</div><div class="line">        .pipe(gulp.dest(<span class="string">'../lib/style/fonts'</span>));</div><div class="line">&#125;);</div><div class="line"></div><div class="line"><span class="comment">// 拷贝base</span></div><div class="line">gulp.task(<span class="string">'copyfonts'</span>, <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</div><div class="line">    gulp.src(<span class="string">'../components/style/core/base.css'</span>)</div><div class="line">        .pipe(gulp.dest(<span class="string">'../lib/'</span>));</div><div class="line">&#125;);</div><div class="line"></div><div class="line">gulp.task(<span class="string">'default'</span>, [<span class="string">'compile'</span>, <span class="string">'copyfonts'</span>]);</div></pre></td></tr></table></figure>
-<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>最后打包的结果如下图：<br><img style="width: 200px;" src="http://oksj4hknl.bkt.clouddn.com/gulpcss.png"></p>
+                <p>目前WMS以及考拉小店系统内的打印方案用的都是客户端打印的方案，借助了<a href="http://www.lodop.net/" target="_blank" rel="external">Lodop</a>打印控件来完成打印操作。</p>
+<h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><h5 id="Q：为什么需要借助Lodop，而不直接用window-print-？"><a href="#Q：为什么需要借助Lodop，而不直接用window-print-？" class="headerlink" title="Q：为什么需要借助Lodop，而不直接用window.print()？"></a>Q：为什么需要借助Lodop，而不直接用<code>window.print()</code>？</h5><p>A：我们的业务场景有几点是<code>window.print()</code>无法满足的，比如：</p>
 <blockquote>
 <ol>
-<li>在项目中使用的时候可以借助<code>babel-plugin-component</code>这个babel插件，来<code>import { Button } from &#39;nek-vue&#39;</code>这样引入，他的实际引用其实会转换成这样：<code>var button = require(&#39;nek-vue/lib/button&#39;);
-require(&#39;nek-vue/lib/styles/button.css&#39;)</code></li>
-<li>在工程搭建的时候，参考了iView和element-ui两个工程，老版本的iView对按需引入的处理方式是直接在工程中引入源码，通过babel编译。然后CSS并没有拆分引入，这种做法显然不够优雅。而我上述讲的方式正是参考的element-ui的处理方式，区别在于我把每个组件的样式和脚本打包在一起，这样更方便维护。</li>
+<li>需要无预览界面直接打印</li>
+<li><code>window.print()</code>是采取截屏打印的策略，而我们的业务场景都是大多都是需要自定义HTML模版进行打印。</li>
+<li>我们有云打印的需求，也就是指定一个局域网ip，从指定ip下打印而不是本地打印。</li>
 </ol>
 </blockquote>
+<p>基于以上几点原因，必须要借助打印机控件来完成，而多方了解之后，目前各大公司WMS的打印业务大部分采用的都是Lodop的方案。</p>
+<h5 id="Q-Lodop是如何完成上述的这些功能的？"><a href="#Q-Lodop是如何完成上述的这些功能的？" class="headerlink" title="Q: Lodop是如何完成上述的这些功能的？"></a>Q: Lodop是如何完成上述的这些功能的？</h5><p>A：我们都知道，浏览器环境对于系统设备的控制能力是比较弱的，或者说浏览器的BOM接口对于设备调用这方面暴露给开发者的功能都是阉割版的，包括摄像头调用，打印机设备调用等等。而如果是CS架构的系统对于设备调用就轻松多了，而Lodop就是浏览器和设备之间的桥梁。我画了一个简单的图，大致代表Lodop的工作方式：</p>
+<p><img src="http://oksj4hknl.bkt.clouddn.com/Lodop.png"></p>
+<ol>
+<li>Lodop是一个客户端，需要在打印机主机上安装，运行的时候会起一个http服务。</li>
+<li>浏览器端需要去加载这个http服务上的一个JS文件，这个JS文件中会建立浏览器和Lodop客户端的websocket链接</li>
+<li>浏览器端通过websocket发送打印指令，Lodop接收指令，调用系统原生打印方法进行打印控制</li>
+</ol>
+<h2 id="如何在系统中使用"><a href="#如何在系统中使用" class="headerlink" title="如何在系统中使用"></a>如何在系统中使用</h2><h4 id="1-安装Lodop"><a href="#1-安装Lodop" class="headerlink" title="1. 安装Lodop"></a>1. 安装Lodop</h4><p>到<a href="http://www.lodop.net/download.html" target="_blank" rel="external">Lodop官网</a>下载Lodop综合版，安装在连接打印机的主机上。</p>
+<h4 id="2-在需要打印的系统中引入下面的初始化脚本。"><a href="#2-在需要打印的系统中引入下面的初始化脚本。" class="headerlink" title="2. 在需要打印的系统中引入下面的初始化脚本。"></a>2. 在需要打印的系统中引入下面的<a href="http://oksj4hknl.bkt.clouddn.com/LodopFuncs.js" target="_blank" rel="external">初始化脚本</a>。</h4><h4 id="3-初始化完Lodop实例之后就可以根据官网的Lodop技术手册来调用相应的打印接口了。"><a href="#3-初始化完Lodop实例之后就可以根据官网的Lodop技术手册来调用相应的打印接口了。" class="headerlink" title="3. 初始化完Lodop实例之后就可以根据官网的Lodop技术手册来调用相应的打印接口了。"></a>3. 初始化完Lodop实例之后就可以根据官网的Lodop技术手册来调用相应的打印接口了。</h4><h2 id="一些坑"><a href="#一些坑" class="headerlink" title="一些坑"></a>一些坑</h2><p>看起来Lodop的使用比较简单，但是真正开发的时候会发现里面坑很多，下面记录一些目前已知的坑和解决方案。</p>
+<h5 id="Q：Lodop打印出来的页面带有水印，如何去除？"><a href="#Q：Lodop打印出来的页面带有水印，如何去除？" class="headerlink" title="Q：Lodop打印出来的页面带有水印，如何去除？"></a>Q：Lodop打印出来的页面带有水印，如何去除？</h5><p>A： Lodop默认打印出来会带有一个Lodop的水印，如果需要去掉水印的话需要购买他们的License，我们的License初始化方式如下：<code>LODOP.SET_LICENSES(&#39;网易无尾熊（杭州）科技有限公司&#39;, &#39;D2B0BD99D1EF8B1D840543B6C17E04F2&#39;, &#39;&#39;, &#39;&#39;);</code></p>
+<h5 id="Q：为什么不同的电脑打印出来的效果不一致？"><a href="#Q：为什么不同的电脑打印出来的效果不一致？" class="headerlink" title="Q：为什么不同的电脑打印出来的效果不一致？"></a>Q：为什么不同的电脑打印出来的效果不一致？</h5><p>A： 1. Lodop在渲染的时候调用的是本机的ie浏览器渲染引擎，所以需要在安装Lodop的机子上安装ie11，我在仓库实施的过程中发现ie11以下的浏览器版本会因为CSS兼容性问题会出现布局混乱。2. 如果安装了最新版本的ie还是发现打印异常，可以尝试切换对应打印机的打印机驱动</p>
+<h5 id="Q：在打印之前是不是先写好一个HTML模版再去直接打印就好了？"><a href="#Q：在打印之前是不是先写好一个HTML模版再去直接打印就好了？" class="headerlink" title="Q：在打印之前是不是先写好一个HTML模版再去直接打印就好了？"></a>Q：在打印之前是不是先写好一个HTML模版再去直接打印就好了？</h5><p>A： 我们在Chrome等浏览器下预览的HTML模版和实际打印的效果存在一些偏差，需要调用Lodop.PREVIEW()来预览打印效果。</p>
+<h5 id="Q：打印表格的时候，当表格内容过多，表格分页的时候最底下的单元格会被截断，怎么办？"><a href="#Q：打印表格的时候，当表格内容过多，表格分页的时候最底下的单元格会被截断，怎么办？" class="headerlink" title="Q：打印表格的时候，当表格内容过多，表格分页的时候最底下的单元格会被截断，怎么办？"></a>Q：打印表格的时候，当表格内容过多，表格分页的时候最底下的单元格会被截断，怎么办？</h5><p>A： 在打印表格的时候，尽量调用<code>LODOP.ADD_PRINT_TABLE</code>，这样在分页的时候会是平滑的。</p>
+<h5 id="Q：LODOP-NEWPAGE和LODOP-NEWPAGEA这两个接口的区别是什么？"><a href="#Q：LODOP-NEWPAGE和LODOP-NEWPAGEA这两个接口的区别是什么？" class="headerlink" title="Q：LODOP.NEWPAGE和LODOP.NEWPAGEA这两个接口的区别是什么？"></a>Q：<code>LODOP.NEWPAGE</code>和<code>LODOP.NEWPAGEA</code>这两个接口的区别是什么？</h5><p>A: <code>LODOP.NEWPAGEA</code>会在前一个打印页完全完成后（比如报表内容很多导致分页）再分页，而<code>LODOP.NEWPAGE</code>会直接分页，因此建议使用<code>LODOP.NEWPAGEA</code>。</p>
+<h5 id="Q：有时候发现在某些字段上有重叠打印的情况，是怎么回事？"><a href="#Q：有时候发现在某些字段上有重叠打印的情况，是怎么回事？" class="headerlink" title="Q：有时候发现在某些字段上有重叠打印的情况，是怎么回事？"></a>Q：有时候发现在某些字段上有重叠打印的情况，是怎么回事？</h5><p>A：可以检查以下是不是设置了<code>LODOP.SET_PRINT_STYLE(&#39;ItemType&#39;, 1);</code>。</p>
+<h5 id="Q：在循环里调用LODOP-PRINT-的时候会发现打印任务被分配到了多台打印机？"><a href="#Q：在循环里调用LODOP-PRINT-的时候会发现打印任务被分配到了多台打印机？" class="headerlink" title="Q：在循环里调用LODOP.PRINT()的时候会发现打印任务被分配到了多台打印机？"></a>Q：在循环里调用LODOP.PRINT()的时候会发现打印任务被分配到了多台打印机？</h5><p>A：还没去调查过Lodop内部是否有类似负载均衡这样的机制，目前的解决方案是尽量在循环结束之后只调用一次LODOP.PRINT()。</p>
 
 
                 <hr>
@@ -222,11 +227,11 @@ require(&#39;nek-vue/lib/styles/button.css&#39;)</code></li>
                 </style>
                 <div class="ds-share"
                     style="text-align: right"
-                    data-thread-key="2017/12/10/记组件库工程搭建/"
-                    data-title="记组件库工程搭建"
-                    data-url="https://yeomanyang.github.io/2017/12/10/记组件库工程搭建/"
+                    data-thread-key="2018/03/11/Lodop打印方案汇总/"
+                    data-title="Lodop打印方案汇总"
+                    data-url="https://yeomanyang.github.io/2018/03/11/Lodop打印方案汇总/"
                     data-images=""
-                    data-content="最近团队内准备维护一套vue的组件库，为了和nek-ui保持一样的交互设计。在搭建一个vue的... | Yeoman的博客 | Yeoman&#39;s Blog " >
+                    data-content="目前WMS以及考拉小店系统内的打印方案用的都是客户端打印的方案，借助了Lodop打印控件来完成... | Yeoman的博客 | Yeoman&#39;s Blog " >
                     <div class="ds-share-inline">
                       <ul  class="ds-share-icons-16">
                         <li data-toggle="ds-share-icons-more"><a class="ds-more" href="#">分享到：</a></li>
@@ -244,13 +249,9 @@ require(&#39;nek-vue/lib/styles/button.css&#39;)</code></li>
 
                 <ul class="pager">
                     
-                        <li class="previous">
-                            <a href="/2017/12/13/记Chrome的性能分析工具实践/" data-toggle="tooltip" data-placement="top" title="记Chrome的性能分析工具实践">&larr; Previous Post</a>
-                        </li>
-                    
                     
                         <li class="next">
-                            <a href="/2017/09/02/从搭建工程讲到CSS-Modules/" data-toggle="tooltip" data-placement="top" title="从搭建工程讲到CSS Modules">Next Post &rarr;</a>
+                            <a href="/2018/01/16/0.1+0.2=0.30000000000000004/" data-toggle="tooltip" data-placement="top" title="从0.1+0.2=0.30000000000000004再看JS中的Number类型.md">Next Post &rarr;</a>
                         </li>
                     
                 </ul>
@@ -259,9 +260,9 @@ require(&#39;nek-vue/lib/styles/button.css&#39;)</code></li>
                 <!-- 多说评论框 start -->
                 <div class="comment">
                     <div class="ds-thread"
-                        data-thread-key="2017/12/10/记组件库工程搭建/"
-                        data-title="记组件库工程搭建"
-                        data-url="https://yeomanyang.github.io/2017/12/10/记组件库工程搭建/" >
+                        data-thread-key="2018/03/11/Lodop打印方案汇总/"
+                        data-title="Lodop打印方案汇总"
+                        data-url="https://yeomanyang.github.io/2018/03/11/Lodop打印方案汇总/" >
                     </div>
                 </div>
                 <!-- 多说评论框 end -->
@@ -287,8 +288,6 @@ require(&#39;nek-vue/lib/styles/button.css&#39;)</code></li>
                     <h5><a href="/tags/">FEATURED TAGS</a></h5>
                     <div class="tags">
                        
-                          <a class="tag" href="/tags/#technique" title="technique">technique</a>
-                        
                     </div>
                 </section>
                 
