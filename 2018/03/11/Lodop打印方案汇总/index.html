@@ -90,14 +90,14 @@
 
                         
                         <li>
-                            <a href="/archives/">Archives</a>
+                            <a href="/about/">About</a>
                         </li>
                         
                     
 
                         
                         <li>
-                            <a href="/about/">About</a>
+                            <a href="/archives/">Archives</a>
                         </li>
                         
                     
@@ -211,7 +211,7 @@
 </ol>
 <h2 id="如何在系统中使用"><a href="#如何在系统中使用" class="headerlink" title="如何在系统中使用"></a>如何在系统中使用</h2><h4 id="1-安装Lodop"><a href="#1-安装Lodop" class="headerlink" title="1. 安装Lodop"></a>1. 安装Lodop</h4><p>到<a href="http://www.lodop.net/download.html" target="_blank" rel="external">Lodop官网</a>下载Lodop综合版，安装在连接打印机的主机上。</p>
 <h4 id="2-在需要打印的系统中引入下面的初始化脚本。"><a href="#2-在需要打印的系统中引入下面的初始化脚本。" class="headerlink" title="2. 在需要打印的系统中引入下面的初始化脚本。"></a>2. 在需要打印的系统中引入下面的<a href="http://oksj4hknl.bkt.clouddn.com/LodopFuncs.js" target="_blank" rel="external">初始化脚本</a>。</h4><h4 id="3-初始化完Lodop实例之后就可以根据官网的Lodop技术手册来调用相应的打印接口了。"><a href="#3-初始化完Lodop实例之后就可以根据官网的Lodop技术手册来调用相应的打印接口了。" class="headerlink" title="3. 初始化完Lodop实例之后就可以根据官网的Lodop技术手册来调用相应的打印接口了。"></a>3. 初始化完Lodop实例之后就可以根据官网的Lodop技术手册来调用相应的打印接口了。</h4><h2 id="一些坑"><a href="#一些坑" class="headerlink" title="一些坑"></a>一些坑</h2><p>看起来Lodop的使用比较简单，但是真正开发的时候会发现里面坑很多，下面记录一些目前已知的坑和解决方案。</p>
-<h5 id="Q：Lodop打印出来的页面带有水印，如何去除？"><a href="#Q：Lodop打印出来的页面带有水印，如何去除？" class="headerlink" title="Q：Lodop打印出来的页面带有水印，如何去除？"></a>Q：Lodop打印出来的页面带有水印，如何去除？</h5><p>A： Lodop默认打印出来会带有一个Lodop的水印，如果需要去掉水印的话需要购买他们的License，我们的License初始化方式如下：<code>LODOP.SET_LICENSES(&#39;网易无尾熊（杭州）科技有限公司&#39;, &#39;D2B0BD99D1EF8B1D840543B6C17E04F2&#39;, &#39;&#39;, &#39;&#39;);</code></p>
+<h5 id="Q：Lodop打印出来的页面带有水印，如何去除？"><a href="#Q：Lodop打印出来的页面带有水印，如何去除？" class="headerlink" title="Q：Lodop打印出来的页面带有水印，如何去除？"></a>Q：Lodop打印出来的页面带有水印，如何去除？</h5><p>A： Lodop默认打印出来会带有一个Lodop的水印，如果需要去掉水印的话需要购买他们的License。</p>
 <h5 id="Q：为什么不同的电脑打印出来的效果不一致？"><a href="#Q：为什么不同的电脑打印出来的效果不一致？" class="headerlink" title="Q：为什么不同的电脑打印出来的效果不一致？"></a>Q：为什么不同的电脑打印出来的效果不一致？</h5><p>A： 1. Lodop在渲染的时候调用的是本机的ie浏览器渲染引擎，所以需要在安装Lodop的机子上安装ie11，我在仓库实施的过程中发现ie11以下的浏览器版本会因为CSS兼容性问题会出现布局混乱。2. 如果安装了最新版本的ie还是发现打印异常，可以尝试切换对应打印机的打印机驱动</p>
 <h5 id="Q：在打印之前是不是先写好一个HTML模版再去直接打印就好了？"><a href="#Q：在打印之前是不是先写好一个HTML模版再去直接打印就好了？" class="headerlink" title="Q：在打印之前是不是先写好一个HTML模版再去直接打印就好了？"></a>Q：在打印之前是不是先写好一个HTML模版再去直接打印就好了？</h5><p>A： 我们在Chrome等浏览器下预览的HTML模版和实际打印的效果存在一些偏差，需要调用Lodop.PREVIEW()来预览打印效果。</p>
 <h5 id="Q：打印表格的时候，当表格内容过多，表格分页的时候最底下的单元格会被截断，怎么办？"><a href="#Q：打印表格的时候，当表格内容过多，表格分页的时候最底下的单元格会被截断，怎么办？" class="headerlink" title="Q：打印表格的时候，当表格内容过多，表格分页的时候最底下的单元格会被截断，怎么办？"></a>Q：打印表格的时候，当表格内容过多，表格分页的时候最底下的单元格会被截断，怎么办？</h5><p>A： 在打印表格的时候，尽量调用<code>LODOP.ADD_PRINT_TABLE</code>，这样在分页的时候会是平滑的。</p>
