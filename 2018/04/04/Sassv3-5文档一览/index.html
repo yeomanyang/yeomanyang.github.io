@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Talk is cheap, show me the code.">
+    <meta name="keyword"  content="">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>
+        
+          Sassv3.5文档一览 - Yeoman的博客 | Yeoman&#39;s Blog
+        
+    </title>
+
+    <link rel="canonical" href="https://yeomanyang.github.io/2018/04/04/Sassv3-5文档一览/">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/hux-blog.min.css">
+
+    <!-- Pygments Highlight CSS -->
+    <link rel="stylesheet" href="/css/highlight.css">
+
+    <!-- Custom Fonts -->
+    <!-- <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="https://cdn.staticfile.org/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- Hux Delete, sad but pending in China
+    <link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/
+    css'>
+    -->
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">Yeoman&#39;s Blog</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archives/">Archives</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">Tags</a>
+                        </li>
+                        
+                    
+
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    
+<!-- Image to hack wechat -->
+<!-- <img src="https://yeomanyang.github.io/img/icon_wechat.png" width="0" height="0"> -->
+<!-- <img src="{{ site.baseurl }}/{% if page.header-img %}{{ page.header-img }}{% else %}{{ site.header-img }}{% endif %}" width="0" height="0"> -->
+
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        background-image: url('/img/home-bg.jpg')
+    }
+</style>
+<header class="intro-header" >
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                    </div>
+                    <h1>Sassv3.5文档一览</h1>
+                    <h2 class="subheading"></h2>
+                    <span class="meta">
+                        Posted by Yeoman on
+                        2018-04-04
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+    <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                <h3 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h3><p>因为nek-ui 2.0 要完全重构掉CSS部分，因此决定重新调研一下现在比较好的CSS预处理方案。参考了一下element-ui，发现element-ui在新版本已经从postcss+postcss-salad的方案迁移到了node-sass+sass-loader的方案。看了一些Sass的写法，发现有些语法已经看不懂了，于是决定系统性地过下<a href="https://sass-lang.com/documentation/file.SASS_REFERENCE.html#" target="_blank" rel="external">Sass官方文档</a>，学习下Sass的一些新特性。本文旨在翻译和整理学习（所有的样例都用Sass-cli验证过）。</p>
+<h3 id="为什么要用Sass"><a href="#为什么要用Sass" class="headerlink" title="为什么要用Sass"></a>为什么要用Sass</h3><ol>
+<li>Sass对于原生CSS是完全兼容的</li>
+<li>Sass在语法上扩展了变量（关于这一点，CSS规范也已经提供了<a href="https://drafts.csswg.org/css-variables/" target="_blank" rel="external">解决方案</a>）,嵌套，还有混合（代码块）。</li>
+<li>有很多现成的函数可以使用，比如<code>mix($color1, $color2, [$weight])</code>用来将两种颜色混合等等。</li>
+<li>可以基本的流程控制，比如<code>p { @if 1 + 1 == 2 { border: 1px solid;  } }</code></li>
+</ol>
+<p>很显然，上述的大部分特性在CSS规范中都没有被支持甚至是提出，因此我们需要CSS预处理器来帮助更方便地写CSS。</p>
+<h3 id="CSS扩展"><a href="#CSS扩展" class="headerlink" title="CSS扩展"></a>CSS扩展</h3><p>Sass的CSS扩展上，除了支持嵌套语法，还有一些很有用的扩展：</p>
+<h4 id="1-支持-amp-来获得父级选择器"><a href="#1-支持-amp-来获得父级选择器" class="headerlink" title="1. 支持&amp;来获得父级选择器"></a>1. 支持&amp;来获得父级选择器</h4><figure class="highlight stylus"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="selector-tag">a</span> &#123;</div><div class="line">  &amp;:hover &#123; <span class="attribute">text-decoration</span>: underline; &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h4 id="2-支持属性的嵌套写法（这个感觉没啥用"><a href="#2-支持属性的嵌套写法（这个感觉没啥用" class="headerlink" title="2. 支持属性的嵌套写法（这个感觉没啥用- -"></a>2. 支持属性的嵌套写法（这个感觉没啥用- -</h4><figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="selector-class">.funky</span> &#123;</div><div class="line">  <span class="attribute">font</span>: &#123;</div><div class="line">    family: fantasy;</div><div class="line">    <span class="attribute">size</span>: <span class="number">30em</span>;</div><div class="line">    <span class="attribute">weight</span>: bold;</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h4 id="3-支持Placeholder-Selectors"><a href="#3-支持Placeholder-Selectors" class="headerlink" title="3. 支持Placeholder Selectors"></a>3. 支持<em>Placeholder Selectors</em></h4><p>这个属性是配合@extend来使用的，</p>
+<figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">.<span class="keyword">btn </span>&#123;</div><div class="line"><span class="symbol">    color:</span> <span class="comment">#333;</span></div><div class="line">&#125;</div><div class="line"></div><div class="line">.primary-<span class="keyword">btn </span>&#123;</div><div class="line">    @<span class="keyword">extend </span>.<span class="keyword">btn;</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>这段CSS会被编译成：</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="selector-class">.btn</span> <span class="selector-class">.primary-btn</span> &#123;</div><div class="line">    <span class="attribute">color</span>: <span class="number">#333</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>而如果用了<em>Placeholder Selectors</em>，看下区别：</p>
+<figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">%<span class="keyword">btn </span>&#123;</div><div class="line"><span class="symbol">    color:</span> <span class="comment">#333;</span></div><div class="line">&#125;</div><div class="line"></div><div class="line">.primary-<span class="keyword">btn </span>&#123;</div><div class="line">    @<span class="keyword">extend </span>%<span class="keyword">btn;</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>这段CSS会被编译成：</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="selector-class">.primary-btn</span> &#123;</div><div class="line">    <span class="attribute">color</span>: <span class="number">#333</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>这样这个基础.btn样式则不会被渲染。</p>
+<h3 id="Sass注释"><a href="#Sass注释" class="headerlink" title="Sass注释"></a>Sass注释</h3><p>Sass支持<code>/**/</code>和<code>//</code>这两种形式的注释方式，前者在编译后会被保留，后者会被删除。</p>
+<h3 id="SassScript"><a href="#SassScript" class="headerlink" title="SassScript"></a>SassScript</h3><h4 id="1-通过-关键字来定义变量"><a href="#1-通过-关键字来定义变量" class="headerlink" title="1. 通过$关键字来定义变量"></a>1. 通过$关键字来定义变量</h4><blockquote>
+<p>!global关键字可以让变量变成全局变量</p>
+</blockquote>
+<h4 id="2-数据类型"><a href="#2-数据类型" class="headerlink" title="2. 数据类型"></a>2. 数据类型</h4><ul>
+<li>Sass支持的数据类型<ul>
+<li>numbers</li>
+<li>strings</li>
+<li>colors</li>
+<li>booleans</li>
+<li>nulls</li>
+<li>lists</li>
+<li>maps</li>
+<li>function refrences</li>
+</ul>
+</li>
+</ul>
+<p>这里重点记录一下number类型的运算（因为最常用：</p>
+<ol>
+<li>Sass支持+， - ，*，/和%的运算</li>
+<li>Sass在运算过程中保留单位，两个带有单位的值相乘会抛出异常（10px <em> 10px），如果要使用乘法应该是`10px </em> 10`</li>
+<li><code>/</code>会被解析成除法的场景如下：</li>
+</ol>
+<figure class="highlight scss"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="selector-tag">p</span> &#123;</div><div class="line">  <span class="attribute">font</span>: <span class="number">10px</span>/<span class="number">8px</span>;             <span class="comment">// 原生的CSS，不作为除法</span></div><div class="line">  <span class="variable">$width</span>: <span class="number">1000px</span>;</div><div class="line">      <span class="attribute">width</span>: <span class="variable">$width</span>/<span class="number">2</span>;            <span class="comment">// 使用了变量, 作为除法</span></div><div class="line">  <span class="attribute">width</span>: round(<span class="number">1.5</span>)/<span class="number">2</span>;        <span class="comment">// 使用了函数, 作为除法</span></div><div class="line">  <span class="attribute">height</span>: (<span class="number">500px</span>/<span class="number">2</span>);          <span class="comment">// 使用了括号, 作为除法</span></div><div class="line">  <span class="attribute">margin-left</span>: <span class="number">5px</span> + <span class="number">8px</span>/<span class="number">2px</span>; <span class="comment">// 使用了 +, 作为除法</span></div><div class="line">  <span class="attribute">font</span>: (italic bold <span class="number">10px</span>/<span class="number">8px</span>); <span class="comment">// 在一个列表（list）中，括号可以被忽略。</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ol>
+<li>在使用<code>-</code>的时候主要注意两点：<ul>
+<li>如果要作为减法使用，应该在<code>-</code>前后都留空格。</li>
+<li>如果要作为负数使用，要在前面留一个空格，后面不留</li>
+</ul>
+</li>
+</ol>
+<h4 id="3-Interpolation-插值"><a href="#3-Interpolation-插值" class="headerlink" title="3. Interpolation#{}插值"></a>3. Interpolation<code>#{}</code>插值</h4><p>前面提到Sass中可以用$关键字来定义变量，而插值的作用则是在选择器和属性名中使用变量。</p>
+<figure class="highlight scss"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="variable">$name</span>: foo;</div><div class="line"><span class="variable">$attr</span>: border;</div><div class="line"><span class="selector-tag">p</span>.#&#123;<span class="variable">$name</span>&#125; &#123;</div><div class="line">    #&#123;<span class="variable">$attr</span>&#125;-<span class="attribute">color</span>: blue;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>这段CSS会被编译成：</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="selector-tag">p</span><span class="selector-class">.foo</span> &#123;</div><div class="line">  <span class="attribute">border-color</span>: blue; &#125;</div></pre></td></tr></table></figure>
+<h4 id="4-amp-in-SassScript"><a href="#4-amp-in-SassScript" class="headerlink" title="4. &amp; in SassScript"></a>4. &amp; in SassScript</h4><p>前面提到过&amp;可以直接作为父级选择器，那么如果把&amp;用在SassScript中，常用的场景如下：</p>
+<figure class="highlight scss"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">@<span class="keyword">mixin</span> e(<span class="variable">$element</span>) &#123;</div><div class="line">  <span class="variable">$selector</span>: &amp;;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h4 id="5-default（变量默认）"><a href="#5-default（变量默认）" class="headerlink" title="5. !default（变量默认）"></a>5. !default（变量默认）</h4><p>这个属性很简单，就是当一个变量已经被赋值过了，则不会被有!default修改的同名变量覆盖。</p>
+<figure class="highlight autoit"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">$content: <span class="string">"First content"</span><span class="comment">;</span></div><div class="line">$content: <span class="string">"Second content?"</span> !<span class="keyword">default</span><span class="comment">;</span></div><div class="line"></div><div class="line">// $content还是<span class="string">"First content"</span></div></pre></td></tr></table></figure>
+<h3 id="规则和指令"><a href="#规则和指令" class="headerlink" title="@规则和指令"></a>@规则和指令</h3><h4 id="import"><a href="#import" class="headerlink" title="@import"></a>@import</h4><p>Sass对于@import的扩展主要有两个功能：</p>
+<ol>
+<li>支持导入.scss和.sass文件</li>
+<li>被导入文件中所定义的变量或mixins都可以在主文件中被使用。</li>
+</ol>
+<h4 id="extend"><a href="#extend" class="headerlink" title="@extend"></a>@extend</h4><p><code>@extend</code>的用法在上述例子中已经展示了，主要的作用就是复用CSS代码片段。</p>
+<p>说到复用CSS，肯定会想到另一个功能<code>@mixin</code>，关于这两者的区别这篇<a href="https://www.w3cplus.com/preprocessor/sass-mixin-or-extend.html" target="_blank" rel="external">译文</a>写的比较好。结论是大部分场景下用mixin会更合适一些，所以就不去细看<code>@extend</code>的各种细致用法了。</p>
+<h4 id="at-root"><a href="#at-root" class="headerlink" title="@at-root"></a>@at-root</h4><p>这个关键字类似CSS Module中的global关键字。用于将样式应用在文档的根结点， 而不是被嵌套在父容器下。</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="selector-class">.parent</span> &#123;</div><div class="line">    <span class="attribute">color</span>: <span class="number">#000</span>;</div><div class="line">    @at-root <span class="selector-class">.child</span> &#123;</div><div class="line">        <span class="attribute">color</span>: <span class="number">#fff</span>;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>这段样式会被编译成：</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="selector-class">.parent</span> &#123;</div><div class="line">    <span class="attribute">color</span>: <span class="number">#000</span>;</div><div class="line">&#125;</div><div class="line"><span class="selector-class">.child</span> &#123;</div><div class="line">    <span class="attribute">color</span>: <span class="number">#fff</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<blockquote>
+<p>默认情况下， @at-root只是移动到选择器的最外层，如果要移动到嵌套选择器（比如@media）的外层则需要使用@at-root (without: …) 和 @at-root (with: …)</p>
+</blockquote>
+<h3 id="Control-Directives-amp-Expressions"><a href="#Control-Directives-amp-Expressions" class="headerlink" title="Control Directives &amp; Expressions"></a>Control Directives &amp; Expressions</h3><h4 id="1-if"><a href="#1-if" class="headerlink" title="1. if()"></a>1. if()</h4><p><code>if()</code>和三目运算符<code>? :</code>很像：</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="selector-class">.if</span> &#123;</div><div class="line">    <span class="attribute">width</span>: <span class="built_in">if</span>(true, 1px, 2px);</div><div class="line">    <span class="attribute">height</span>: <span class="built_in">if</span>(false, 1px, 2px);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>会被编译成：</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="selector-class">.if</span> &#123;</div><div class="line">    <span class="attribute">width</span>: <span class="number">1px</span>;</div><div class="line">    <span class="attribute">height</span>: <span class="number">2px</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h4 id="if，-else-if-和-else"><a href="#if，-else-if-和-else" class="headerlink" title="@if，@else if 和 @else"></a>@if，@else if 和 @else</h4><p>这个控制就和JS中的流程控制是一样的：</p>
+<figure class="highlight scss"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line"><span class="variable">$type</span>: monster;</div><div class="line"><span class="selector-tag">p</span> &#123;</div><div class="line">    @<span class="keyword">if</span> <span class="variable">$type</span>==ocean &#123;</div><div class="line">        <span class="attribute">color</span>: blue;</div><div class="line">    &#125;</div><div class="line">    @<span class="keyword">else</span> if <span class="variable">$type</span>==matador &#123;</div><div class="line">        <span class="attribute">color</span>: red;</div><div class="line">    &#125;</div><div class="line">    @<span class="keyword">else</span> if <span class="variable">$type</span>==monster &#123;</div><div class="line">        <span class="attribute">color</span>: green;</div><div class="line">    &#125;</div><div class="line">    @<span class="keyword">else</span> &#123;</div><div class="line">        <span class="attribute">color</span>: black;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>会被编译成：</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="selector-tag">p</span> &#123;</div><div class="line">    <span class="attribute">color</span>: green;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h4 id="for"><a href="#for" class="headerlink" title="@for"></a>@for</h4><p>for可以循环生成一组样式：</p>
+<figure class="highlight scss"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">@<span class="keyword">for</span> <span class="variable">$i</span> from 1 through 3 &#123;</div><div class="line">    <span class="selector-class">.item-</span>#&#123;<span class="variable">$i</span>&#125; &#123; <span class="attribute">width</span>: <span class="number">2em</span> * <span class="variable">$i</span>; &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>会被编译成：</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="selector-class">.item-1</span> &#123;</div><div class="line">    <span class="attribute">width</span>: <span class="number">2em</span>;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="selector-class">.item-2</span> &#123;</div><div class="line">    <span class="attribute">width</span>: <span class="number">4em</span>;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="selector-class">.item-3</span> &#123;</div><div class="line">    <span class="attribute">width</span>: <span class="number">6em</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<blockquote>
+<p>@for $i from <start> to <end>的写法输出是不包含<end>的</end></end></start></p>
+</blockquote>
+<h4 id="each"><a href="#each" class="headerlink" title="@each"></a>@each</h4><p>@each的功能和@for比较像，@for的循环只限于数字递增递减，而@each可以自定义list，用@each来实现上面@for的需求，输出是一模一样的。</p>
+<figure class="highlight scss"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">@<span class="keyword">each</span> <span class="variable">$i</span> in 1, 2, 3 &#123;</div><div class="line">    <span class="selector-class">.item-</span>#&#123;<span class="variable">$i</span>&#125; &#123; <span class="attribute">width</span>: <span class="number">2em</span> * <span class="variable">$i</span>; &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<blockquote>
+<p>@each可以使用@each $var1,$var2, … in <list>这样的形式进行多重赋值</list></p>
+</blockquote>
+<h3 id="Mixin"><a href="#Mixin" class="headerlink" title="Mixin"></a>Mixin</h3><p>Sass官方把Mixin单独拿作为一个章节来讲，可见Mixin在Sass中确实是一个很强大很实用的功能。</p>
+<p>Mixin的基础用法和@extend没有二异，但是Mixin强大的地方在于支持参数传递，这样用法上就很像函数了：</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">@<span class="keyword">mixin</span> silly-links($color) &#123;</div><div class="line">    <span class="selector-tag">a</span> &#123;</div><div class="line">        <span class="attribute">color</span>: $color;</div><div class="line">        <span class="attribute">background-color</span>: red;</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line">@<span class="keyword">include</span> silly-links(blue);</div></pre></td></tr></table></figure>
+<p>编译成：</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="selector-tag">a</span> &#123;</div><div class="line">    <span class="attribute">color</span>: blue;</div><div class="line">    <span class="attribute">background-color</span>: red;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h4 id="在参数传递的时候，还支持关键字参数，这样可读性会更强："><a href="#在参数传递的时候，还支持关键字参数，这样可读性会更强：" class="headerlink" title="在参数传递的时候，还支持关键字参数，这样可读性会更强："></a>在参数传递的时候，还支持关键字参数，这样可读性会更强：</h4><figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">@<span class="keyword">mixin</span> silly-links($color) &#123;</div><div class="line">    <span class="selector-tag">a</span> &#123;</div><div class="line">        <span class="attribute">color</span>: $color;</div><div class="line">        <span class="attribute">background-color</span>: red;</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line">@<span class="keyword">include</span> silly-links($color: blue);</div></pre></td></tr></table></figure>
+<h4 id="以及不定参数："><a href="#以及不定参数：" class="headerlink" title="以及不定参数："></a>以及不定参数：</h4><p>@mixin box-shadow($shadows…) {<br>    box-shadow: $shadows;<br>}</p>
+<figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">.shadows &#123;</div><div class="line">    @include box-shadow(<span class="number">0</span>px <span class="number">4</span>px <span class="number">5</span>px #<span class="number">666</span>, <span class="number">2</span>px <span class="number">6</span>px <span class="number">10</span>px #<span class="number">999</span>);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>会被编译成：</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="selector-class">.shadows</span> &#123;</div><div class="line">    <span class="attribute">box-shadow</span>: <span class="number">0px</span> <span class="number">4px</span> <span class="number">5px</span> <span class="number">#666</span>, <span class="number">2px</span> <span class="number">6px</span> <span class="number">10px</span> <span class="number">#999</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h4 id="还有一个很重要的功能，就是Mixin还可以配合-content支持直接传递一个代码块，这个功能对于实现Sass中的BEM很重要，关于BEM在Sass中的mixin实践，可以看这篇文章："><a href="#还有一个很重要的功能，就是Mixin还可以配合-content支持直接传递一个代码块，这个功能对于实现Sass中的BEM很重要，关于BEM在Sass中的mixin实践，可以看这篇文章：" class="headerlink" title="还有一个很重要的功能，就是Mixin还可以配合@content支持直接传递一个代码块，这个功能对于实现Sass中的BEM很重要，关于BEM在Sass中的mixin实践，可以看这篇文章："></a>还有一个很重要的功能，就是Mixin还可以配合@content支持直接传递一个代码块，这个功能对于实现Sass中的BEM很重要，关于BEM在Sass中的mixin实践，可以看<a href="https://medium.com/@marcmintel/pushing-bem-to-the-next-level-with-sass-3-4-5239d2371321" target="_blank" rel="external">这篇文章</a>：</h4><figure class="highlight stylus"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">@mixin b(<span class="variable">$block</span>) &#123;</div><div class="line">    .#&#123;<span class="string">'kl-'</span> + <span class="variable">$block</span>&#125; &#123;</div><div class="line">        @<span class="attribute">content</span>;</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line">@include b(<span class="variable">$block</span>: header) &#123;</div><div class="line">    <span class="attribute">color</span>: <span class="number">#333</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>会被编译成：</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="selector-class">.kl-header</span> &#123;</div><div class="line">    <span class="attribute">color</span>: <span class="number">#333</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="函数指令"><a href="#函数指令" class="headerlink" title="函数指令"></a>函数指令</h3><figure class="highlight scss"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="variable">$grid-width</span>: <span class="number">40px</span>;</div><div class="line"><span class="variable">$gutter-width</span>: <span class="number">10px</span>;</div><div class="line">@function grid-width(<span class="variable">$n</span>) &#123;</div><div class="line">    @return <span class="variable">$n</span> * <span class="variable">$grid-width</span>+(<span class="variable">$n</span> - 1) * <span class="variable">$gutter-width</span>;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="selector-id">#sidebar</span> &#123;</div><div class="line">    <span class="attribute">width</span>: grid-width(<span class="number">5</span>);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>会被编译成：</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="selector-id">#sidebar</span> &#123;</div><div class="line">    <span class="attribute">width</span>: <span class="number">240px</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>整体来说，Sass拥有变量，流程控制，Mixin，Function等等功能之后，都是为了让CSS能够具备一些简易的脚本功能，如果是这样的话，会不会React中CSS in JS的做法才是CSS的趋势走向？</p>
+
+
+                <hr>
+
+                
+
+                <ul class="pager">
+                    
+                    
+                        <li class="next">
+                            <a href="/2018/03/11/Lodop打印方案汇总/" data-toggle="tooltip" data-placement="top" title="Lodop打印方案汇总">Next Post &rarr;</a>
+                        </li>
+                    
+                </ul>
+
+                
+
+                
+
+            </div>
+    <!-- Side Catalog Container -->
+        
+
+    <!-- Sidebar Container -->
+
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                       
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+                <hr>
+                <h5>FRIENDS</h5>
+                <ul class="list-inline">
+
+                    
+                        <li><a href="https://palmerye.github.io/palmer-blog/" target="_blank">Palmer Blog</a></li>
+                    
+                </ul>
+                
+            </div>
+
+        </div>
+    </div>
+</article>
+
+
+
+
+
+
+
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                
+                
+                
+                    <li>
+                        <a target="_blank" href="https://www.zhihu.com/people/yeomanyang">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa  fa-stack-1x fa-inverse">知</i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/yeomanyang">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; Yeoman&#39;s Blog 2018 
+                    <br>
+                    Theme by <a href="http://huangxuan.me">Hux</a> 
+                    <span style="display: inline-block; margin: 0 5px;">
+                        <i class="fa fa-heart"></i>
+                    </span> 
+                    Ported by <a href="http://blog.kaijun.rocks">Kaijun</a> | 
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="91px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=kaijun&repo=hexo-theme-huxblog&type=star&count=true" >
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="/js/jquery.min.js"></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="/js/bootstrap.min.js"></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/hux-blog.min.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- 
+     Because of the native support for backtick-style fenced code blocks 
+     right within the Markdown is landed in Github Pages, 
+     From V1.6, There is no need for Highlight.js, 
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0  
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/    
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("https://yeomanyang.github.io/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+
+<script>
+    // dynamic User by Hux
+    var _gaId = 'UA-90487102-1';
+    var _gaDomain = 'undefined';
+
+    // Originial
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', _gaId, _gaDomain);
+    ga('send', 'pageview');
+</script>
+
+
+
+
+<!-- Baidu Tongji -->
+
+<script>
+    // dynamic User by Hux
+    var _baId = 'c7f7936268a976be71b91508db530dfa';
+
+    // Originial
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?" + _baId;
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+</script>
+
+
+<!-- Side Catalog -->
+
+
+
+
+
+<!-- Image to hack wechat -->
+<img src="https://yeomanyang.github.io/img/icon_wechat.png" width="0" height="0" />
+<!-- Migrate from head to bottom, no longer block render and still work -->
+
+</body>
+
+</html>
