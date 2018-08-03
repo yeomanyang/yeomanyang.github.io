@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Talk is cheap, show me the code.">
+    <meta name="keyword"  content="">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>
+        
+          聊聊个人任务管理 - Yeoman的博客 | Yeoman&#39;s Blog
+        
+    </title>
+
+    <link rel="canonical" href="https://yeomanyang.github.io/2018/08/03/聊聊个人任务管理/">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/hux-blog.min.css">
+
+    <!-- Pygments Highlight CSS -->
+    <link rel="stylesheet" href="/css/highlight.css">
+
+    <!-- Custom Fonts -->
+    <!-- <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="https://cdn.staticfile.org/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- Hux Delete, sad but pending in China
+    <link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/
+    css'>
+    -->
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">Yeoman&#39;s Blog</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archives/">Archives</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">Tags</a>
+                        </li>
+                        
+                    
+
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    
+<!-- Image to hack wechat -->
+<!-- <img src="https://yeomanyang.github.io/img/icon_wechat.png" width="0" height="0"> -->
+<!-- <img src="{{ site.baseurl }}/{% if page.header-img %}{{ page.header-img }}{% else %}{{ site.header-img }}{% endif %}" width="0" height="0"> -->
+
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        background-image: url('/img/home-bg.jpg')
+    }
+</style>
+<header class="intro-header" >
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                          <a class="tag" href="/tags/#technique" title="technique">technique</a>
+                        
+                    </div>
+                    <h1>聊聊个人任务管理</h1>
+                    <h2 class="subheading"></h2>
+                    <span class="meta">
+                        Posted by Yeoman on
+                        2018-08-03
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+    <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                <h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>Q2季度事情非常多而杂，尤其端午那段时间整个人的状态非常混乱。感觉急需一个科学合理的个人任务管理工具。于是在工作节奏缓过来之后，看了一些这方面的文章，然后发现了一个科技类博主JailbreakHum的<a href="https://www.zhihu.com/lives/823230794934947840" target="_blank" rel="external">知乎Live</a>，Live有两期，分成入门和进阶，仔细听完之后比较认同作者看问题看本质的思维方式。</p>
+<p>这篇文章主要就是记录下Live的听后感以及自己的一些实践。</p>
+<h2 id="Why？"><a href="#Why？" class="headerlink" title="Why？"></a>Why？</h2><p>个人任务管理应该是一个私人定制化比较强的事情，但是做这个事情我们要解决的问题应该是一致的。</p>
+<ol>
+<li>会经常被各种琐碎的事情打断，常常理不清任务的优先级</li>
+<li>会经常彻底忘记掉一些不是当下需要马上处理的事情</li>
+<li>脑子里经常惦记着几件重要的事，导致无法安心处理手里的工作</li>
+<li>对于一些生活中的小事养成了一拖再拖的习惯</li>
+</ol>
+<p>上面这四点是我列出的我个人的痛点，其中第三点是我觉得最严重的一点。当同时有好几件重要的事情来临的时候，如果没有好好规划任务，就很容易导致效率变得更低。</p>
+<p>如果大家没有上述这些痛点的话，那么恭喜你，你的个人任务管理能力已经非常棒了～OR，你的工作还没有对你进行足够的摧残。</p>
+<h2 id="关于GTD"><a href="#关于GTD" class="headerlink" title="关于GTD"></a>关于GTD</h2><p>谈到任务管理，很多人都会想到GTD（getting things done），但是一去查GTD的内容就会觉得不就是个任务管理么，为什么搞得这么复杂！（摔</p>
+<p><img src="https://haitao.nos.netease.com/f20bb737-e62d-42e6-a3d1-27fa89591905_440_331.jpg"></p>
+<p>Live的作者认为，之所以GTD让人觉得复杂，主要是以下几个原因：</p>
+<ol>
+<li>GTD不是单纯的任务管理，是一个本身就很复杂的体系，但是我们在日常任务管理上不需要那么复杂的概念</li>
+<li>GTD那本书的内容和现代的任务管理工具严重脱节</li>
+<li>很多工具套用了GTD里面的概念，但是对于相同的功能使用了不同的名字，让使用者困惑</li>
+</ol>
+<p>总之，我们首先要明确一点，任务管理不复杂，甚至很简单！</p>
+<h2 id="GTD的5个步骤"><a href="#GTD的5个步骤" class="headerlink" title="GTD的5个步骤"></a>GTD的5个步骤</h2><p>我们来看下GTD的五个核心步骤：</p>
+<p><img src="https://haitao.nos.netease.com/5869554f-4c0a-4894-b9f0-b0097ca353b8_486_890.png"></p>
+<h3 id="3-1-收集"><a href="#3-1-收集" class="headerlink" title="3.1 收集"></a>3.1 收集</h3><ol>
+<li>收集任务的时候不要去整理，要<em>批量收集</em>，<em>批量处理</em>。（比如说，我们在写博客的时候，需要收集很多图片，但是我们不想被打断思路，这时候就应该在写文章的时候先打上标记，最后批量收集图片）</li>
+<li>收集任务的时候一定要尽可能多的记录任务的细节，否则一段时间过后就会忘记。</li>
+<li>GTD的原则是收集任务的时候如果碰到一些可以马上做掉的小任务尽量马上做掉。</li>
+</ol>
+<h3 id="3-2-处理"><a href="#3-2-处理" class="headerlink" title="3.2 处理"></a>3.2 处理</h3><ol>
+<li>确保收集的任务是切实可行的，如果不是，则需要及时删掉。</li>
+<li>如果你的任务只需要几分钟就可以完成，可以搭上标记。（比如可以打上@easy的标签）。然后可以在零碎的时间去完成它们。</li>
+</ol>
+<h3 id="3-3-组织"><a href="#3-3-组织" class="headerlink" title="3.3 组织"></a>3.3 组织</h3><p>组织是比较重要的一步了，这个关系到后面我们如何去找到我们的要做的任务。</p>
+<p>组织任务主要有两个维度：列表和标签。</p>
+<h4 id="3-3-1-列表"><a href="#3-3-1-列表" class="headerlink" title="3.3.1 列表"></a>3.3.1 列表</h4><ol>
+<li>列表在各个工具里有不同的名字，比如list，listGroup，project。</li>
+<li>列表可以有层级。</li>
+</ol>
+<p>举个例子，这是我的列表：<br><img src="https://haitao.nos.netease.com/11ff914b-2b6e-4d24-891a-dcab786cbc03_363_315.jpeg"></p>
+<h4 id="3-3-2-标签"><a href="#3-3-2-标签" class="headerlink" title="3.3.2 标签"></a>3.3.2 标签</h4><p>这是一些常用的标签类型，其中日期，优先级，任务状态这些都是我们平时比较常用的。</p>
+<p><img src="https://haitao.nos.netease.com/2fa28520-cca4-4d3e-8da8-d6fedf183182_904_406.png"></p>
+<p>同样的，我也贴一下自己的一些标签：</p>
+<p><img src="https://haitao.nos.netease.com/62071673-1b29-4690-b365-ebcbdfac7454_304_638.jpeg"></p>
+<p>其实很多同学在做任务管理的时候，都只做到了这个维度。形式上主要是记在笔记本上，或者是用一些check list工具来记录。</p>
+<h3 id="3-4-归档"><a href="#3-4-归档" class="headerlink" title="3.4 归档"></a>3.4 归档</h3><p>归档这一步其实是被挺多同学忽略的一步，我觉得归档带来的好处还是显而易见的：</p>
+<ol>
+<li>是对过去一段时间工作的回顾和整理</li>
+<li>在汇报工作的时候可以拿出一份比较完整的报告</li>
+<li>要区分归档和删除，对于没有保留意义的内容应该是删除而不是归档</li>
+</ol>
+<h3 id="3-5-执行"><a href="#3-5-执行" class="headerlink" title="3.5 执行"></a>3.5 执行</h3><p>关于执行，Live的作者主要给出了下面这几条做事情的tips：</p>
+<ol>
+<li>使用定时器（比如番茄工作法）来记录自己能集中注意力的时间，不断的调整，理想状态是达到1个小时</li>
+<li>尽可能批量地去完成同类的任务</li>
+<li>大部分事情尽量都在当下就去完成，因为过了当下就需要花更多精力去找到当时的那个上下文</li>
+<li>合理拖延，在精神状态不到位的时候，无法处理重要事件，这时候可以先去处理一些简单的任务，减轻焦虑</li>
+</ol>
+<h2 id="过滤"><a href="#过滤" class="headerlink" title="过滤"></a>过滤</h2><p>讲了这么多，接下来要讲的这个功能才是重头戏，概念非常简单，但却是现代任务管理工具的核心功能。（Live作者这么认为，我也非常认同～）</p>
+<h3 id="4-1-为什么过滤很重要"><a href="#4-1-为什么过滤很重要" class="headerlink" title="4.1 为什么过滤很重要"></a>4.1 为什么过滤很重要</h3><p>过滤这个功能是传统纸币系统所不能企及的现代任务管理的核心，它可以让我们在任何情境下都可以最快的找到我们当下需要处理的任务。列表和标签本质上都是为了过滤的两个维度。</p>
+<h3 id="4-2-三大工具"><a href="#4-2-三大工具" class="headerlink" title="4.2 三大工具"></a>4.2 三大工具</h3><p>谈到任务管理工具，不得不提三大任务管理工具：omniFocus，2do，todoist，过滤这个功能在这三个软件里分别叫：透视，智能列表，过滤。（things不在讨论范围，因为things在过滤这一块功能比较弱）</p>
+<h4 id="omniFocus"><a href="#omniFocus" class="headerlink" title="omniFocus"></a>omniFocus</h4><p>其中omniFocus应该是名气最大的，尤其是以它的复杂而著称。据说这个软件基本没有差评，如果在使用过程中发现不好用，那用户也会觉得是自己不会用这个软件- -（不明觉厉</p>
+<p>但是这个作者毫无留情地diss了这个软件- -</p>
+<h4 id="2do"><a href="#2do" class="headerlink" title="2do"></a>2do</h4><p>2do这个软件功能比较完备，iOS和mac平台都支持，用户体验也比较好。而且是这三者中过滤器语法支持最全的。唯一的缺憾是同步需要通过Dropbox。</p>
+<p>这是2do的<a href="https://www.2doapp.com/kb/article/how-do-i-use-the-search-feature-to-look-for-tags-actions-and-other-stuff.html" target="_blank" rel="external">过滤器语法</a>，可以发现作者确实是把过滤作为非常重要的一个功能来开发的，考虑得非常细。</p>
+<h4 id="todoist"><a href="#todoist" class="headerlink" title="todoist"></a>todoist</h4><p>但是Live的作者推荐的是todoist这个软件，这个软件符合上面说的所有功能，同步也是通过他们官方的服务器，同时支持api扩展其他服务的调用。但是这个软件是按年收费的。</p>
+<h3 id="4-3-my-choice"><a href="#4-3-my-choice" class="headerlink" title="4.3 my choice"></a>4.3 my choice</h3><p>首先，omniFocus肯定不在选择的范畴。虽然作者是极力推荐todoist这个软件，但是todoist比2do擅长的部分我并没有什么需求，而2do已经完全能满足我的日常需求，而且我访问了国内和美国的App Store，2do的评分都比todoist要高。</p>
+<p>因此我选择一次性消费，咬咬牙买了2do的license（难道不是因为穷？</p>
+<p>分享两个我目前主力的智能列表：</p>
+<h4 id="4-3-1-今日列表"><a href="#4-3-1-今日列表" class="headerlink" title="4.3.1 今日列表"></a>4.3.1 今日列表</h4><p>这个列表就是我每天工作关注的内容，我只要从上往下依次往下做就可以，完全不用考虑其他事情，因为任务内容，优先级等等已经在收集，处理，组织那几步完成了。</p>
+<p>过滤器语法：<br><code>groups: work type: today OR overdue OR inprogress</code></p>
+<p><img src="https://haitao.nos.netease.com/112a459f-c371-4871-95d0-e8f18f57c5ab_2880_1724.jpeg"></p>
+<h4 id="4-3-2-总结列表"><a href="#4-3-2-总结列表" class="headerlink" title="4.3.2 总结列表"></a>4.3.2 总结列表</h4><p>然后是我的周归档列表，这个列表可是我每周写周报时候的利器，每周做了什么一目了然呢，呀比！</p>
+<p><img src="https://haitao.nos.netease.com/a2efea4e-77f1-4ed9-89ac-8dc2601776a4_2880_1724.jpeg"></p>
+<p>过滤这个功能是非常强大的，这也只是我一小段时间内的实践，毕竟除了上班也没啥别的事情了。但是大家可以根据自己的生活习惯，定制很多实用的智能列表～</p>
+<h2 id="one-more-thing"><a href="#one-more-thing" class="headerlink" title="one more thing"></a>one more thing</h2><p>Live的作者最后有提到一点，信任。我觉得这个词非常得恰当了，我们要足够信任我们的任务管理工具。让他去帮我们找出我们当下应该做的事情，这样我们就可以更专注于我们该做的事情上了。</p>
+<h2 id="感谢"><a href="#感谢" class="headerlink" title="感谢"></a>感谢</h2><p>感谢JailbreakHum的知乎Live。附上大佬两个的Live链接：</p>
+<p><a href="https://www.zhihu.com/lives/823230794934947840" target="_blank" rel="external">个人任务管理入门：基本概念与基础工具
+</a></p>
+<p><a href="https://www.zhihu.com/lives/823240334342492160" target="_blank" rel="external">个人任务管理进阶：任务过滤和进阶工具
+</a></p>
+
+
+                <hr>
+
+                
+
+                <ul class="pager">
+                    
+                    
+                        <li class="next">
+                            <a href="/2018/04/04/Sassv3-5文档一览/" data-toggle="tooltip" data-placement="top" title="Sassv3.5文档一览">Next Post &rarr;</a>
+                        </li>
+                    
+                </ul>
+
+                
+
+                
+
+            </div>
+    <!-- Side Catalog Container -->
+        
+
+    <!-- Sidebar Container -->
+
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                       
+                          <a class="tag" href="/tags/#technique" title="technique">technique</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+                <hr>
+                <h5>FRIENDS</h5>
+                <ul class="list-inline">
+
+                    
+                        <li><a href="https://palmerye.github.io/palmer-blog/" target="_blank">Palmer Blog</a></li>
+                    
+                </ul>
+                
+            </div>
+
+        </div>
+    </div>
+</article>
+
+
+
+
+
+
+
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                
+                
+                
+                    <li>
+                        <a target="_blank" href="https://www.zhihu.com/people/yeomanyang">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa  fa-stack-1x fa-inverse">知</i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/yeomanyang">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; Yeoman&#39;s Blog 2018 
+                    <br>
+                    Theme by <a href="http://huangxuan.me">Hux</a> 
+                    <span style="display: inline-block; margin: 0 5px;">
+                        <i class="fa fa-heart"></i>
+                    </span> 
+                    Ported by <a href="http://blog.kaijun.rocks">Kaijun</a> | 
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="91px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=kaijun&repo=hexo-theme-huxblog&type=star&count=true" >
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="/js/jquery.min.js"></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="/js/bootstrap.min.js"></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/hux-blog.min.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- 
+     Because of the native support for backtick-style fenced code blocks 
+     right within the Markdown is landed in Github Pages, 
+     From V1.6, There is no need for Highlight.js, 
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0  
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/    
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("https://yeomanyang.github.io/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+
+<script>
+    // dynamic User by Hux
+    var _gaId = 'UA-90487102-1';
+    var _gaDomain = 'undefined';
+
+    // Originial
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', _gaId, _gaDomain);
+    ga('send', 'pageview');
+</script>
+
+
+
+
+<!-- Baidu Tongji -->
+
+<script>
+    // dynamic User by Hux
+    var _baId = 'c7f7936268a976be71b91508db530dfa';
+
+    // Originial
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?" + _baId;
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+</script>
+
+
+<!-- Side Catalog -->
+
+
+
+
+
+<!-- Image to hack wechat -->
+<img src="https://yeomanyang.github.io/img/icon_wechat.png" width="0" height="0" />
+<!-- Migrate from head to bottom, no longer block render and still work -->
+
+</body>
+
+</html>
