@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Talk is cheap, show me the code.">
+    <meta name="keyword"  content="">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>
+        
+          Vue源码学习-从keep-alive的bug讲起 - Yeoman的博客 | Yeoman&#39;s Blog
+        
+    </title>
+
+    <link rel="canonical" href="https://yeomanyang.github.io/2018/08/20/Vue源码学习-从keep-alive的bug讲起/">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/hux-blog.min.css">
+
+    <!-- Pygments Highlight CSS -->
+    <link rel="stylesheet" href="/css/highlight.css">
+
+    <!-- Custom Fonts -->
+    <!-- <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="https://cdn.staticfile.org/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- Hux Delete, sad but pending in China
+    <link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/
+    css'>
+    -->
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">Yeoman&#39;s Blog</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archives/">Archives</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">Tags</a>
+                        </li>
+                        
+                    
+
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    
+<!-- Image to hack wechat -->
+<!-- <img src="https://yeomanyang.github.io/img/icon_wechat.png" width="0" height="0"> -->
+<!-- <img src="{{ site.baseurl }}/{% if page.header-img %}{{ page.header-img }}{% else %}{{ site.header-img }}{% endif %}" width="0" height="0"> -->
+
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        background-image: url('/img/home-bg.jpg')
+    }
+</style>
+<header class="intro-header" >
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                          <a class="tag" href="/tags/#technique" title="technique">technique</a>
+                        
+                    </div>
+                    <h1>Vue源码学习-从keep-alive的bug讲起</h1>
+                    <h2 class="subheading"></h2>
+                    <span class="meta">
+                        Posted by Yeoman on
+                        2018-08-20
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+    <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                <h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>嗯，这个月的主题是Vue。想着正好趁着这个时间好好撸一撸Vue源码，说到源码阅读，先聊聊我觉得读源码几种比较好的方式吧。</p>
+<h3 id="1-1-系统性阅读"><a href="#1-1-系统性阅读" class="headerlink" title="1.1 系统性阅读"></a>1.1 系统性阅读</h3><p>通常一个成熟的框架源码代码量都是比较多的，也有比较多的复杂模块，这时候我们要找到一条主线，先不要去阅读细节的代码。然后庖丁解牛，逐个模块击破。比如我们先大致捋一捋Vue源码的主线，看过一些Vue源码的同学对于下面这张图应该都比较熟悉：</p>
+<p><img src="https://haitao.nos.netease.com/7ab8bae0-27d7-4dc2-9a79-cfe324e548a4.jpg"></p>
+<p>Vue的源码核心概念可以分为：</p>
+<h4 id="1-1-1-编译"><a href="#1-1-1-编译" class="headerlink" title="1.1.1 - 编译"></a>1.1.1 - 编译</h4><p>图中的左边部分，解析template模版到抽象语法树（AST），然后再用抽象语法树生成Render函数。这部分我们称之为编译（compiler）,代码部分对应Vue源码目录下的<code>src/compiler</code>目录下。（如果直接自定义Render函数则没有compiler这一步）</p>
+<h4 id="1-1-2-数据响应系统"><a href="#1-1-2-数据响应系统" class="headerlink" title="1.1.2 - 数据响应系统"></a>1.1.2 - 数据响应系统</h4><p>图中的右边部分，这部分也是源码中被讲的最多的，通过<code>Watcher</code>，<code>Dep</code>，<code>Observer</code>这几个核心类实现订阅发布者模式来构造了Vue的数据响应系统。这部分的核心代码在<code>src/core/observer</code> 目录下。</p>
+<h4 id="1-1-3-Virtual-DOM"><a href="#1-1-3-Virtual-DOM" class="headerlink" title="1.1.3 - Virtual DOM"></a>1.1.3 - Virtual DOM</h4><p>从功能模块上来讲，其实虚拟DOM也是属于数据响应系统的一部分-更新UI。Vue 2.0借鉴了React的Virtual DOM的思想，来实现视图的局部更新。Virtual DOM的概念本身是比较简单的，就是用对象去描述真实DOM树，但是在更新视图的时候就需要用diff算法来实现patch。所以这一块也可以拎出来单独看。这部分代码在<code>src/core/vdom</code>目录下。</p>
+<h4 id="1-1-4-SSR"><a href="#1-1-4-SSR" class="headerlink" title="1.1.4 - SSR"></a>1.1.4 - SSR</h4><p>这张图中并没有体现的服务端渲染，但是服务端渲染也是SPA应用比较重要的一个特性了，这一块的代码应该可以结合<code>Nuxt.js</code>一起看，代码在<code>src/server</code>目录。</p>
+<h3 id="1-2-带着问题去读"><a href="#1-2-带着问题去读" class="headerlink" title="1.2 - 带着问题去读"></a>1.2 - 带着问题去读</h3><p>通常我们都是先学会用，再去理解原理。这时候如果在用的过程中发现了一些问题的话就可以去找对应的源码来精度了。比如说：</p>
+<blockquote>
+<ol>
+<li>template是如何编译成AST的？</li>
+<li>双向绑定中不同类型的数据是如何实现变化侦查的？</li>
+<li>this.$nextTick的实现原理是什么？</li>
+<li>keep-alive组件的实现原理？</li>
+<li>Vue的生命周期在源码中的体现是怎样的？</li>
+<li>等等…</li>
+</ol>
+</blockquote>
+<h3 id="1-3-知己知彼"><a href="#1-3-知己知彼" class="headerlink" title="1.3 - 知己知彼"></a>1.3 - 知己知彼</h3><p>这种阅读方式要求就比较高了，通过去阅读不通框架对于相同功能的实现方式，来思考实现方式的优劣和使用场景。（反正我不会，我只会YY- -）比如说：</p>
+<blockquote>
+<ol>
+<li>React和Vue在做变化侦查的实现方式上有什么区别？（被动pull还是主动push）</li>
+<li>Vue和React的Virtual Dom实现上有哪些差异？</li>
+<li>Vue的声明式组件和React的JSX有什么优劣，各自的实现方式如何？</li>
+<li>React生态中为什么在Redux（对应vuex）之后又出现了Mobx，两者的核心思路有哪些区别？</li>
+<li>等等…</li>
+</ol>
+</blockquote>
+<h2 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h2><h3 id="2-1-提出问题"><a href="#2-1-提出问题" class="headerlink" title="2.1 提出问题"></a>2.1 提出问题</h3><p>好像废话太多了，这片文章会试着从遇到的问题来讲讲Vue的部分源码，内容会比较杂，基本按照我的思考路径来记述。</p>
+<p>问题的发现者是P同学（感谢提供了素材！！！），他发现了一个疑似<code>keep-alive</code>组件的bug，<code>keep-alive</code>组件暴露了两个API，分别是<code>include</code>和<code>exclude</code>，用于控制哪些组件需要被缓存。但是实际的实现效果是被<code>include</code>剔除的组件并没有被销毁，我们可以通过vue-tools看下，实际效果如图：</p>
+<p><img src="https://haitao.nos.netease.com/d2845371-c01a-46c8-baca-2a1d35fb2855.gif"></p>
+<p>应P同学建议贴一下工程里对应的代码：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">template</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">div</span>&gt;</span></div><div class="line">        <span class="tag">&lt;<span class="name">keep-alive</span> <span class="attr">:include</span>=<span class="string">"include"</span>&gt;</span></div><div class="line">            <span class="tag">&lt;<span class="name">router-view</span> /&gt;</span></div><div class="line">        <span class="tag">&lt;/<span class="name">keep-alive</span>&gt;</span></div><div class="line">    <span class="tag">&lt;/<span class="name">div</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">template</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="javascript"></span></div><div class="line"><span class="keyword">import</span> &#123;</div><div class="line">    mapState,</div><div class="line">    mapMutations</div><div class="line">&#125; <span class="keyword">from</span> <span class="string">'vuex'</span>;</div><div class="line"></div><div class="line"><span class="keyword">export</span> <span class="keyword">default</span> &#123;</div><div class="line">    <span class="attr">computed</span>: &#123;</div><div class="line">        ...mapState(&#123;</div><div class="line">            <span class="attr">tabList</span>: <span class="function"><span class="params">state</span> =&gt;</span> state.tabList</div><div class="line">        &#125;),</div><div class="line">        include() &#123;</div><div class="line">            <span class="keyword">return</span> <span class="keyword">this</span>.tabList.map(<span class="function"><span class="params">tab</span> =&gt;</span> tab.key).join(<span class="string">','</span>);</div><div class="line">        &#125;</div><div class="line">    &#125;,</div><div class="line">    <span class="attr">methods</span>: &#123;</div><div class="line">        ...mapMutations([<span class="string">'SWITCHTAB_REQUEST'</span>]),</div><div class="line">        handleSwitchTab(item) &#123;</div><div class="line">            <span class="keyword">if</span> (item.route) &#123;</div><div class="line">                <span class="keyword">this</span>.SWITCHTAB_REQUEST(&#123;</div><div class="line">                    <span class="attr">key</span>: item.route, <span class="attr">name</span>: item.name, <span class="attr">muti</span>: <span class="literal">false</span></div><div class="line">                &#125;);</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;;</div><div class="line"><span class="tag">&lt;/<span class="name">script</span>&gt;</span></div></pre></td></tr></table></figure>
+<p>页面中的拖拽左侧菜单栏对应加入到<code>include</code>操作，关闭tab对应剔除出<code>include</code>操作。可以发现，如果不断重复加入<code>include</code>和剔除<code>include</code>操作的话，通过Vue devtools工具可以看到重复的组件会不断累加，之前的组件不会被销毁。</p>
+<p>查看当前的Vue版本是<code>v2.5.2</code>，查看了之前的老工程<code>v2.2.6</code>版本不会存在这个问题，看来小右哥哥又悄悄写bug了……emmm让我们来看看这个bug悄悄写到哪里了。这部分对应的代码非常好找，就在<a href="https://github.com/vuejs/vue/blob/dev/src/core/components/keep-alive.js" target="_blank" rel="external"><code>src/core/components/keep-alive.js</code>里面</a>，先来分析下keep-alive组件的实现，可以看到还是比较简单的。</p>
+<ol>
+<li>keep-alive组件提供了Render函数，cache的逻辑基本就是这个函数来控制，获取到$slots的结点作为自己的vnode（这里注意，如果没有配置组件的name属性的话，keep-alive会用组件的tag作为name，因此如果要配合<code>include</code>和<code>exclude</code>使用的话，组件必须配置name属性）。</li>
+<li>判断组件是否在include列表，如果没有就直接返回这个vnode节点</li>
+<li>如果组件在include列表内，判断组件之前是否被缓存过，如果没有，则缓存到cache对象里，如果有，则从cache对象里取出返回。</li>
+</ol>
+<p>然后对比两个版本的代码差异，很快就可以发现问题代码了，下面是关键伪代码：</p>
+<p>这是v2.5.2</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">// v2.5.2</div><div class="line"></div><div class="line">function pruneCacheEntry (</div><div class="line">  <span class="keyword">cache</span>: VNodeCache,</div><div class="line">  <span class="keyword">key</span>: <span class="keyword">string</span>,</div><div class="line">  <span class="keyword">keys</span>: <span class="built_in">Array</span>&lt;<span class="keyword">string</span>&gt;,</div><div class="line">  <span class="keyword">current</span>?: VNode</div><div class="line">) &#123;</div><div class="line">  const cached = <span class="keyword">cache</span>[<span class="keyword">key</span>]</div><div class="line">  <span class="keyword">if</span> (cached &amp;&amp; (!<span class="keyword">current</span> || cached.tag !== current.tag)) &#123;</div><div class="line">    cached.componentInstance.$destroy()</div><div class="line">  &#125;</div><div class="line">  <span class="keyword">cache</span>[<span class="keyword">key</span>] = <span class="literal">null</span></div><div class="line">  remove(<span class="keyword">keys</span>, <span class="keyword">key</span>)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>这是v2.2.6：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// v2.2.6</span></div><div class="line"></div><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">pruneCacheEntry</span> <span class="params">(vnode: ?VNode)</span> </span>&#123;</div><div class="line">  <span class="keyword">if</span> (vnode) &#123;</div><div class="line">    <span class="keyword">if</span> (!vnode.componentInstance._inactive) &#123;</div><div class="line">      callHook(vnode.componentInstance, <span class="string">'deactivated'</span>)</div><div class="line">    &#125;</div><div class="line">    vnode.componentInstance.$destroy()</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>可以发现，两者的区别在于，v2.5.2版本在<code>destroy</code>组件的时候加了判断，如果是当前渲染的组件，不能被销毁。再结合我们刚才看到的gif图就比较好理解了，我们关闭一个tab的时候，这个视图还是当前被渲染的，这时候就不会被destroy了。而且这个key还从keys数组中移除了，下一次遍历缓存的时候就不会遍历到这个组件了，就导致了刚才看到的那个bug。</p>
+<h3 id="2-2-解决问题"><a href="#2-2-解决问题" class="headerlink" title="2.2 解决问题"></a>2.2 解决问题</h3><p>知道了问题原因之后，开始思考如何解决这个问题。我们先把Vue更新到当前最新的v2.5.16版本，看看尤大是不是已经偷偷修复了这个bug。</p>
+<p>蛤？还真的修了呢……</p>
+<p><img src="https://haitao.nos.netease.com/515dd6d2-30fe-40e7-b4c8-7218c9a03cb2.gif"></p>
+<p>让我来看看大佬是怎么修bug的，经过反复侦查，发现了这条可疑提交：</p>
+<p><img src="https://haitao.nos.netease.com/0b6b3101-4bdc-4494-a8ac-49c6acc98c10.jpeg"></p>
+<p>经过切换版本测试，发现确实是这个提交修复了这个bug，把watch放到mounted函数里就解决这个问题了？？？</p>
+<p>我感觉自己被降维打击了orz</p>
+<p><img src="https://haitao.nos.netease.com/c1e71041-2c04-4f4a-9e01-15f961cf7342.jpg"></p>
+<h3 id="2-3-分析问题"><a href="#2-3-分析问题" class="headerlink" title="2.3 分析问题"></a>2.3 分析问题</h3><p>通常我们都是先分析问题再解决问题，既然尤大已经解决了，那就回过来分析下是怎么解决的。</p>
+<p>要解释这个问题，本质就是搞清楚在构造器里传递watch和在mounted中调用vm.$watch的区别。单纯看代码diff，一下子真的看不出这个解决问题的思路，我需要debug这部分代码进去看看！这时候一个新的坑开始了（不想看这个坑的可以直接跳过这段- -</p>
+<h4 id="2-3-1-调试Vue代码"><a href="#2-3-1-调试Vue代码" class="headerlink" title="2.3.1 调试Vue代码"></a>2.3.1 调试Vue代码</h4><p>要在自己的工程里debug Vue的源码，我的思路很简单（如果不是调试自己工程，Vue工程官方就提供了一些example）：</p>
+<ol>
+<li>把<a href="https://github.com/vuejs/vue" target="_blank" rel="external">Vue</a>工程clone下来，运行工程的dev模式（会监听源码变化生成dist目录）。</li>
+<li>把工程里<code>import Vue from &#39;vue&#39;</code>的地方全部替换成从这个工程里引入。</li>
+</ol>
+<p>现实总是骨感的，做完上面两步，页面妥妥打不开了- -</p>
+<p><img src="https://haitao.nos.netease.com/9180c146-71a1-4593-bdb9-9df08fc41b59.jpeg"></p>
+<p>查看调用关系，发现<code>this.$router</code>变成undefined了。我换个Vue的dist文件关你vue-router什么事咯（摔</p>
+<p>经过一通理（xia）性（bi）猜测和调试，还是没有解决问题，我生气了，今天不解决这个问题不回家了……</p>
+<p>既然是<code>this.$router</code>这个对象找不到，那就先去vue-route的源码里看看这个对象是怎么放到vm实例上的，看vue的插件肯定先从插件的<a href="https://github.com/vuejs/vue-router/blob/dev/src/install.js" target="_blank" rel="external">install.js</a>看起了。</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">Object.defineProperty(Vue.prototype, <span class="string">'$route'</span>, &#123;</div><div class="line">    <span class="keyword">get</span> () &#123; <span class="keyword">return</span> <span class="keyword">this</span>._routerRoot._route &#125;</div><div class="line">&#125;)</div></pre></td></tr></table></figure>
+<p>因吹斯汀，和大部分的Vue实例属性一样，这个$router也是直接放在了Vue这个构造函数的原型链上，这样在new Vue()的时候，每一个组件都会拥有这个对象，按照这样的思路，不应该出现$router找不到情况才对，只能继续看<code>_routerRoot</code>从哪里来</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">Vue.mixin(&#123;</div><div class="line">    beforeCreate () &#123;</div><div class="line">      <span class="keyword">if</span> (isDef(<span class="keyword">this</span>.$options.router)) &#123;</div><div class="line">        <span class="keyword">this</span>._routerRoot = <span class="keyword">this</span></div><div class="line">        <span class="keyword">this</span>._router = <span class="keyword">this</span>.$options.router</div><div class="line">        <span class="keyword">this</span>._router.init(<span class="keyword">this</span>)</div><div class="line">        Vue.util.defineReactive(<span class="keyword">this</span>, <span class="string">'_route'</span>, <span class="keyword">this</span>._router.history.current)</div><div class="line">      &#125; <span class="keyword">else</span> &#123;</div><div class="line">        <span class="keyword">this</span>._routerRoot = (<span class="keyword">this</span>.$parent &amp;&amp; <span class="keyword">this</span>.$parent._routerRoot) || <span class="keyword">this</span></div><div class="line">      &#125;</div><div class="line">      registerInstance(<span class="keyword">this</span>, <span class="keyword">this</span>)</div><div class="line">    &#125;,</div><div class="line">    destroyed () &#123;</div><div class="line">      registerInstance(<span class="keyword">this</span>)</div><div class="line">    &#125;</div><div class="line">  &#125;)</div></pre></td></tr></table></figure>
+<p>我们在工程里的main.js里初始化根结点组件的时候都会这么写</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="selector-tag">new</span> <span class="selector-tag">Vue</span>(&#123;</div><div class="line">    <span class="attribute">el</span>: <span class="string">'#app'</span>,</div><div class="line">    router</div><div class="line">&#125;);</div></pre></td></tr></table></figure>
+<p>这里提供的router对象就被设置在了这个应用的根节点组件，然后子节点依次去父节点获取。</p>
+<p>我在应用内输出根节点的$router对象，发现是存在的，但是输出子节点就发现不存在了，真相只有一个，那就是子节点不是亲生的！皮一下很开心。</p>
+<p>这时候基本想清楚原因了，其实是因为子节点的构造函数和父节点不是同一个，原型链上并没有$router对象。我们知道根节点的构造函数就是通过<code>import Vue from &#39;vue&#39;</code>引入的，那么子节点呢？我们知道子节点都是vue单文件，是由vue-loader去解析的，猛然想起webpack有一处配置。</p>
+<figure class="highlight gams"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">alias</span>: &#123;</div><div class="line">    vue<span class="symbol">$</span>: <span class="string">'vue/dist/vue.esm.js'</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>没错，只要把这一处的路径也替换就好了- -</p>
+<p>这个别名不确定会在哪里会引用到，没有深入探究，有熟悉的同学可以告知下～</p>
+<h4 id="2-3-2-发现真相"><a href="#2-3-2-发现真相" class="headerlink" title="2.3.2 发现真相"></a>2.3.2 发现真相</h4><p>——————————————重点分割线—————————————</p>
+<p>废话了这么久，回过头再看<code>keep-alive</code>这段简化后的代码：</p>
+<figure class="highlight processing"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div></pre></td><td class="code"><pre><div class="line">function pruneCache (keepAliveInstance: any, <span class="built_in">filter</span>: Function) &#123;</div><div class="line">  <span class="keyword">const</span> &#123; cache, keys, _vnode &#125; = keepAliveInstance</div><div class="line">  <span class="keyword">for</span> (<span class="keyword">const</span> <span class="built_in">key</span> in cache) &#123;</div><div class="line">    <span class="keyword">const</span> cachedNode: ?VNode = cache[<span class="built_in">key</span>]</div><div class="line">    <span class="keyword">if</span> (cachedNode) &#123;</div><div class="line">      <span class="keyword">const</span> name: ?string = getComponentName(cachedNode.componentOptions)</div><div class="line">      <span class="keyword">if</span> (name &amp;&amp; !<span class="built_in">filter</span>(name)) &#123;</div><div class="line">        pruneCacheEntry(cache, <span class="built_in">key</span>, keys, _vnode)</div><div class="line">      &#125;</div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line">function pruneCacheEntry (</div><div class="line">  cache: VNodeCache,</div><div class="line">  <span class="built_in">key</span>: string,</div><div class="line">  keys: <span class="keyword">Array</span>&lt;string&gt;,</div><div class="line">  current?: VNode</div><div class="line">) &#123;</div><div class="line">  <span class="keyword">const</span> cached = cache[<span class="built_in">key</span>]</div><div class="line">  <span class="keyword">if</span> (cached &amp;&amp; (!current || cached.tag !== current.tag)) &#123;</div><div class="line">    cached.componentInstance.$destroy()</div><div class="line">  &#125;</div><div class="line">  cache[<span class="built_in">key</span>] = <span class="keyword">null</span></div><div class="line">  remove(keys, <span class="built_in">key</span>)</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">const</span> patternTypes: <span class="keyword">Array</span>&lt;Function&gt; = [<span class="keyword">String</span>, RegExp, <span class="keyword">Array</span>]</div><div class="line"></div><div class="line">export <span class="keyword">default</span> &#123;</div><div class="line">  name: <span class="string">'keep-alive'</span>,</div><div class="line">  <span class="keyword">abstract</span>: <span class="keyword">true</span>,</div><div class="line">  mounted () &#123;</div><div class="line">    <span class="keyword">this</span>.$watch(<span class="string">'include'</span>, val =&gt; &#123;</div><div class="line">      pruneCache(<span class="keyword">this</span>, name =&gt; matches(val, name))</div><div class="line">    &#125;)</div><div class="line">    <span class="keyword">this</span>.$watch(<span class="string">'exclude'</span>, val =&gt; &#123;</div><div class="line">      pruneCache(<span class="keyword">this</span>, name =&gt; !matches(val, name))</div><div class="line">    &#125;)</div><div class="line">  &#125;,</div><div class="line"></div><div class="line">  render () &#123;</div><div class="line">    <span class="keyword">const</span> slot = <span class="keyword">this</span>.$slots.<span class="keyword">default</span></div><div class="line">    <span class="keyword">const</span> vnode: VNode = getFirstComponentChild(slot)</div><div class="line">    <span class="keyword">const</span> componentOptions: ?VNodeComponentOptions = vnode &amp;&amp; vnode.componentOptions</div><div class="line">    <span class="keyword">if</span> (componentOptions) &#123;</div><div class="line">      <span class="comment">// check pattern</span></div><div class="line">      <span class="keyword">const</span> name: ?string = getComponentName(componentOptions)</div><div class="line">      <span class="keyword">const</span> &#123; include, exclude &#125; = <span class="keyword">this</span></div><div class="line">      <span class="keyword">if</span> (</div><div class="line">        <span class="comment">// not included</span></div><div class="line">        (include &amp;&amp; (!name || !matches(include, name))) ||</div><div class="line">        <span class="comment">// excluded</span></div><div class="line">        (exclude &amp;&amp; name &amp;&amp; matches(exclude, name))</div><div class="line">      ) &#123;</div><div class="line">        <span class="keyword">return</span> vnode</div><div class="line">      &#125;</div><div class="line"></div><div class="line">      <span class="keyword">const</span> &#123; cache, keys &#125; = <span class="keyword">this</span></div><div class="line">      <span class="keyword">const</span> <span class="built_in">key</span>: ?string = vnode.<span class="built_in">key</span> == <span class="keyword">null</span></div><div class="line">        <span class="comment">// same constructor may get registered as different local components</span></div><div class="line">        <span class="comment">// so cid alone is not enough (#3269)</span></div><div class="line">        ? componentOptions.Ctor.cid + (componentOptions.tag ? `::$&#123;componentOptions.tag&#125;` : <span class="string">''</span>)</div><div class="line">        : vnode.<span class="built_in">key</span></div><div class="line">      <span class="keyword">if</span> (cache[<span class="built_in">key</span>]) &#123;</div><div class="line">        vnode.componentInstance = cache[<span class="built_in">key</span>].componentInstance</div><div class="line">        <span class="comment">// make current key freshest</span></div><div class="line">        remove(keys, <span class="built_in">key</span>)</div><div class="line">        keys.push(<span class="built_in">key</span>)</div><div class="line">      &#125; <span class="keyword">else</span> &#123;</div><div class="line">        cache[<span class="built_in">key</span>] = vnode</div><div class="line">        keys.push(<span class="built_in">key</span>)</div><div class="line">        <span class="comment">// prune oldest entry</span></div><div class="line">        <span class="keyword">if</span> (<span class="keyword">this</span>.<span class="built_in">max</span> &amp;&amp; keys.length &gt; parseInt(<span class="keyword">this</span>.<span class="built_in">max</span>)) &#123;</div><div class="line">          pruneCacheEntry(cache, keys[<span class="number">0</span>], keys, <span class="keyword">this</span>._vnode)</div><div class="line">        &#125;</div><div class="line">      &#125;</div><div class="line"></div><div class="line">      vnode.data.keepAlive = <span class="keyword">true</span></div><div class="line">    &#125;</div><div class="line">    <span class="keyword">return</span> vnode || (slot &amp;&amp; slot[<span class="number">0</span>])</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>查看调用关系之后，我们发现判断那里增加的<code>current</code>参数就是<code>this._vnode</code>。而每次切换路由的时候，<code>keep-alive</code>的render函数都会重新调用渲染，<code>this._vnode</code>都会变成<em>路由切换后</em>的页面节点。</p>
+<p>断点调试之后，发现如果是通过在watch选项中监听include参数的话，会先调用include变化的回调，然后再调用Render函数，这样的话，在调用pruneCache修整缓存的时候，因为Render函数还没有被调用，也就是<em>路由切换前节点</em>还被认为是<code>current</code>，也就没办法销毁了。</p>
+<p>相反的，如果是在mounted函数中通过this.$watch监听的话，会先调用Render函数再回调include变化的回调，这样在调用pruneCache的时候<code>this._vnode</code>已经指向了<em>路由切换后节点</em>，那么老页面就可以正常销毁了。</p>
+<p>从<a href="https://163.lu/k/7RCid1" target="_blank" rel="external">这篇文章</a>中，我们梳理过，如果以watch选项的方式来监听的话，会在created阶段创建Watcher来进行监听，那么问题就简化成了，<code>created</code>中的回调,<code>mounted</code>中的回调,<code>Render()</code>这三个函数的调用时机是怎样的。</p>
+<p>看似问题已经简化了，但其实这才刚开始进入重点，我们还有几个核心问题没有理清楚，也是我在看源码过程中花费时间最久的过程：</p>
+<ol>
+<li>new Wathcer()到底做了什么事情？</li>
+<li>为什么每次<code>include</code>变化的时候Render函数都会被重新调用？</li>
+<li>如果有多个Watcher，调用顺序是怎样的？</li>
+</ol>
+<h2 id="Vue的响应式系统"><a href="#Vue的响应式系统" class="headerlink" title="Vue的响应式系统"></a>Vue的响应式系统</h2><p>要解释上面这些问题，涉及到的源码文件比较多，调用关系也比较复杂，我发现贴代码来描述不如画图来的直观，我根据自己理解画了下面这张图，这张图只是响应式系统的一部分，但是用来解释上面这几个问题足够了，我们假设我们同时在<code>created</code>和<code>mounted</code>阶段都监听了<code>include</code>字段。</p>
+<p><img src="https://haitao.nos.netease.com/56aecdc3-c4a1-42c4-aa75-757b8446d8ea.png"></p>
+<p>我们来按照代码的执行逻辑分析下这张图：</p>
+<ol>
+<li>首先在生命周期那边文章中我们知道，在<code>_initData</code>的过程中，会对所有的data进行递归调用<code>defineReactive</code>，这一步甚至早于<code>_initWatcher</code>，这样我们的<code>include</code>字段就变成了一个响应式数据，拥有<code>get</code>和<code>set</code>方法</li>
+<li>下一步就是<code>_initWatch</code>的时候，也就是处理Vue实例的<code>watch</code>选项，对应上面的<code>created</code>阶段，在<code>new Watcher()</code>的过程中，会对这个监听的表达式进行求值，这时候就触发了<code>get</code>函数中的依赖收集，依赖被收集到<code>Dep</code>的<code>subs</code>中对应图中的Watcher1（Watcher的uid是一个递增字段，用来作为<code>Watcher</code>的唯一标志）,这里解释了第一个问题，重点在于触发依赖收集。</li>
+<li>生命周期那篇文章中提过，在初始化完Vue实例的各种属性之后就会调用<code>$mount</code>函数，这个函数最重要的作用就是去调用<code>_render</code>函数，同样这个函数还有一个非常重要的作用就是会调用new Watcher()，可以理解为<code>_render</code>就是这个watcher的回调函数，就这样，图中的Watcher2也被收集到了Dep中。</li>
+<li><code>_render</code>函数执行完之后，就会调用<code>mounted</code>这个生命周期的钩子函数，其实从函数名也能看出来。这时候我们调用this.$watch，<code>$watch</code>只是对<code>Watcher</code>的一个封装，同样的，和第二步一样，这个Watcher3就收集到依赖中。</li>
+<li>这时候我们去关闭tab的时候，也就触发了<code>include</code>的<code>set</code>方法(实际上数组的变化监听是通过代理掉数组的原生方法)，这个时候就会在<code>set</code>中调用<code>Dep</code>的<code>notify</code>方法，<code>notify</code>会被遍历调用之前收集到的Watcher，那么调用的顺序是什么样的呢，在调用之前，会先按照Watcher的id进行排序，这里就解释了上面提到的第三个问题，所以会先调用<code>created</code>的<code>watcher</code>，然后是<code>Render</code>的，最后是<code>mounted</code>的。</li>
+<li>那么Watcher的调用是如何执行的呢，我们知道我们在写<code>$watch</code>的时候，会传入一个回调函数，这种Watcher在调用的时候就是直接调用了这个回调函数，那么问题来了，图中的Watcher2是Vue内部生成的，没有回调，怎么办？实际上Vue内部会把<code>updateComponent</code>作为这种<code>RenderWatcher</code>的回调，这个函数会重新触发<code>_render</code>函数。这就解释了上面的第二个问题，所以我们的调用顺序就是<code>created</code>中的回调，<code>Render()</code>，最后是<code>mounted</code>中的回调。</li>
+</ol>
+<blockquote>
+<p>Vue中的Watcher有两种类型，一种是UserWatcher，也就是用户调用$watch的时候生成的，还有一种是RenderWatcher，Vue内部监听响应式数据用的。</p>
+</blockquote>
+<p>至此，虽然这中间我们漏掉了一些很有意思的细节代码，但是也可以说是完美解释清楚了尤大解决这个bug的思路。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>这篇文章主要就是通过用前文提到的第二种阅读源码的方式来带着问题去读，我觉得还是颇有收获的。看似一个很普通的bug，但是如果深入去分析作者解决这个bug的思路的时候，会发现Vue内部确实做了很多有意思的事情。</p>
+<p>其实在上文我已经列了一些我觉得比较有意思的可以去深入学习研究的点，这个时候就可以像前文说的那样去逐个击破啦，苟…利国家…….</p>
+
+
+                <hr>
+
+                
+
+                <ul class="pager">
+                    
+                        <li class="previous">
+                            <a href="/2018/08/25/Vue源码学习-结合EventLoop看nextTick/" data-toggle="tooltip" data-placement="top" title="Vue源码学习-结合EventLoop看nextTick">&larr; Previous Post</a>
+                        </li>
+                    
+                    
+                        <li class="next">
+                            <a href="/2018/08/03/聊聊个人任务管理/" data-toggle="tooltip" data-placement="top" title="聊聊个人任务管理">Next Post &rarr;</a>
+                        </li>
+                    
+                </ul>
+
+                
+
+                
+
+            </div>
+    <!-- Side Catalog Container -->
+        
+
+    <!-- Sidebar Container -->
+
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                       
+                          <a class="tag" href="/tags/#technique" title="technique">technique</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+                <hr>
+                <h5>FRIENDS</h5>
+                <ul class="list-inline">
+
+                    
+                        <li><a href="https://palmerye.github.io/palmer-blog/" target="_blank">Palmer Blog</a></li>
+                    
+                </ul>
+                
+            </div>
+
+        </div>
+    </div>
+</article>
+
+
+
+
+
+
+
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                
+                
+                
+                    <li>
+                        <a target="_blank" href="https://www.zhihu.com/people/yeomanyang">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa  fa-stack-1x fa-inverse">知</i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/yeomanyang">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; Yeoman&#39;s Blog 2018 
+                    <br>
+                    Theme by <a href="http://huangxuan.me">Hux</a> 
+                    <span style="display: inline-block; margin: 0 5px;">
+                        <i class="fa fa-heart"></i>
+                    </span> 
+                    Ported by <a href="http://blog.kaijun.rocks">Kaijun</a> | 
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="91px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=kaijun&repo=hexo-theme-huxblog&type=star&count=true" >
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="/js/jquery.min.js"></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="/js/bootstrap.min.js"></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/hux-blog.min.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- 
+     Because of the native support for backtick-style fenced code blocks 
+     right within the Markdown is landed in Github Pages, 
+     From V1.6, There is no need for Highlight.js, 
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0  
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/    
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("https://yeomanyang.github.io/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+
+<script>
+    // dynamic User by Hux
+    var _gaId = 'UA-90487102-1';
+    var _gaDomain = 'undefined';
+
+    // Originial
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', _gaId, _gaDomain);
+    ga('send', 'pageview');
+</script>
+
+
+
+
+<!-- Baidu Tongji -->
+
+<script>
+    // dynamic User by Hux
+    var _baId = 'c7f7936268a976be71b91508db530dfa';
+
+    // Originial
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?" + _baId;
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+</script>
+
+
+<!-- Side Catalog -->
+
+
+
+
+
+<!-- Image to hack wechat -->
+<img src="https://yeomanyang.github.io/img/icon_wechat.png" width="0" height="0" />
+<!-- Migrate from head to bottom, no longer block render and still work -->
+
+</body>
+
+</html>
