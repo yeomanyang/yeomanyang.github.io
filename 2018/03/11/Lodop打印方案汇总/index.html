@@ -2,13 +2,13 @@
 <html lang="en">
 
 <!-- Head tag -->
-<head>
+<head><meta name="generator" content="Hexo 3.8.0">
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="Talk is cheap, show me the code.">
-    <meta name="keyword"  content="">
+    <meta name="keyword" content="">
     <link rel="shortcut icon" href="/img/favicon.ico">
 
     <title>
@@ -90,14 +90,14 @@
 
                         
                         <li>
-                            <a href="/archives/">Archives</a>
+                            <a href="/about/">About</a>
                         </li>
                         
                     
 
                         
                         <li>
-                            <a href="/about/">About</a>
+                            <a href="/archives/">Archives</a>
                         </li>
                         
                     
@@ -161,12 +161,14 @@
         background-image: url('/img/home-bg.jpg')
     }
 </style>
-<header class="intro-header" >
+<header class="intro-header">
     <div class="container">
         <div class="row">
             <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
                 <div class="post-heading">
                     <div class="tags">
+                        
+                          <a class="tag" href="/tags/#Tools" title="Tools">Tools</a>
                         
                     </div>
                     <h1>Lodop打印方案汇总</h1>
@@ -192,7 +194,7 @@
                 col-md-10 col-md-offset-1
                 post-container">
 
-                <p>目前WMS以及考拉小店系统内的打印方案用的都是客户端打印的方案，借助了<a href="http://www.lodop.net/" target="_blank" rel="external">Lodop</a>打印控件来完成打印操作。</p>
+                <p>目前WMS以及考拉小店系统内的打印方案用的都是客户端打印的方案，借助了<a href="http://www.lodop.net/" target="_blank" rel="noopener">Lodop</a>打印控件来完成打印操作。</p>
 <h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><h5 id="Q：为什么需要借助Lodop，而不直接用window-print-？"><a href="#Q：为什么需要借助Lodop，而不直接用window-print-？" class="headerlink" title="Q：为什么需要借助Lodop，而不直接用window.print()？"></a>Q：为什么需要借助Lodop，而不直接用<code>window.print()</code>？</h5><p>A：我们的业务场景有几点是<code>window.print()</code>无法满足的，比如：</p>
 <blockquote>
 <ol>
@@ -209,8 +211,8 @@
 <li>浏览器端需要去加载这个http服务上的一个JS文件，这个JS文件中会建立浏览器和Lodop客户端的websocket链接</li>
 <li>浏览器端通过websocket发送打印指令，Lodop接收指令，调用系统原生打印方法进行打印控制</li>
 </ol>
-<h2 id="如何在系统中使用"><a href="#如何在系统中使用" class="headerlink" title="如何在系统中使用"></a>如何在系统中使用</h2><h4 id="1-安装Lodop"><a href="#1-安装Lodop" class="headerlink" title="1. 安装Lodop"></a>1. 安装Lodop</h4><p>到<a href="http://www.lodop.net/download.html" target="_blank" rel="external">Lodop官网</a>下载Lodop综合版，安装在连接打印机的主机上。</p>
-<h4 id="2-在需要打印的系统中引入下面的初始化脚本。"><a href="#2-在需要打印的系统中引入下面的初始化脚本。" class="headerlink" title="2. 在需要打印的系统中引入下面的初始化脚本。"></a>2. 在需要打印的系统中引入下面的<a href="http://oksj4hknl.bkt.clouddn.com/LodopFuncs.js" target="_blank" rel="external">初始化脚本</a>。</h4><h4 id="3-初始化完Lodop实例之后就可以根据官网的Lodop技术手册来调用相应的打印接口了。"><a href="#3-初始化完Lodop实例之后就可以根据官网的Lodop技术手册来调用相应的打印接口了。" class="headerlink" title="3. 初始化完Lodop实例之后就可以根据官网的Lodop技术手册来调用相应的打印接口了。"></a>3. 初始化完Lodop实例之后就可以根据官网的Lodop技术手册来调用相应的打印接口了。</h4><h2 id="一些坑"><a href="#一些坑" class="headerlink" title="一些坑"></a>一些坑</h2><p>看起来Lodop的使用比较简单，但是真正开发的时候会发现里面坑很多，下面记录一些目前已知的坑和解决方案。</p>
+<h2 id="如何在系统中使用"><a href="#如何在系统中使用" class="headerlink" title="如何在系统中使用"></a>如何在系统中使用</h2><h4 id="1-安装Lodop"><a href="#1-安装Lodop" class="headerlink" title="1. 安装Lodop"></a>1. 安装Lodop</h4><p>到<a href="http://www.lodop.net/download.html" target="_blank" rel="noopener">Lodop官网</a>下载Lodop综合版，安装在连接打印机的主机上。</p>
+<h4 id="2-在需要打印的系统中引入下面的初始化脚本。"><a href="#2-在需要打印的系统中引入下面的初始化脚本。" class="headerlink" title="2. 在需要打印的系统中引入下面的初始化脚本。"></a>2. 在需要打印的系统中引入下面的<a href="http://oksj4hknl.bkt.clouddn.com/LodopFuncs.js" target="_blank" rel="noopener">初始化脚本</a>。</h4><h4 id="3-初始化完Lodop实例之后就可以根据官网的Lodop技术手册来调用相应的打印接口了。"><a href="#3-初始化完Lodop实例之后就可以根据官网的Lodop技术手册来调用相应的打印接口了。" class="headerlink" title="3. 初始化完Lodop实例之后就可以根据官网的Lodop技术手册来调用相应的打印接口了。"></a>3. 初始化完Lodop实例之后就可以根据官网的Lodop技术手册来调用相应的打印接口了。</h4><h2 id="一些坑"><a href="#一些坑" class="headerlink" title="一些坑"></a>一些坑</h2><p>看起来Lodop的使用比较简单，但是真正开发的时候会发现里面坑很多，下面记录一些目前已知的坑和解决方案。</p>
 <h5 id="Q：Lodop打印出来的页面带有水印，如何去除？"><a href="#Q：Lodop打印出来的页面带有水印，如何去除？" class="headerlink" title="Q：Lodop打印出来的页面带有水印，如何去除？"></a>Q：Lodop打印出来的页面带有水印，如何去除？</h5><p>A： Lodop默认打印出来会带有一个Lodop的水印，如果需要去掉水印的话需要购买他们的License。</p>
 <h5 id="Q：为什么不同的电脑打印出来的效果不一致？"><a href="#Q：为什么不同的电脑打印出来的效果不一致？" class="headerlink" title="Q：为什么不同的电脑打印出来的效果不一致？"></a>Q：为什么不同的电脑打印出来的效果不一致？</h5><p>A： 1. Lodop在渲染的时候调用的是本机的ie浏览器渲染引擎，所以需要在安装Lodop的机子上安装ie11，我在仓库实施的过程中发现ie11以下的浏览器版本会因为CSS兼容性问题会出现布局混乱。2. 如果安装了最新版本的ie还是发现打印异常，可以尝试切换对应打印机的打印机驱动</p>
 <h5 id="Q：在打印之前是不是先写好一个HTML模版再去直接打印就好了？"><a href="#Q：在打印之前是不是先写好一个HTML模版再去直接打印就好了？" class="headerlink" title="Q：在打印之前是不是先写好一个HTML模版再去直接打印就好了？"></a>Q：在打印之前是不是先写好一个HTML模版再去直接打印就好了？</h5><p>A： 我们在Chrome等浏览器下预览的HTML模版和实际打印的效果存在一些偏差，需要调用Lodop.PREVIEW()来预览打印效果。</p>
@@ -259,6 +261,8 @@
                     <h5><a href="/tags/">FEATURED TAGS</a></h5>
                     <div class="tags">
                        
+                          <a class="tag" href="/tags/#Tools" title="Tools">Tools</a>
+                        
                     </div>
                 </section>
                 
@@ -314,7 +318,7 @@
 
                 
                     <li>
-                        <a target="_blank"  href="https://github.com/yeomanyang">
+                        <a target="_blank" href="https://github.com/yeomanyang">
                             <span class="fa-stack fa-lg">
                                 <i class="fa fa-circle fa-stack-2x"></i>
                                 <i class="fa fa-github fa-stack-1x fa-inverse"></i>
@@ -334,10 +338,7 @@
                         <i class="fa fa-heart"></i>
                     </span> 
                     Ported by <a href="http://blog.kaijun.rocks">Kaijun</a> | 
-                    <iframe
-                        style="margin-left: 2px; margin-bottom:-5px;"
-                        frameborder="0" scrolling="0" width="91px" height="20px"
-                        src="https://ghbtns.com/github-btn.html?user=kaijun&repo=hexo-theme-huxblog&type=star&count=true" >
+                    <iframe style="margin-left: 2px; margin-bottom:-5px;" frameborder="0" scrolling="0" width="91px" height="20px" src="https://ghbtns.com/github-btn.html?user=kaijun&repo=hexo-theme-huxblog&type=star&count=true">
                     </iframe>
                 </p>
             </div>

@@ -2,13 +2,13 @@
 <html lang="en">
 
 <!-- Head tag -->
-<head>
+<head><meta name="generator" content="Hexo 3.8.0">
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="Talk is cheap, show me the code.">
-    <meta name="keyword"  content="">
+    <meta name="keyword" content="">
     <link rel="shortcut icon" href="/img/favicon.ico">
 
     <title>
@@ -90,14 +90,14 @@
 
                         
                         <li>
-                            <a href="/archives/">Archives</a>
+                            <a href="/about/">About</a>
                         </li>
                         
                     
 
                         
                         <li>
-                            <a href="/about/">About</a>
+                            <a href="/archives/">Archives</a>
                         </li>
                         
                     
@@ -161,14 +161,14 @@
         background-image: url('/img/home-bg.jpg')
     }
 </style>
-<header class="intro-header" >
+<header class="intro-header">
     <div class="container">
         <div class="row">
             <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
                 <div class="post-heading">
                     <div class="tags">
                         
-                          <a class="tag" href="/tags/#technique" title="technique">technique</a>
+                          <a class="tag" href="/tags/#HTTP" title="HTTP">HTTP</a>
                         
                     </div>
                     <h1>聊聊「跨域请求」这个事</h1>
@@ -195,7 +195,7 @@
                 post-container">
 
                 <p>这篇文章的目的就是讲清楚跨域网络请求这件事情。</p>
-<h2 id="浏览器的同源策略"><a href="#浏览器的同源策略" class="headerlink" title="浏览器的同源策略"></a>浏览器的同源策略</h2><p>浏览器的同源策略是引发跨域问题的根本原因，同源策略限制从一个 <em>源</em> 加载的文档或脚本如何与来自另一个 <em>源</em> 的资源进行交互。<br>那么如何来判断两个URL是否是属于同一个 <em>源</em> 呢？<br>假设我们当前的URL为：<a href="http://blog.yangmingming.me/" target="_blank" rel="external">http://blog.yangmingming.me/</a>  ，对应下面URL的同源检测结果如下</p>
+<h2 id="浏览器的同源策略"><a href="#浏览器的同源策略" class="headerlink" title="浏览器的同源策略"></a>浏览器的同源策略</h2><p>浏览器的同源策略是引发跨域问题的根本原因，同源策略限制从一个 <em>源</em> 加载的文档或脚本如何与来自另一个 <em>源</em> 的资源进行交互。<br>那么如何来判断两个URL是否是属于同一个 <em>源</em> 呢？<br>假设我们当前的URL为：<a href="http://blog.yangmingming.me/" target="_blank" rel="noopener">http://blog.yangmingming.me/</a>  ，对应下面URL的同源检测结果如下</p>
 <table>
 <thead>
 <tr>
@@ -206,38 +206,38 @@
 </thead>
 <tbody>
 <tr>
-<td><a href="http://blog.yangmingming.me/index.html" target="_blank" rel="external">http://blog.yangmingming.me/index.html</a></td>
+<td><a href="http://blog.yangmingming.me/index.html" target="_blank" rel="noopener">http://blog.yangmingming.me/index.html</a></td>
 <td>成功</td>
 <td>同源</td>
 </tr>
 <tr>
-<td><a href="https://blog.yangmingming.me" target="_blank" rel="external">https://blog.yangmingming.me</a></td>
+<td><a href="https://blog.yangmingming.me" target="_blank" rel="noopener">https://blog.yangmingming.me</a></td>
 <td>失败</td>
 <td>协议不同（https）</td>
 </tr>
 <tr>
-<td><a href="http://blog.yangmingming.me:3000" target="_blank" rel="external">http://blog.yangmingming.me:3000</a></td>
+<td><a href="http://blog.yangmingming.me:3000" target="_blank" rel="noopener">http://blog.yangmingming.me:3000</a></td>
 <td>失败</td>
 <td>不同端口</td>
 </tr>
 <tr>
-<td><a href="http://about.yangmingming.me" target="_blank" rel="external">http://about.yangmingming.me</a></td>
+<td><a href="http://about.yangmingming.me" target="_blank" rel="noopener">http://about.yangmingming.me</a></td>
 <td>失败</td>
 <td>不同主机</td>
 </tr>
 </tbody>
 </table>
 <h2 id="搭建测试环境"><a href="#搭建测试环境" class="headerlink" title="搭建测试环境"></a>搭建测试环境</h2><p>为了方便进行测试各种跨域的方法，我新建了两个Express工程，直接在localhost下进行测试。<br><code>backend</code>模仿后端环境，对应3000端口；<code>front</code>模仿前端环境，对应3001端口。</p>
-<h4 id="跨源网络请求-cross-origin-HTTP-request"><a href="#跨源网络请求-cross-origin-HTTP-request" class="headerlink" title="跨源网络请求(cross-origin HTTP request)"></a>跨源网络请求(cross-origin HTTP request)</h4><p>对于前端而言，讲到HTTP请求，就必须得提到 <a href="https://developer.mozilla.org/en/DOM/XMLHttpRequest" target="_blank" rel="external">XMLHttpRequest</a> 对象，但是现在是2017年了，还得提一提 <a href="https://developer.mozilla.org/zh-CN/docs/Web/API/Fetch_API" target="_blank" rel="external">Fetch</a> 对象，作为XHR的替代方案，Fetch的API友好了很多。而不管是 <em>XMLHttpRequest</em> 还是 <em>Fetch</em>  请求都必须遵守同源策略。上代码：  </p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">cross_origin_request</span>(<span class="params">url</span>) </span>&#123;</div><div class="line">    <span class="keyword">if</span>(<span class="built_in">window</span>.fetch) &#123;</div><div class="line">        fetch(url).then(<span class="function"><span class="params">response</span> =&gt;</span> response.json())</div><div class="line">		  	.then(<span class="function"><span class="params">data</span> =&gt;</span> <span class="built_in">console</span>.log(data))</div><div class="line">		  	.catch(<span class="function"><span class="params">e</span> =&gt;</span> <span class="built_in">console</span>.log(<span class="string">"error"</span>, e))</div><div class="line">    &#125; <span class="keyword">else</span> &#123;</div><div class="line">        alert(<span class="string">'大兄弟，该换个现代浏览器了～'</span>)</div><div class="line">    &#125;		</div><div class="line">&#125;</div><div class="line"><span class="keyword">var</span> backend_url = <span class="string">'http://'</span> + <span class="built_in">window</span>.location.hostname + <span class="string">':3000'</span></div><div class="line">cross_origin_request(backend_url)</div></pre></td></tr></table></figure>
+<h4 id="跨源网络请求-cross-origin-HTTP-request"><a href="#跨源网络请求-cross-origin-HTTP-request" class="headerlink" title="跨源网络请求(cross-origin HTTP request)"></a>跨源网络请求(cross-origin HTTP request)</h4><p>对于前端而言，讲到HTTP请求，就必须得提到 <a href="https://developer.mozilla.org/en/DOM/XMLHttpRequest" target="_blank" rel="noopener">XMLHttpRequest</a> 对象，但是现在是2017年了，还得提一提 <a href="https://developer.mozilla.org/zh-CN/docs/Web/API/Fetch_API" target="_blank" rel="noopener">Fetch</a> 对象，作为XHR的替代方案，Fetch的API友好了很多。而不管是 <em>XMLHttpRequest</em> 还是 <em>Fetch</em>  请求都必须遵守同源策略。上代码：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">cross_origin_request</span>(<span class="params">url</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(<span class="built_in">window</span>.fetch) &#123;</span><br><span class="line">        fetch(url).then(<span class="function"><span class="params">response</span> =&gt;</span> response.json())</span><br><span class="line">		  	.then(<span class="function"><span class="params">data</span> =&gt;</span> <span class="built_in">console</span>.log(data))</span><br><span class="line">		  	.catch(<span class="function"><span class="params">e</span> =&gt;</span> <span class="built_in">console</span>.log(<span class="string">"error"</span>, e))</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        alert(<span class="string">'大兄弟，该换个现代浏览器了～'</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">var</span> backend_url = <span class="string">'http://'</span> + <span class="built_in">window</span>.location.hostname + <span class="string">':3000'</span></span><br><span class="line">cross_origin_request(backend_url)</span><br></pre></td></tr></table></figure>
 <blockquote>
-<p>注：本文会用Fetch对象和ES6语法来进行测试演示。  </p>
+<p>注：本文会用Fetch对象和ES6语法来进行测试演示。</p>
 </blockquote>
 <p>会看到浏览器打印如下信息:<br><img src="http://oksj4hknl.bkt.clouddn.com/cross-origin.png"><br>可以看到，在localhost:3001去请求localhost:3000出现了跨域错误，验证了上面的同源策略。接下来会同样用代码的形式验证不同方式去进行跨域网络请求。</p>
 <h2 id="JSONP（JSON-with-Padding）"><a href="#JSONP（JSON-with-Padding）" class="headerlink" title="JSONP（JSON with Padding）"></a>JSONP（JSON with Padding）</h2><p><em>JSONP（JSON with Padding）是数据格式JSON的一种“使用模式”，可以让网页从别的网域要数据。另一个解决这个问题的新方法是跨来源资源共享。</em><br>这是维基百科对于JSONP的解释，而JSONP确实是一种解决跨域请求的方式。JSONP的实现原理就是利用&lt;script&gt;标签引入其他源的脚本的时候是不存在跨域问题这个特性。有聪明的开发者想到，可以添加一个script标签，&lt;script src=”yangmingming.me/users?callback=jsonp”&gt;，通过url参数把回调函数名传递给后端，后端再响应一个JSON数据+回调函数，如：<code>jsonp({name: yeoman})</code>。这样前端就会回调这个函数，并且拿到后端传递的JSON数据。从而达到跨域请求的目的。上代码：<br>前端部分：添加一个script标签用来请求后端API，同时传递<code>callback=jsonp</code>参数。</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">appendScript</span>(<span class="params">src</span>) </span>&#123;</div><div class="line">    <span class="keyword">var</span> script = <span class="built_in">document</span>.createElement(<span class="string">'script'</span>);</div><div class="line">    script.setAttribute(<span class="string">"type"</span>,<span class="string">"text/javascript"</span>);</div><div class="line">    script.src = src;</div><div class="line">    <span class="built_in">document</span>.body.appendChild(script);</div><div class="line">&#125;</div><div class="line"></div><div class="line">appendScript(<span class="string">'http://'</span> + <span class="built_in">window</span>.location.hostname + <span class="string">'/users?callback=jsonp'</span>);</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">jsonp</span>(<span class="params">data</span>) </span>&#123;</div><div class="line">    <span class="built_in">console</span>.log(data);</div><div class="line">&#125;;</div></pre></td></tr></table></figure>
-<p>后端部分：响应请求，并返回参数。这里的<code>res.jsonp</code>是Express的API，可以看<a href="http://www.expressjs.com.cn/4x/api.html#res.jsonp" target="_blank" rel="external">这里</a>。</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">app.<span class="keyword">use</span>(<span class="string">'/users'</span>, <span class="function"><span class="keyword">function</span><span class="params">(req, res, next)</span> </span>&#123;</div><div class="line">    res.jsonp(&#123;name: <span class="string">'yeoman'</span>&#125;)</div><div class="line">&#125;);</div></pre></td></tr></table></figure>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">appendScript</span>(<span class="params">src</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> script = <span class="built_in">document</span>.createElement(<span class="string">'script'</span>);</span><br><span class="line">    script.setAttribute(<span class="string">"type"</span>,<span class="string">"text/javascript"</span>);</span><br><span class="line">    script.src = src;</span><br><span class="line">    <span class="built_in">document</span>.body.appendChild(script);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">appendScript(<span class="string">'http://'</span> + <span class="built_in">window</span>.location.hostname + <span class="string">'/users?callback=jsonp'</span>);</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">jsonp</span>(<span class="params">data</span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(data);</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>后端部分：响应请求，并返回参数。这里的<code>res.jsonp</code>是Express的API，可以看<a href="http://www.expressjs.com.cn/4x/api.html#res.jsonp" target="_blank" rel="noopener">这里</a>。</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">app.<span class="keyword">use</span>(<span class="string">'/users'</span>, <span class="function"><span class="keyword">function</span><span class="params">(req, res, next)</span> </span>&#123;</span><br><span class="line">    res.jsonp(&#123;name: <span class="string">'yeoman'</span>&#125;)</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
 <p>查看浏览器console窗口，信息如下：<br><img src="http://oksj4hknl.bkt.clouddn.com/jsonp.png"><br>呀比～成功跨域请求到了后端的response。</p>
 <blockquote>
 <ol>
@@ -263,50 +263,50 @@
 </blockquote>
 <p>关键概念就到这，上代码：</p>
 <p>服务端：</p>
-<figure class="highlight lua"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">app.all(<span class="string">'*'</span>,<span class="function"><span class="keyword">function</span> <span class="params">(req, res, next)</span></span> &#123;</div><div class="line">    res.header(<span class="string">'Access-Control-Allow-Origin'</span>, <span class="string">'*'</span>);</div><div class="line">    res.header(<span class="string">'Access-Control-Allow-Methods'</span>, <span class="string">'PUT, POST, GET, DELETE, OPTIONS'</span>);</div><div class="line">    <span class="keyword">if</span> (req.method == <span class="string">'OPTIONS'</span>) &#123;</div><div class="line">        res.send(<span class="string">'OPTIONS PASSED'</span>);</div><div class="line">    &#125; <span class="keyword">else</span> &#123;</div><div class="line">        <span class="built_in">next</span>();</div><div class="line">    &#125;</div><div class="line">&#125;);</div></pre></td></tr></table></figure>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">app.all(<span class="string">'*'</span>,<span class="function"><span class="keyword">function</span> <span class="params">(req, res, next)</span></span> &#123;</span><br><span class="line">    res.header(<span class="string">'Access-Control-Allow-Origin'</span>, <span class="string">'*'</span>);</span><br><span class="line">    res.header(<span class="string">'Access-Control-Allow-Methods'</span>, <span class="string">'PUT, POST, GET, DELETE, OPTIONS'</span>);</span><br><span class="line">    <span class="keyword">if</span> (req.method == <span class="string">'OPTIONS'</span>) &#123;</span><br><span class="line">        res.send(<span class="string">'OPTIONS PASSED'</span>);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="built_in">next</span>();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
 <p>用户端还是发送之前那个返回跨域错误的GET请求。返回200，成功返回～<br><img src="http://oksj4hknl.bkt.clouddn.com/cors-get.png"><br>同时可以看到在Response Headers里有在服务端设置的两个HTTP头字段，<code>Access-Control-Allow-Methods:PUT, POST, GET, DELETE, OPTIONS</code>,<code>Access-Control-Allow-Origin:*</code></p>
 <p>接着我们发一个<code>PUT请求</code>：</p>
 <p>前端：</p>
-<figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="selector-tag">cross_origin_request</span>(<span class="selector-tag">backend_url</span>, &#123;<span class="attribute">method</span>: <span class="string">'PUT'</span>&#125;)</div></pre></td></tr></table></figure>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-tag">cross_origin_request</span>(<span class="selector-tag">backend_url</span>, &#123;<span class="attribute">method</span>: <span class="string">'PUT'</span>&#125;)</span><br></pre></td></tr></table></figure>
 <p>同时服务端设置预请求有效期：</p>
-<figure class="highlight lasso"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">res.<span class="keyword">header</span>(<span class="string">'Access-Control-Max-Age'</span>, <span class="number">3600</span>)</div></pre></td></tr></table></figure>
+<figure class="highlight lasso"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">res.<span class="keyword">header</span>(<span class="string">'Access-Control-Max-Age'</span>, <span class="number">3600</span>)</span><br></pre></td></tr></table></figure>
 <p>可以看到确实先发送了OPTIONS请求并多了Access-Control-Max-Age字段：<br><img src="http://oksj4hknl.bkt.clouddn.com/cors-options.png"></p>
 <blockquote>
 <p>但是我在测试的时候发现第二次请求的时候还是会先发送OPTIONS请求，难道<code>Access-Control-Max-Age</code>字段无效？Google之后，发现也有朋友遇到这个问题，是因为勾选了Chrome的<code>Disable cache</code> 选项。启动缓存，在一个小时之内就不会发送OPTIONS请求了～</p>
 </blockquote>
 <p><br></p>
-<h2 id="postMessage"><a href="#postMessage" class="headerlink" title="postMessage"></a>postMessage</h2><p>而除了CORS之外，还有一种安全的跨域通信做法，就是postMessage。postMessage是HTML5标准内的一个<a href="https://developer.mozilla.org/zh-CN/docs/Web/API/Window/postMessage" target="_blank" rel="external">API</a>。用法如下：</p>
-<figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="selector-tag">otherWindow</span><span class="selector-class">.postMessage</span>(<span class="selector-tag">message</span>, <span class="selector-tag">targetOrigin</span>, <span class="selector-attr">[transfer]</span>);</div></pre></td></tr></table></figure>
+<h2 id="postMessage"><a href="#postMessage" class="headerlink" title="postMessage"></a>postMessage</h2><p>而除了CORS之外，还有一种安全的跨域通信做法，就是postMessage。postMessage是HTML5标准内的一个<a href="https://developer.mozilla.org/zh-CN/docs/Web/API/Window/postMessage" target="_blank" rel="noopener">API</a>。用法如下：</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-tag">otherWindow</span><span class="selector-class">.postMessage</span>(<span class="selector-tag">message</span>, <span class="selector-tag">targetOrigin</span>, <span class="selector-attr">[transfer]</span>);</span><br></pre></td></tr></table></figure>
 <blockquote>
 <p>这里的otherWindow可以是iframe的contentWindow，window.open()返回的window对象，或者是window.parent这个父窗口。</p>
 </blockquote>
 <p>postMessage的通信借助于window对象，因此用iframe来演示，上代码：</p>
 <p>front：</p>
 <p>HTML</p>
-<figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">iframe</span> <span class="attr">id</span>=<span class="string">"iframe_test"</span> <span class="attr">src</span>=<span class="string">"http://localhost:3000"</span>&gt;</span><span class="tag">&lt;/<span class="name">iframe</span>&gt;</span></div></pre></td></tr></table></figure>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;iframe <span class="attribute">id</span>=<span class="string">"iframe_test"</span> <span class="attribute">src</span>=<span class="string">"http://localhost:3000"</span>&gt;&lt;/iframe&gt;</span><br></pre></td></tr></table></figure>
 <p>Javascript</p>
-<figure class="highlight coffeescript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">var iframe_test = <span class="built_in">document</span>.getElementById(<span class="string">'iframe_test'</span>)</div><div class="line">var window_iframe = iframe_test.contentWindow</div><div class="line">window_iframe.postMessage(&#123;ha:<span class="string">'如果你要一定要问我支持不支持'</span>&#125;, <span class="string">'http://'</span> + <span class="built_in">window</span>.location.hostname + <span class="string">':3000'</span>);</div><div class="line"><span class="function"><span class="title">onmessage</span> = <span class="params">(e)</span> =&gt;</span> &#123;</div><div class="line">    e = e || event;</div><div class="line">    setTimeout(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</div><div class="line">        alert(e.data)</div><div class="line">    &#125;, <span class="number">2000</span>)</div><div class="line">&#125;;</div></pre></td></tr></table></figure>
+<figure class="highlight coffeescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">var iframe_test = <span class="built_in">document</span>.getElementById(<span class="string">'iframe_test'</span>)</span><br><span class="line">var window_iframe = iframe_test.contentWindow</span><br><span class="line">window_iframe.postMessage(&#123;ha:<span class="string">'如果你要一定要问我支持不支持'</span>&#125;, <span class="string">'http://'</span> + <span class="built_in">window</span>.location.hostname + <span class="string">':3000'</span>);</span><br><span class="line"><span class="function"><span class="title">onmessage</span> = <span class="params">(e)</span> =&gt;</span> &#123;</span><br><span class="line">    e = e || event;</span><br><span class="line">    setTimeout(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">        alert(e.data)</span><br><span class="line">    &#125;, <span class="number">2000</span>)</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
 <p>backend：</p>
-<figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">type</span>=<span class="string">"text/javascript"</span>&gt;</span><span class="javascript"></span></div><div class="line">    <span class="built_in">window</span>.onload = <span class="function"><span class="params">()</span> =&gt;</span> &#123;	</div><div class="line">        onmessage = <span class="function">(<span class="params">e</span>) =&gt;</span> &#123;</div><div class="line">            e = e || event;</div><div class="line">            <span class="built_in">document</span>.write(<span class="built_in">JSON</span>.stringify(e.data));</div><div class="line">            <span class="keyword">var</span> window_parent = <span class="built_in">window</span>.parent;</div><div class="line">            window_parent.postMessage(<span class="string">'我肯定是支持的'</span>, <span class="string">'http://'</span> + <span class="built_in">window</span>.location.hostname + <span class="string">':3001'</span>)</div><div class="line">        &#125;;</div><div class="line">    &#125;</div><div class="line"><span class="tag">&lt;/<span class="name">script</span>&gt;</span></div></pre></td></tr></table></figure>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">type</span>=<span class="string">"text/javascript"</span>&gt;</span><span class="undefined"></span></span><br><span class="line"><span class="javascript">    <span class="built_in">window</span>.onload = <span class="function"><span class="params">()</span> =&gt;</span> &#123;</span></span><br><span class="line"><span class="javascript">        onmessage = <span class="function">(<span class="params">e</span>) =&gt;</span> &#123;</span></span><br><span class="line"><span class="undefined">            e = e || event;</span></span><br><span class="line"><span class="javascript">            <span class="built_in">document</span>.write(<span class="built_in">JSON</span>.stringify(e.data));</span></span><br><span class="line"><span class="javascript">            <span class="keyword">var</span> window_parent = <span class="built_in">window</span>.parent;</span></span><br><span class="line"><span class="javascript">            window_parent.postMessage(<span class="string">'我肯定是支持的'</span>, <span class="string">'http://'</span> + <span class="built_in">window</span>.location.hostname + <span class="string">':3001'</span>)</span></span><br><span class="line"><span class="undefined">        &#125;;</span></span><br><span class="line"><span class="undefined">    &#125;</span></span><br><span class="line"><span class="undefined"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br></pre></td></tr></table></figure>
 <p>可以看下如下的输出，成功跨域通信：<br><img src="http://oksj4hknl.bkt.clouddn.com/postMessage.png"></p>
 <p><br></p>
-<h2 id="WebSocket"><a href="#WebSocket" class="headerlink" title="WebSocket"></a>WebSocket</h2><p><em>WebSocket一种在单个 TCP 连接上进行全双工通讯的协议。</em>    –《维基百科》  </p>
-<p>WebSocket的出现背景是因为目前实现服务器和客户端推送服务的解决方案都存在问题，因此HTML5定义了WebSocket协议。  </p>
-<p>WebSocket使用和HTTP相同的TCP端口，也就是默认是80端口，加上TLS是在443端口。  </p>
-<p>值得一提的是，WebSocket并不遵守浏览器的同源策略！这里我们用 <a href="http://socket.io/" target="_blank" rel="external">socket.io</a>来进行测试。</p>
-<p>front：<br>引入socket.io。<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">type</span>=<span class="string">"text/javascript"</span> <span class="attr">src</span>=<span class="string">"https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.2/socket.io.js"</span>&gt;</span><span class="undefined"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></div></pre></td></tr></table></figure></p>
+<h2 id="WebSocket"><a href="#WebSocket" class="headerlink" title="WebSocket"></a>WebSocket</h2><p><em>WebSocket一种在单个 TCP 连接上进行全双工通讯的协议。</em>    –《维基百科》</p>
+<p>WebSocket的出现背景是因为目前实现服务器和客户端推送服务的解决方案都存在问题，因此HTML5定义了WebSocket协议。</p>
+<p>WebSocket使用和HTTP相同的TCP端口，也就是默认是80端口，加上TLS是在443端口。</p>
+<p>值得一提的是，WebSocket并不遵守浏览器的同源策略！这里我们用 <a href="http://socket.io/" target="_blank" rel="noopener">socket.io</a>来进行测试。</p>
+<p>front：<br>引入socket.io。<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">type</span>=<span class="string">"text/javascript"</span> <span class="attr">src</span>=<span class="string">"https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.2/socket.io.js"</span>&gt;</span><span class="undefined"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
 <p>往backend发送消息。</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> socket = io(<span class="string">'http://localhost:3000'</span>);</div><div class="line">socket.on(<span class="string">'news'</span>, <span class="function"><span class="keyword">function</span> (<span class="params">data</span>) </span>&#123;</div><div class="line">    <span class="built_in">console</span>.log(data);</div><div class="line">    socket.emit(<span class="string">'my other event'</span>, &#123; <span class="attr">my</span>: <span class="string">'data'</span> &#125;);</div><div class="line">&#125;);</div></pre></td></tr></table></figure>
-<p>backend：<br>安装socket.io。  </p>
-<figure class="highlight livecodeserver"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">npm install <span class="built_in">socket</span>.io <span class="comment">--save</span></div></pre></td></tr></table></figure>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> socket = io(<span class="string">'http://localhost:3000'</span>);</span><br><span class="line">socket.on(<span class="string">'news'</span>, <span class="function"><span class="keyword">function</span> (<span class="params">data</span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(data);</span><br><span class="line">    socket.emit(<span class="string">'my other event'</span>, &#123; <span class="attr">my</span>: <span class="string">'data'</span> &#125;);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<p>backend：<br>安装socket.io。</p>
+<figure class="highlight livecodeserver"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install <span class="built_in">socket</span>.io <span class="comment">--save</span></span><br></pre></td></tr></table></figure>
 <p>链接server，发送消息：</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> app = <span class="built_in">require</span>(<span class="string">'../app'</span>);</div><div class="line"><span class="keyword">var</span> server = http.createServer(app);</div><div class="line"><span class="keyword">var</span> io = <span class="built_in">require</span>(<span class="string">'socket.io'</span>)(server);</div><div class="line">io.on(<span class="string">'connection'</span>, <span class="function"><span class="keyword">function</span> (<span class="params">socket</span>) </span>&#123;</div><div class="line">    socket.emit(<span class="string">'news'</span>, &#123; <span class="attr">hello</span>: <span class="string">'world'</span> &#125;);</div><div class="line">    socket.on(<span class="string">'my other event'</span>, <span class="function"><span class="keyword">function</span> (<span class="params">data</span>) </span>&#123;</div><div class="line">        <span class="built_in">console</span>.log(data);</div><div class="line">    &#125;);</div><div class="line">&#125;);</div></pre></td></tr></table></figure>
-<p>查看调试工具，看看发生了什么：  </p>
-<p>front成功打印<code>Object {hello: &quot;world&quot;}</code>，backend成功打印<code>{ my: &#39;data&#39; }</code>，成功跨域通信！  </p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> app = <span class="built_in">require</span>(<span class="string">'../app'</span>);</span><br><span class="line"><span class="keyword">var</span> server = http.createServer(app);</span><br><span class="line"><span class="keyword">var</span> io = <span class="built_in">require</span>(<span class="string">'socket.io'</span>)(server);</span><br><span class="line">io.on(<span class="string">'connection'</span>, <span class="function"><span class="keyword">function</span> (<span class="params">socket</span>) </span>&#123;</span><br><span class="line">    socket.emit(<span class="string">'news'</span>, &#123; <span class="attr">hello</span>: <span class="string">'world'</span> &#125;);</span><br><span class="line">    socket.on(<span class="string">'my other event'</span>, <span class="function"><span class="keyword">function</span> (<span class="params">data</span>) </span>&#123;</span><br><span class="line">        <span class="built_in">console</span>.log(data);</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<p>查看调试工具，看看发生了什么：</p>
+<p>front成功打印<code>Object {hello: &quot;world&quot;}</code>，backend成功打印<code>{ my: &#39;data&#39; }</code>，成功跨域通信！</p>
 <p>但是！！！当我再查看Network的时候，如图：</p>
-<p><img src="http://oksj4hknl.bkt.clouddn.com/websocket-http.png"><br>这，这，这这这，这不还是发送了HTTP请求么，说好的WebSocket呢？？？<br><img src="http://oksj4hknl.bkt.clouddn.com/yilianmengbi.jpeg">  </p>
+<p><img src="http://oksj4hknl.bkt.clouddn.com/websocket-http.png"><br>这，这，这这这，这不还是发送了HTTP请求么，说好的WebSocket呢？？？<br><img src="http://oksj4hknl.bkt.clouddn.com/yilianmengbi.jpeg"></p>
 <p>我猜测是 <em>socket.io</em> 为了提升响应速度，在WebSocket成功建立链接之前，会先发送HTTP请求。于是我加上延时调用：</p>
-<figure class="highlight coffeescript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">setTimeout(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</div><div class="line">    socket.emit(<span class="string">'my other event'</span>, &#123; my:<span class="string">'data'</span> &#125;);</div><div class="line">&#125;, <span class="number">2000</span>)</div></pre></td></tr></table></figure>
+<figure class="highlight coffeescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">setTimeout(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">    socket.emit(<span class="string">'my other event'</span>, &#123; my:<span class="string">'data'</span> &#125;);</span><br><span class="line">&#125;, <span class="number">2000</span>)</span><br></pre></td></tr></table></figure>
 <p>果然不再发送刚才的HTTP请求，而是如下：<br><img src="http://oksj4hknl.bkt.clouddn.com/websocket-101.png"><br><img src="http://oksj4hknl.bkt.clouddn.com/websocket-frames.png"></p>
 <p><code>wx://</code>建立连接之后，会一直保持，之后的请求都是在这个连接中完成。</p>
 <blockquote>
@@ -314,7 +314,7 @@
 </blockquote>
 <p><br></p>
 <h2 id="服务端代理"><a href="#服务端代理" class="headerlink" title="服务端代理"></a>服务端代理</h2><p>服务端代理同样可以解决跨域的问题，这种方式则是完全在服务端解决，与浏览器端无关。<br>也就是先请求相同域下的API容器，然后这个API容器作为代理去请求真正的服务器端再返回给客户端。</p>
-<h2 id="Tips"><a href="#Tips" class="headerlink" title="Tips"></a>Tips</h2><p>本文的Demo代码放在了<a href="https://github.com/yeomanyang/Cross-Origin-Demo" target="_blank" rel="external">Github上</a>。</p>
+<h2 id="Tips"><a href="#Tips" class="headerlink" title="Tips"></a>Tips</h2><p>本文的Demo代码放在了<a href="https://github.com/yeomanyang/Cross-Origin-Demo" target="_blank" rel="noopener">Github上</a>。</p>
 
 
                 <hr>
@@ -356,7 +356,7 @@
                     <h5><a href="/tags/">FEATURED TAGS</a></h5>
                     <div class="tags">
                        
-                          <a class="tag" href="/tags/#technique" title="technique">technique</a>
+                          <a class="tag" href="/tags/#HTTP" title="HTTP">HTTP</a>
                         
                     </div>
                 </section>
@@ -413,7 +413,7 @@
 
                 
                     <li>
-                        <a target="_blank"  href="https://github.com/yeomanyang">
+                        <a target="_blank" href="https://github.com/yeomanyang">
                             <span class="fa-stack fa-lg">
                                 <i class="fa fa-circle fa-stack-2x"></i>
                                 <i class="fa fa-github fa-stack-1x fa-inverse"></i>
@@ -433,10 +433,7 @@
                         <i class="fa fa-heart"></i>
                     </span> 
                     Ported by <a href="http://blog.kaijun.rocks">Kaijun</a> | 
-                    <iframe
-                        style="margin-left: 2px; margin-bottom:-5px;"
-                        frameborder="0" scrolling="0" width="91px" height="20px"
-                        src="https://ghbtns.com/github-btn.html?user=kaijun&repo=hexo-theme-huxblog&type=star&count=true" >
+                    <iframe style="margin-left: 2px; margin-bottom:-5px;" frameborder="0" scrolling="0" width="91px" height="20px" src="https://ghbtns.com/github-btn.html?user=kaijun&repo=hexo-theme-huxblog&type=star&count=true">
                     </iframe>
                 </p>
             </div>

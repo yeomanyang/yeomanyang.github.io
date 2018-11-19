@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head><meta name="generator" content="Hexo 3.8.0">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Talk is cheap, show me the code.">
+    <meta name="keyword" content="">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>
+        
+          egg-sequelize以及事务相关 - Yeoman的博客 | Yeoman&#39;s Blog
+        
+    </title>
+
+    <link rel="canonical" href="https://yeomanyang.github.io/2018/11/19/egg-sequelize以及事务相关/">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/hux-blog.min.css">
+
+    <!-- Pygments Highlight CSS -->
+    <link rel="stylesheet" href="/css/highlight.css">
+
+    <!-- Custom Fonts -->
+    <!-- <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="https://cdn.staticfile.org/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- Hux Delete, sad but pending in China
+    <link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/
+    css'>
+    -->
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">Yeoman&#39;s Blog</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archives/">Archives</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">Tags</a>
+                        </li>
+                        
+                    
+
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    
+<!-- Image to hack wechat -->
+<!-- <img src="https://yeomanyang.github.io/img/icon_wechat.png" width="0" height="0"> -->
+<!-- <img src="{{ site.baseurl }}/{% if page.header-img %}{{ page.header-img }}{% else %}{{ site.header-img }}{% endif %}" width="0" height="0"> -->
+
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        background-image: url('/img/home-bg.jpg')
+    }
+</style>
+<header class="intro-header">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                          <a class="tag" href="/tags/#Backend" title="Backend">Backend</a>
+                        
+                    </div>
+                    <h1>egg-sequelize以及事务相关</h1>
+                    <h2 class="subheading"></h2>
+                    <span class="meta">
+                        Posted by Yeoman on
+                        2018-11-19
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+    <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                <p>emmm，其实有一些标题党。这篇文章主要是记录一下事务的一些核心概念，为了强行和Eggj.js搭上一点边，也顺便聊下egg-sequelize的简单使用体验。</p>
+<h3 id="0-写在前面"><a href="#0-写在前面" class="headerlink" title="0. 写在前面"></a>0. 写在前面</h3><p>Egg.js目前我还是停留在使用阶段，感觉在实践上更深入一些后，再去看源码相关效果会好一些。（懒</p>
+<p>最近正好在看Mysql的东西，也对egg-sequelize有一些简单的实践，就以这篇文章记录一下。</p>
+<h3 id="1-egg-sequelize目前遇到的一些问题"><a href="#1-egg-sequelize目前遇到的一些问题" class="headerlink" title="1. egg-sequelize目前遇到的一些问题"></a>1. egg-sequelize目前遇到的一些问题</h3><h5 id="Q：Sequelize在映射表的时候会自动映射表时会自动带上复数。"><a href="#Q：Sequelize在映射表的时候会自动映射表时会自动带上复数。" class="headerlink" title="Q：Sequelize在映射表的时候会自动映射表时会自动带上复数。"></a>Q：Sequelize在映射表的时候会自动映射表时会自动带上复数。</h5><p>这句话是什么意思呢，比如说我们在工程里定义了一个User的model，那么这个model映射到数据库里的表名就是users这张表。</p>
+<p>看起来好像也没有什么问题，但是比如说我们在建关系表的时候，我们通常会用两张表加下划线来命名。比如用户和用户组的关系表，模型命名UserGroup。而表命名就会显得比较奇怪，叫user_groups。</p>
+<p>因此我在使用Squelize的时候，会打开<code>freezeTableName</code>这个配置，这样在映射的时候就不会自动带上复数了。</p>
+<h5 id="Q：数据库字段命名通常习惯用下划线命名，而JS的命名习惯是驼峰。"><a href="#Q：数据库字段命名通常习惯用下划线命名，而JS的命名习惯是驼峰。" class="headerlink" title="Q：数据库字段命名通常习惯用下划线命名，而JS的命名习惯是驼峰。"></a>Q：数据库字段命名通常习惯用下划线命名，而JS的命名习惯是驼峰。</h5><p>我们可以使用<code>filed</code>别名来进行转换。</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">const</span> <span class="string">GroupModule</span> <span class="string">=</span> <span class="string">app.model.define('group_module',</span> <span class="string">&#123;</span></span><br><span class="line"><span class="attr">        id:</span> <span class="string">&#123;</span></span><br><span class="line"><span class="attr">            type:</span> <span class="string">INTEGER,</span></span><br><span class="line"><span class="attr">            primaryKey:</span> <span class="literal">true</span><span class="string">,</span></span><br><span class="line"><span class="attr">            autoIncrement:</span> <span class="literal">true</span></span><br><span class="line">        <span class="string">&#125;,</span></span><br><span class="line"><span class="attr">        groupId:</span> <span class="string">&#123;</span></span><br><span class="line"><span class="attr">            type:</span> <span class="string">INTEGER,</span></span><br><span class="line"><span class="attr">            allowNull:</span> <span class="literal">false</span><span class="string">,</span></span><br><span class="line"><span class="attr">            field:</span> <span class="string">'group_id'</span></span><br><span class="line">        <span class="string">&#125;,</span></span><br><span class="line">    <span class="string">&#125;</span></span><br><span class="line"><span class="string">);</span></span><br></pre></td></tr></table></figure>
+<h5 id="Q：Sequelize的CLI迁移工具在建表的时候不会自动生成组合唯一索引。"><a href="#Q：Sequelize的CLI迁移工具在建表的时候不会自动生成组合唯一索引。" class="headerlink" title="Q：Sequelize的CLI迁移工具在建表的时候不会自动生成组合唯一索引。"></a>Q：Sequelize的CLI迁移工具在建表的时候不会自动生成组合唯一索引。</h5><p>组合唯一索引算是一个常见的场景，但是根据文档上的配置去生成表之后，发现并不会带上唯一索引，目前我的解决办法是在提交建表工单的时候，自己在sql语句上加上。</p>
+<p>这个问题看起来像是一个bug，不知道是不是我使用姿势不对- -</p>
+<figure class="highlight less"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Creating two objects with the same value will throw an error. The unique property can be either a</span></span><br><span class="line"> <span class="comment">// boolean, or a string. If you provide the same string for multiple columns, they will form a</span></span><br><span class="line"> <span class="comment">// composite unique key.</span></span><br><span class="line"> <span class="attribute">uniqueOne</span>: &#123; <span class="attribute">type</span>: Sequelize.STRING,  <span class="attribute">unique</span>: <span class="string">'compositeIndex'</span> &#125;,</span><br><span class="line"> <span class="attribute">uniqueTwo</span>: &#123; <span class="attribute">type</span>: Sequelize.INTEGER, <span class="attribute">unique</span>: <span class="string">'compositeIndex'</span> &#125;,</span><br></pre></td></tr></table></figure>
+<h5 id="Q：DBA通常不让使用外键，但是Sequelize在关联表查询的时候通常需要外键。"><a href="#Q：DBA通常不让使用外键，但是Sequelize在关联表查询的时候通常需要外键。" class="headerlink" title="Q：DBA通常不让使用外键，但是Sequelize在关联表查询的时候通常需要外键。"></a>Q：DBA通常不让使用外键，但是Sequelize在关联表查询的时候通常需要外键。</h5><p>一般情况下不使用外键已经成了大家的一个共识，因为会带来一些性能问题。</p>
+<p>当我们使用Sequelize进行关联表查询的时候，Sequelize要求我们使用<code>belongsTo</code>,<code>hasMany</code>等语句来进行表关联。然后才可以用<code>include</code>属性来达到join的查询效果。</p>
+<p>但是当我们声明了关联关系时候，这时候去调用<code>app.model.sync</code>的时候，会发现Sequelize会自动给相应的字段加上外键。</p>
+<p>我的处理办法是建表的时候不使用外键，然后只是在Model层声明表的关联关系。这样同样可以实现关联表查询的效果。</p>
+<p>实际上，在Sequelize中声明了关联关系之后，Sequelize在生成join语句的时候，会自动带上类似<code>user</code>.<code>id</code> = <code>user_group</code>.<code>user_id</code>这样的语句。</p>
+<h5 id="Q：当事务在多个函数中或者service传递时，比较麻烦"><a href="#Q：当事务在多个函数中或者service传递时，比较麻烦" class="headerlink" title="Q：当事务在多个函数中或者service传递时，比较麻烦"></a>Q：当事务在多个函数中或者service传递时，比较麻烦</h5><p>我目前使用事务的场景其实比较简单，但是这个痛点想想感觉也挺明显的，在CNode上有<a href="https://cnodejs.org/topic/5ae7c43202591040485ba997" target="_blank" rel="noopener">一篇文章</a>讲这个痛点的解决方案，我觉得挺值得借鉴的。</p>
+<h5 id="Q：使用体验"><a href="#Q：使用体验" class="headerlink" title="Q：使用体验"></a>Q：使用体验</h5><p>ORM框架的优势不用多说了，可以让我们以一种更面向对象的方式来操作数据库，但是缺点也是很明显的，不是那么灵活。</p>
+<p>特别是在不熟悉一个ORM框架的时候，比如一个中间表关联查询，写sql语句只用2分钟，但是要摸索ORM中的写法可能需要半个小时。</p>
+<h3 id="2-具体聊聊事务"><a href="#2-具体聊聊事务" class="headerlink" title="2. 具体聊聊事务"></a>2. 具体聊聊事务</h3><p>第一部分记录了一些在使用Sequelize框架过程中遇到的一些问题，然后这部分会详细聊聊事务。</p>
+<p>Sequelize文档对于事务的介绍其实比较简单，就是介绍了一下事务的使用以及设置，这部分我们来深入了解一下事务。</p>
+<p>首先我们得明确一个概念，事务是数据库引擎来实现的，而Mysql支持支持几种基本的数据库引擎，最常见的是MyISAM和InnoDB，前者不支持明确的事务管理，而我们最常用的InnoDB是支持的。</p>
+<h4 id="2-1-绕不开的ACID"><a href="#2-1-绕不开的ACID" class="headerlink" title="2.1 绕不开的ACID"></a>2.1 绕不开的ACID</h4><p>谈事务几乎一定绕不开ACID这个概念，ACID这几个属性也非常好的诠释了事务的作用，我们通过一些实际的场景来看这几个概念。</p>
+<h5 id="2-1-1-原子性（Atomicity）"><a href="#2-1-1-原子性（Atomicity）" class="headerlink" title="2.1.1 原子性（Atomicity）"></a>2.1.1 原子性（Atomicity）</h5><p>通常我们讲原子操作是在讲多线程并发场景是会去提的一个概念，但是ACID中去描述这个场景是在I（隔离性）中，这里的A指的是另一回事。</p>
+<p>比如说我们执行一个转账的操作，我们现在用户A的账户上扣100块钱，然后在用户B的账户上加100块钱，这是两条UPDATE语句。那么如果当A的账户上扣除100块成功之后，忽然发生网络异常或者服务故障，导致用户B的账户没有被加上100块钱，这时候系统就出错了。</p>
+<p>事务的原子性就是防止这种错误的，简单起见，我们假设这个转账操作是在一个事务里完成的，那么如果在第二条sql执行失败之后，事务可以自动或者手动地进行回滚，也就是把第一条扣钱的操作回滚掉。当然，实际场景中也可以考虑失败重试的策略，但是这不是事务的范畴。</p>
+<p>事务的原子性就是保证了在错误时中止事务，丢弃该事务之前进行的所有写入的变更。（事务不会回滚CREATE操作和DROP操作，实际上我们也不会这么做）</p>
+<h5 id="2-1-2-一致性（Consistency）"><a href="#2-1-2-一致性（Consistency）" class="headerlink" title="2.1.2 一致性（Consistency）"></a>2.1.2 一致性（Consistency）</h5><p>一致性描述了事务在执行前后数据都具有完整性，这个概念比较宽泛。比如转账这个操作，不能出现只扣钱不加钱，这是业务上要保证的数据一致性。</p>
+<h5 id="2-1-3-持久性（Durability）"><a href="#2-1-3-持久性（Durability）" class="headerlink" title="2.1.3 持久性（Durability）"></a>2.1.3 持久性（Durability）</h5><p>先讲持久性，因为这个概念比较简单，持久性就是保证了当一个事务被Commit完成，写入的数据一定不会丢失。当然这里的数据不丢失不包含硬盘和备份损坏的情况。</p>
+<h5 id="2-1-4-隔离性（Isolation）"><a href="#2-1-4-隔离性（Isolation）" class="headerlink" title="2.1.4 隔离性（Isolation）"></a>2.1.4 隔离性（Isolation）</h5><p>这里的隔离指的是多个事务之间的隔离。</p>
+<p>我们假设这样一种场景，当我们在A事务中执行了操作-更新所有有VIP标志用户的用户的贷款额度为10000，这时候在事务B中，我们把用户小王更新成了VIP。那么事务A中小王的贷款额度的贷款额度到底有没有被更新成10000呢？隔离性就是来解决这种并发的场景。</p>
+<p>这里涉及到一个概念，事务的<em>隔离级别</em>。</p>
+<h4 id="2-2-事务隔离级别"><a href="#2-2-事务隔离级别" class="headerlink" title="2.2 事务隔离级别"></a>2.2 事务隔离级别</h4><p>在Squelize的文档里，我们可以去设置事务的隔离级别，一共有四种：</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Sequelize<span class="selector-class">.Transaction</span><span class="selector-class">.ISOLATION_LEVELS</span><span class="selector-class">.READ_UNCOMMITTED</span> <span class="comment">// "READ UNCOMMITTED"</span></span><br><span class="line">Sequelize<span class="selector-class">.Transaction</span><span class="selector-class">.ISOLATION_LEVELS</span><span class="selector-class">.READ_COMMITTED</span> <span class="comment">// "READ COMMITTED"</span></span><br><span class="line">Sequelize<span class="selector-class">.Transaction</span><span class="selector-class">.ISOLATION_LEVELS</span><span class="selector-class">.REPEATABLE_READ</span>  <span class="comment">// "REPEATABLE READ"</span></span><br><span class="line">Sequelize<span class="selector-class">.Transaction</span><span class="selector-class">.ISOLATION_LEVELS</span><span class="selector-class">.SERIALIZABLE</span> <span class="comment">// "SERIALIZABLE"</span></span><br></pre></td></tr></table></figure>
+<p>我们来看一个例子（事务A和事务B并发执行），分别了解下这四种隔离级别到底是什么意思呢？</p>
+<ul>
+<li>事务A：</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">START</span> <span class="keyword">TRANSACTION</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">SELECT</span> * <span class="keyword">from</span> <span class="keyword">order</span> <span class="keyword">where</span> <span class="keyword">id</span> = <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">/* payed: 0 */</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>事务B：</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">START</span> <span class="keyword">TRANSACTION</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">UPDATE</span> <span class="keyword">order</span> <span class="keyword">SET</span> payed = <span class="number">1</span> <span class="keyword">where</span> <span class="keyword">id</span> = <span class="number">1</span>;</span><br></pre></td></tr></table></figure>
+<h5 id="2-1-读未提交（READ-UNCOMMITTED）"><a href="#2-1-读未提交（READ-UNCOMMITTED）" class="headerlink" title="2.1 读未提交（READ_UNCOMMITTED）"></a>2.1 读未提交（READ_UNCOMMITTED）</h5><p>在READ_UNCOMMITTED的隔离级别下，如果在事务B还没有COMMIT的情况下，事务A在事务B执行完UPDATE语句并且未提交的时候，先后两次读到的订单支付状态是相反的。第一次是未支付，第二次是已支付。这种情况被称之为脏读（dirty reads）；</p>
+<p>实际情况上，我们是不允许出现脏读的，因为事务B很可能会回滚掉这个操作，那么就会导致事务A的操作出现业务错误。</p>
+<h5 id="2-2-读已提交（READ-COMMITTED）"><a href="#2-2-读已提交（READ-COMMITTED）" class="headerlink" title="2.2 读已提交（READ_COMMITTED）"></a>2.2 读已提交（READ_COMMITTED）</h5><p>为了解决脏读的问题，我们把隔离级别上升一个等级，叫读已提交。</p>
+<p>从名字上就非常容易理解了，在这种隔离级别下，当事务B在写数据的时候，会给这一行数据加上排他锁，这么在事务A中既不能读也不能写这一行的数据。直到事务B提交或者中止，事务A才读取到这一行的数据。</p>
+<p>虽然加了排他锁可以防止其他事务的读写，但是还会出现一种情况，就是当事务A的读取已经发生的进行过程中，在事务B中写了同一行记录，这样，同样对出现脏读的现象。因此，要解决这个现象，数据库在读操作的时候都会加上临时共享锁（一旦读完就释放共享锁）。</p>
+<p>虽然这种隔离级别可以解决脏读脏写的问题，但是还是存在一个问题，就是我们在同一个事务里两次读取到的数据是不一致的，这种现象叫不可重复读。</p>
+<h5 id="2-3-可重复读（REPEATABLE-READ）"><a href="#2-3-可重复读（REPEATABLE-READ）" class="headerlink" title="2.3 可重复读（REPEATABLE_READ）"></a>2.3 可重复读（REPEATABLE_READ）</h5><p>可重复读要实现的目标也很简单，我们希望在同一个事务内两次读到的数据都是一致的。</p>
+<p>实际上要实现这个隔离级别，我们只需要把读已提交这个隔离级别中对读的操作的临时共享锁换成持续共享锁就可以了，也就是说在事务A读取到订单的整个过程中，事务B都不能对这个订单进行修改，直到事务A处理结束。</p>
+<p>Mysql的默认事务隔离级别就是可重复读，Sequelize文档中也是一样。但是可重复读就完美了么？答案是否定的，我们假设这样一个场景。</p>
+<ul>
+<li>事务A：</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">START</span> <span class="keyword">TRANSACTION</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">SELECT</span> <span class="keyword">COUNT</span>(*) <span class="keyword">from</span> <span class="keyword">user</span> <span class="keyword">where</span> <span class="keyword">id</span> &lt; <span class="number">10</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">/* count: 5 */</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>事务B：</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">START</span> <span class="keyword">TRANSACTION</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> <span class="string">`user`</span> (<span class="keyword">name</span>, age) <span class="keyword">VALUES</span>(<span class="string">'Tom'</span>, <span class="number">8</span>);</span><br></pre></td></tr></table></figure>
+<p>当事务B的insert操作执行完毕，在事务A中获取年龄小于10岁的孩子个数就增加了一位，这种现象我们称之为幻读。</p>
+<p>也就是说我们虽然通过行级的共享锁和排他锁解决了脏读脏写问题，但是没有办法防止写入。</p>
+<h5 id="2-4-可序列化（SERIALIZABLE）"><a href="#2-4-可序列化（SERIALIZABLE）" class="headerlink" title="2.4 可序列化（SERIALIZABLE）"></a>2.4 可序列化（SERIALIZABLE）</h5><p>这种隔离级别是最高的，通过行级锁不能解决幻读问题，可以通过表级锁来解决。</p>
+<p>但是可序列化也会带来一个很致命的问题，就是性能问题，锁的时间越长，范围越大，并发性就越差，也就会导致性能瓶颈。</p>
+<p>因此隔离级别的选择是一个权衡利弊的过程，并不是隔离级别越高越好的。</p>
+<blockquote>
+<ol>
+<li>上面的描述只是大概讲了各个隔离级别可能实现的原理，但是不同的数据库的实现都有些差异，感兴趣的话还得去看进阶的数据库书籍。</li>
+<li>实际上Mysql的可重复读这个隔离级别通过间隙锁在一定程度解决了幻读的问题。</li>
+</ol>
+</blockquote>
+<h3 id="3-总结"><a href="#3-总结" class="headerlink" title="3. 总结"></a>3. 总结</h3><p>现在的开发大背景下，全栈开发已经越来越成为一个趋势。在前端往中后台靠的过程中，虽然通常前端自己写的后端业务都会比较简单，也不太有高并发和分布式这些场景。但是如果要真正理解服务端的很多概念，还是需要系统性地看书总结，去设想尽可能多的场景，这样才不至于变成全干工程师，而是真正的full stack，共勉。</p>
+
+
+                <hr>
+
+                
+
+                <ul class="pager">
+                    
+                    
+                        <li class="next">
+                            <a href="/2018/08/30/Vue源码学习-结合EventLoop看nextTick/" data-toggle="tooltip" data-placement="top" title="Vue源码学习-结合EventLoop看nextTick">Next Post &rarr;</a>
+                        </li>
+                    
+                </ul>
+
+                
+
+                
+
+            </div>
+    <!-- Side Catalog Container -->
+        
+
+    <!-- Sidebar Container -->
+
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                       
+                          <a class="tag" href="/tags/#Backend" title="Backend">Backend</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+                <hr>
+                <h5>FRIENDS</h5>
+                <ul class="list-inline">
+
+                    
+                        <li><a href="https://palmerye.github.io/palmer-blog/" target="_blank">Palmer Blog</a></li>
+                    
+                </ul>
+                
+            </div>
+
+        </div>
+    </div>
+</article>
+
+
+
+
+
+
+
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                
+                
+                
+                    <li>
+                        <a target="_blank" href="https://www.zhihu.com/people/yeomanyang">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa  fa-stack-1x fa-inverse">知</i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                
+
+                
+                    <li>
+                        <a target="_blank" href="https://github.com/yeomanyang">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; Yeoman&#39;s Blog 2018 
+                    <br>
+                    Theme by <a href="http://huangxuan.me">Hux</a> 
+                    <span style="display: inline-block; margin: 0 5px;">
+                        <i class="fa fa-heart"></i>
+                    </span> 
+                    Ported by <a href="http://blog.kaijun.rocks">Kaijun</a> | 
+                    <iframe style="margin-left: 2px; margin-bottom:-5px;" frameborder="0" scrolling="0" width="91px" height="20px" src="https://ghbtns.com/github-btn.html?user=kaijun&repo=hexo-theme-huxblog&type=star&count=true">
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="/js/jquery.min.js"></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="/js/bootstrap.min.js"></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/hux-blog.min.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- 
+     Because of the native support for backtick-style fenced code blocks 
+     right within the Markdown is landed in Github Pages, 
+     From V1.6, There is no need for Highlight.js, 
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0  
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/    
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("https://yeomanyang.github.io/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+
+<script>
+    // dynamic User by Hux
+    var _gaId = 'UA-90487102-1';
+    var _gaDomain = 'undefined';
+
+    // Originial
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', _gaId, _gaDomain);
+    ga('send', 'pageview');
+</script>
+
+
+
+
+<!-- Baidu Tongji -->
+
+<script>
+    // dynamic User by Hux
+    var _baId = 'c7f7936268a976be71b91508db530dfa';
+
+    // Originial
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?" + _baId;
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+</script>
+
+
+<!-- Side Catalog -->
+
+
+
+
+
+<!-- Image to hack wechat -->
+<img src="https://yeomanyang.github.io/img/icon_wechat.png" width="0" height="0" />
+<!-- Migrate from head to bottom, no longer block render and still work -->
+
+</body>
+
+</html>

@@ -2,13 +2,13 @@
 <html lang="en">
 
 <!-- Head tag -->
-<head>
+<head><meta name="generator" content="Hexo 3.8.0">
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="Talk is cheap, show me the code.">
-    <meta name="keyword"  content="">
+    <meta name="keyword" content="">
     <link rel="shortcut icon" href="/img/favicon.ico">
 
     <title>
@@ -90,14 +90,14 @@
 
                         
                         <li>
-                            <a href="/archives/">Archives</a>
+                            <a href="/about/">About</a>
                         </li>
                         
                     
 
                         
                         <li>
-                            <a href="/about/">About</a>
+                            <a href="/archives/">Archives</a>
                         </li>
                         
                     
@@ -161,7 +161,7 @@
         background-image: url('/img/home-bg.jpg')
     }
 </style>
-<header class="intro-header" >
+<header class="intro-header">
     <div class="container">
         <div class="row">
             <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
@@ -206,24 +206,24 @@
 <h2 id="Why？"><a href="#Why？" class="headerlink" title="Why？"></a>Why？</h2><p>想要解释清楚上述的两个事实和问题，需要先知道小数在计算机中是如何存储的：</p>
 <h3 id="知识点！！！"><a href="#知识点！！！" class="headerlink" title="知识点！！！"></a>知识点！！！</h3><ol>
 <li>把这个浮点数转成对应的二进制数，并用科学计数法表示</li>
-<li>把这个数值通过<a href="https://zh.wikipedia.org/wiki/IEEE_754" target="_blank" rel="external">IEEE 754</a>标准表示成真正会在计算机中存储的值</li>
+<li>把这个数值通过<a href="https://zh.wikipedia.org/wiki/IEEE_754" target="_blank" rel="noopener">IEEE 754</a>标准表示成真正会在计算机中存储的值</li>
 </ol>
 <p>我们知道，JS中的Number类型使用的是双精度浮点型，也就是其他语言中的double类型。而双精度浮点数使用64 bit来进行存储，结构图如下：</p>
 <p><img src="http://oksj4hknl.bkt.clouddn.com/double1.png"></p>
 <p>也就是说一个Number类型的数字在内存中会被表示成：<code>s x m x 2^e</code>这样的格式。</p>
-<p>在<a href="http://es5.github.io/#x8.5" target="_blank" rel="external">ES规范</a>中规定e的范围在-1074 ~ 971，而m最大能表示的最大数是52个1，最小能表示的是1，这里需要注意：</p>
+<p>在<a href="http://es5.github.io/#x8.5" target="_blank" rel="noopener">ES规范</a>中规定e的范围在-1074 ~ 971，而m最大能表示的最大数是52个1，最小能表示的是1，这里需要注意：</p>
 <h3 id="知识点！！！-1"><a href="#知识点！！！-1" class="headerlink" title="知识点！！！"></a>知识点！！！</h3><p>二进制的第一位有效数字必定是1，因此这个1不会被存储，可以节省一个存储位，因此尾数部分可以存储的范围是1 ~ 2^(52+1)</p>
 <p><strong>也就是说Number能表示的最大数字绝对值范围是 2^-1074 ~ 2^(53+971)</strong></p>
 <h2 id="精度丢失"><a href="#精度丢失" class="headerlink" title="精度丢失"></a>精度丢失</h2><p>前面提到，计算机中存储小数是先转换成二进制进行存储的，我们来看一下0.1和0.2转换成二进制的结果：</p>
-<figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">(<span class="number">0.1</span>)<span class="number">10</span> =&gt; (<span class="number">00011001100110011001</span>(<span class="number">1001</span>)...)<span class="number">2</span></div><div class="line"></div><div class="line">(<span class="number">0.2</span>)<span class="number">10</span> =&gt; (<span class="number">00110011001100110011</span>(<span class="number">0011</span>)...)<span class="number">2</span></div></pre></td></tr></table></figure>
+<figure class="highlight lsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">(<span class="number">0.1</span>)<span class="number">10</span> =&gt; (<span class="number">00011001100110011001</span>(<span class="number">1001</span>)...)<span class="number">2</span></span><br><span class="line"></span><br><span class="line">(<span class="number">0.2</span>)<span class="number">10</span> =&gt; (<span class="number">00110011001100110011</span>(<span class="number">0011</span>)...)<span class="number">2</span></span><br></pre></td></tr></table></figure>
 <p>可以发现，0.1和0.2转成二进制之后都是一个无限循环的数，前面提到尾数位只能存储最多53位有效数字，这时候就必须来进行四舍五入了，而这个取舍的规则就是在IEEE 754中定义的，0.1最终能被存储的有效数字是</p>
-<figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="number">0001</span>(<span class="number">1001</span>)(<span class="number">1001</span>)(<span class="number">1001</span>)(<span class="number">1001</span>)(<span class="number">1001</span>)(<span class="number">1001</span>)(<span class="number">1001</span>)(<span class="number">1001</span>)(<span class="number">1001</span>)(<span class="number">1001</span>)(<span class="number">1001</span>)(<span class="number">1001</span>)<span class="number">101</span></div><div class="line">+</div><div class="line">(<span class="number">0011</span>)(<span class="number">0011</span>)(<span class="number">0011</span>)(<span class="number">0011</span>)(<span class="number">0011</span>)(<span class="number">0011</span>)(<span class="number">0011</span>)(<span class="number">0011</span>)(<span class="number">0011</span>)(<span class="number">0011</span>)(<span class="number">0011</span>)(<span class="number">0011</span>)(<span class="number">0011</span>)<span class="number">01</span></div><div class="line">=</div><div class="line"><span class="number">0100</span>(<span class="number">1100</span>)(<span class="number">1100</span>)(<span class="number">1100</span>)(<span class="number">1100</span>)(<span class="number">1100</span>)(<span class="number">1100</span>)(<span class="number">1100</span>)(<span class="number">1100</span>)(<span class="number">1100</span>)(<span class="number">1100</span>)(<span class="number">1100</span>)(<span class="number">1100</span>)<span class="number">111</span></div></pre></td></tr></table></figure>
+<figure class="highlight lsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="number">0001</span>(<span class="number">1001</span>)(<span class="number">1001</span>)(<span class="number">1001</span>)(<span class="number">1001</span>)(<span class="number">1001</span>)(<span class="number">1001</span>)(<span class="number">1001</span>)(<span class="number">1001</span>)(<span class="number">1001</span>)(<span class="number">1001</span>)(<span class="number">1001</span>)(<span class="number">1001</span>)<span class="number">101</span></span><br><span class="line">+</span><br><span class="line">(<span class="number">0011</span>)(<span class="number">0011</span>)(<span class="number">0011</span>)(<span class="number">0011</span>)(<span class="number">0011</span>)(<span class="number">0011</span>)(<span class="number">0011</span>)(<span class="number">0011</span>)(<span class="number">0011</span>)(<span class="number">0011</span>)(<span class="number">0011</span>)(<span class="number">0011</span>)(<span class="number">0011</span>)<span class="number">01</span></span><br><span class="line">=</span><br><span class="line"><span class="number">0100</span>(<span class="number">1100</span>)(<span class="number">1100</span>)(<span class="number">1100</span>)(<span class="number">1100</span>)(<span class="number">1100</span>)(<span class="number">1100</span>)(<span class="number">1100</span>)(<span class="number">1100</span>)(<span class="number">1100</span>)(<span class="number">1100</span>)(<span class="number">1100</span>)(<span class="number">1100</span>)<span class="number">111</span></span><br></pre></td></tr></table></figure>
 <blockquote>
 <p>这里注意，53位的存储位指的是能存53位有效数字，因此前置的0不算，要往后再取到53位有效数字为止。</p>
 </blockquote>
 <p>最终的这个二进制数转成十进制就是0.30000000000000004（不信的话可以找一个在线进制转换工具试一下。</p>
 <h3 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h3><p>到此，这个精度丢失的问题已经解释清楚了，用一句话来概括就是，计算机中用二进制来存储小数，而大部分小数转成二进制之后都是无限循环的值，因此存在取舍问题，也就是精度丢失。</p>
-<h2 id="最大安全整数"><a href="#最大安全整数" class="headerlink" title="最大安全整数"></a>最大安全整数</h2><p>这里直接推荐一篇<a href="https://medium.com/dailyjs/javascripts-number-type-8d59199db1b6" target="_blank" rel="external">文章</a>，关于这个问题讲的非常清楚（文中有一处错误，会在下面指出。</p>
+<h2 id="最大安全整数"><a href="#最大安全整数" class="headerlink" title="最大安全整数"></a>最大安全整数</h2><p>这里直接推荐一篇<a href="https://medium.com/dailyjs/javascripts-number-type-8d59199db1b6" target="_blank" rel="noopener">文章</a>，关于这个问题讲的非常清楚（文中有一处错误，会在下面指出。</p>
 <p>如果懒得看英文的话，可以看我的总结：</p>
 <p>最大安全整数9007199254740991对应的二进制数如图：<br><img src="http://oksj4hknl.bkt.clouddn.com/2%5E53.png"></p>
 <p>53位有效数字都存储满了之后，想要表示更大的数字，就只能往指数数加一位，这时候尾数因为没有多余的存储空间，因此只能补0。</p>
@@ -236,10 +236,10 @@
 </blockquote>
 <h3 id="小结-1"><a href="#小结-1" class="headerlink" title="小结"></a>小结</h3><p>之所以会有最大安全整数这个概念，本质上还是因为数字类型在计算机中的存储结构。在尾数位不够补零之后，只要是多余的尾数为1所对应的整数都不能被精确表示。</p>
 <h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>可以发现，不管是浮点数计算的计算结果错误和大整数的计算结果错误，最终都可以归结到JS的精度只有53位（尾数只能存储53位的有效数字）。那么我们在日常工作中碰到这两个问题该如何解决呢？</p>
-<p>大而全的解决方案就是使用<a href="https://github.com/josdejong/mathjs" target="_blank" rel="external">mathjs</a>，看一下mathjs的输出：</p>
-<figure class="highlight mel"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">math.config(&#123;</div><div class="line">    number: <span class="string">'BigNumber'</span>,      </div><div class="line">    precision: <span class="number">64</span> </div><div class="line">&#125;);</div><div class="line"></div><div class="line">console.<span class="keyword">log</span>(math.<span class="keyword">format</span>(math.<span class="keyword">eval</span>(<span class="string">'0.1 + 0.2'</span>))); <span class="comment">// '0.3'</span></div><div class="line"></div><div class="line">console.<span class="keyword">log</span>(math.<span class="keyword">format</span>(math.<span class="keyword">eval</span>(<span class="string">'0.23 * 0.34 * 0.92'</span>))); <span class="comment">// '0.071944'</span></div><div class="line"></div><div class="line">console.<span class="keyword">log</span>(math.<span class="keyword">format</span>(math.<span class="keyword">eval</span>(<span class="string">'9007199254740991 + 2'</span>))); <span class="comment">// '9.007199254740993e+15'</span></div></pre></td></tr></table></figure>
-<p>其实平时在遇到整型溢出的情况是非常少的，大部分场景是浮点数的计算，如果不想因为一些简单的计算引入mathjs的话，也可以自己来实现运算函数（需要考虑数字是否越界和当数字被表示成科学计数法的场景），如果懒得自己实现的话，可以使用这个1k都不到的<a href="https://github.com/nefe/number-precision" target="_blank" rel="external">number-precision</a>，这个工具库API简洁很多，已经可以解决浮点数的计算问题了（看了代码，对于超出Number.MAX_SAFE_INTEGER的数字的处理方式是抛出warning）。</p>
-<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><p><a href="https://zh.wikipedia.org/wiki/%E9%9B%99%E7%B2%BE%E5%BA%A6%E6%B5%AE%E9%BB%9E%E6%95%B8" target="_blank" rel="external">双精度浮点数wiki</a><br><a href="http://justjavac.iteye.com/blog/1724438" target="_blank" rel="external">谁偷了你的精度</a><br><a href="https://medium.com/dailyjs/javascripts-number-type-8d59199db1b6" target="_blank" rel="external">Here is what you need to know about JavaScript’s Number type</a></p>
+<p>大而全的解决方案就是使用<a href="https://github.com/josdejong/mathjs" target="_blank" rel="noopener">mathjs</a>，看一下mathjs的输出：</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="built_in">math</span>.<span class="built_in">config</span>(&#123;</span><br><span class="line">    number: <span class="string">'BigNumber'</span>,      </span><br><span class="line">    precision: <span class="number">64</span> </span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">console.<span class="built_in">log</span>(<span class="built_in">math</span>.<span class="built_in">format</span>(<span class="built_in">math</span>.eval(<span class="string">'0.1 + 0.2'</span>))); // <span class="string">'0.3'</span></span><br><span class="line"></span><br><span class="line">console.<span class="built_in">log</span>(<span class="built_in">math</span>.<span class="built_in">format</span>(<span class="built_in">math</span>.eval(<span class="string">'0.23 * 0.34 * 0.92'</span>))); // <span class="string">'0.071944'</span></span><br><span class="line"></span><br><span class="line">console.<span class="built_in">log</span>(<span class="built_in">math</span>.<span class="built_in">format</span>(<span class="built_in">math</span>.eval(<span class="string">'9007199254740991 + 2'</span>))); // <span class="string">'9.007199254740993e+15'</span></span><br></pre></td></tr></table></figure>
+<p>其实平时在遇到整型溢出的情况是非常少的，大部分场景是浮点数的计算，如果不想因为一些简单的计算引入mathjs的话，也可以自己来实现运算函数（需要考虑数字是否越界和当数字被表示成科学计数法的场景），如果懒得自己实现的话，可以使用这个1k都不到的<a href="https://github.com/nefe/number-precision" target="_blank" rel="noopener">number-precision</a>，这个工具库API简洁很多，已经可以解决浮点数的计算问题了（看了代码，对于超出Number.MAX_SAFE_INTEGER的数字的处理方式是抛出warning）。</p>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><p><a href="https://zh.wikipedia.org/wiki/%E9%9B%99%E7%B2%BE%E5%BA%A6%E6%B5%AE%E9%BB%9E%E6%95%B8" target="_blank" rel="noopener">双精度浮点数wiki</a><br><a href="http://justjavac.iteye.com/blog/1724438" target="_blank" rel="noopener">谁偷了你的精度</a><br><a href="https://medium.com/dailyjs/javascripts-number-type-8d59199db1b6" target="_blank" rel="noopener">Here is what you need to know about JavaScript’s Number type</a></p>
 
 
                 <hr>
@@ -338,7 +338,7 @@
 
                 
                     <li>
-                        <a target="_blank"  href="https://github.com/yeomanyang">
+                        <a target="_blank" href="https://github.com/yeomanyang">
                             <span class="fa-stack fa-lg">
                                 <i class="fa fa-circle fa-stack-2x"></i>
                                 <i class="fa fa-github fa-stack-1x fa-inverse"></i>
@@ -358,10 +358,7 @@
                         <i class="fa fa-heart"></i>
                     </span> 
                     Ported by <a href="http://blog.kaijun.rocks">Kaijun</a> | 
-                    <iframe
-                        style="margin-left: 2px; margin-bottom:-5px;"
-                        frameborder="0" scrolling="0" width="91px" height="20px"
-                        src="https://ghbtns.com/github-btn.html?user=kaijun&repo=hexo-theme-huxblog&type=star&count=true" >
+                    <iframe style="margin-left: 2px; margin-bottom:-5px;" frameborder="0" scrolling="0" width="91px" height="20px" src="https://ghbtns.com/github-btn.html?user=kaijun&repo=hexo-theme-huxblog&type=star&count=true">
                     </iframe>
                 </p>
             </div>
