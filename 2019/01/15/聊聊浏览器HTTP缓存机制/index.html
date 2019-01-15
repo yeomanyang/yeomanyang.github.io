@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head><meta name="generator" content="Hexo 3.8.0">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Talk is cheap, show me the code.">
+    <meta name="keyword" content="">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>
+        
+          聊聊浏览器HTTP缓存机制 - Yeoman的博客 | Yeoman&#39;s Blog
+        
+    </title>
+
+    <link rel="canonical" href="https://yeomanyang.github.io/2019/01/15/聊聊浏览器HTTP缓存机制/">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/hux-blog.min.css">
+
+    <!-- Pygments Highlight CSS -->
+    <link rel="stylesheet" href="/css/highlight.css">
+
+    <!-- Custom Fonts -->
+    <!-- <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="https://cdn.staticfile.org/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- Hux Delete, sad but pending in China
+    <link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/
+    css'>
+    -->
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">Yeoman&#39;s Blog</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">Tags</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archives/">Archives</a>
+                        </li>
+                        
+                    
+
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    
+<!-- Image to hack wechat -->
+<!-- <img src="https://yeomanyang.github.io/img/icon_wechat.png" width="0" height="0"> -->
+<!-- <img src="{{ site.baseurl }}/{% if page.header-img %}{{ page.header-img }}{% else %}{{ site.header-img }}{% endif %}" width="0" height="0"> -->
+
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        background-image: url('/img/home-bg.jpg')
+    }
+</style>
+<header class="intro-header">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                          <a class="tag" href="/tags/#Frontend" title="Frontend">Frontend</a>
+                        
+                    </div>
+                    <h1>聊聊浏览器HTTP缓存机制</h1>
+                    <h2 class="subheading"></h2>
+                    <span class="meta">
+                        Posted by Yeoman on
+                        2019-01-15
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+    <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                <h3 id="1-何为缓存"><a href="#1-何为缓存" class="headerlink" title="1. 何为缓存"></a>1. 何为缓存</h3><p>缓存就是对已有资源的重复利用，到达减少网络请求，I/O操作的优化目的。缓存在软件架构中的很多节点都会涉及，而对于前端（非Node.js）而言，我们最关心的，当然是浏览器的HTTP缓存策略，比如我们经常看到的<code>304 Not Modified</code>以及<code>200  (from memory cache)</code>，<code>200  (from disk cache)</code>。</p>
+<p>网上关于浏览器HTTP缓存的文章非常多，这周文章旨在个人总结以及网文中未提及的一些细节的补充。</p>
+<p>本文不涉及service worker（PWA）的内容。</p>
+<h3 id="2-强缓存"><a href="#2-强缓存" class="headerlink" title="2. 强缓存"></a>2. 强缓存</h3><p>缓存的策略可以有很多种，HTTP缓存策略主要分为两种，首先根据设置的时间来决定资源是否失效，也就是强缓存，然后根据文件内容是否变化来决定资源是否失效，也就是协商缓存。</p>
+<p>其中强缓存只要命中了，就不再有服务端交互。而协商缓存则像它的名字一样，是每次都需要和服务器协商过后，确认资源内容没有变更才会命中。</p>
+<h4 id="2-1-强缓存"><a href="#2-1-强缓存" class="headerlink" title="2.1 强缓存"></a>2.1 强缓存</h4><p>和强缓存相关的HTTP头部有两种，Expires和Cache-Control。</p>
+<p>Expires是HTTP 1.0引入的控制强缓存实践的概念，而Cache-Control是HTTP 1.1中引入的概念，它提供了比Expires更灵活的控制方式，可是说是Expires的替代方案。同时，当我们同时设置了两个响应头，Cache-Control的优先级要更高。因此，本篇文章我们只用Cache-Control作为例子。</p>
+<p>对于浏览器而言，最常见的静态资源就是js，css以及图片。我们试下当我们设置了Cache-Control之后的变化。</p>
+<p><img src="https://haitao.nos.netease.com/53fa898c-a7d9-49ce-9762-cad8aa4fab4a_1988_88.jpeg"></p>
+<p>可以看到，当我对两个资源同时设置了Cache-Control，并且二次加载的时候，两个文件都会从缓存中读取。不同的是，css文件是<code>from disk cache</code>，而jpeg是<code>from memory cache</code>。</p>
+<h4 id="2-2-from-disk-cache-vs-from-memory-cache"><a href="#2-2-from-disk-cache-vs-from-memory-cache" class="headerlink" title="2.2 from disk cache vs from memory cache"></a>2.2 <code>from disk cache</code> vs <code>from memory cache</code></h4><p>新版本的Chrome把<code>from cache</code>区分成了<code>from disk cache</code> vs <code>from memory cache</code>。</p>
+<p>对于这两种强缓存的区别，<a href="https://stackoverflow.com/questions/44596937/chrome-memory-cache-vs-disk-cache" target="_blank" rel="noopener">so上很多回答</a>都很明确。一种是从硬盘中读取，另一种是从内存中读取，显然，从内存中读取会更快，因为没有I/O操作，从图中也可以看出，从内存中读取几乎是秒读，但是生命周期到浏览器窗口进程关闭就结束了。</p>
+<p>但是我并没有找到Chrome是基于何种策略来决定是缓存到硬盘还是缓存到内存中的。包括google的开发者文档中也没有提及。</p>
+<p>不过看到上图的表现，我的第一反应是Chrome对于<em>不同类型</em>的资源采用了不同的缓存策略。</p>
+<p>为了验证这个猜测，我访问了一些其他的站点，发现js，css资源也有被缓存到内存的情况，显然，Chrome并不是根据文件类型来进行区分的。</p>
+<p>对比了两个请求的response之后，我猜测最大可能是根据文件大小来决定缓存策略。于是我把css文件改成和图片文件相同的大小，结果如下：</p>
+<p><img src="https://haitao.nos.netease.com/2d801046-f46a-4ebd-8401-7fe02f517f69_776_750.jpeg"></p>
+<p>不难发现，这时候css文件确实是被缓存到内存了，<strong>也就是说Chrome是只会对大文件缓存到内存，同时为了控制浏览器的内存占比，其他的小文件都是缓存到磁盘</strong>。这样想来也是非常合理呢。</p>
+<p>这时候，当我们关闭掉浏览器窗口，将文件改回去，重新访问这个资源，会发现会重新从磁盘读取。</p>
+<p><img src="https://haitao.nos.netease.com/2a176641-9697-4630-8a69-b4bb434c4965_764_694.jpeg"></p>
+<p>看到这里，难道这个加载策略就如此简单么？只是仅仅根据文件大小？我尝试查看了几个主流网站的各类型静态资源加载情况，简单总结了是否缓存到内存是以下几点综合作用的结果：</p>
+<blockquote>
+<ol>
+<li>文件类型 - 比如js和图片文件在size较小的情况下就会被缓存到内存，而css则需要size很大才会缓存到内存</li>
+<li>文件大小 - 这一点在上面已经演示过了</li>
+<li>文件加载方式（Chrome调试工具里的Initiator）- 如果是通过script标签引入的js会被优先缓存到内存，而通过动态加载的js则会优先加载到磁盘</li>
+<li>未知因素</li>
+</ol>
+</blockquote>
+<p>可惜并没有找到官方的说明，不过这一点对于我们优化缓存策略来讲影响并不大。</p>
+<h4 id="2-3-默认强缓存策略"><a href="#2-3-默认强缓存策略" class="headerlink" title="2.3 默认强缓存策略"></a>2.3 默认强缓存策略</h4><p>谈到这里已经基本讲清楚了Chrome强缓存的策略，但是似乎没有提及如果没有设置Cache-Control这个头，浏览器是否会默认缓存呢。</p>
+<p>经过测试，发现Chrome会对资源进行默认强缓存，而Firefox则不会。我们尝试在规范里找到<a href="https://www.w3.org/Protocols/rfc2616/rfc2616-sec13.html" target="_blank" rel="noopener">HTTP 1.1规范的缓存部分</a>。</p>
+<p>其中有这么一段描述：</p>
+<blockquote>
+<p>Unless specifically constrained by a cache-control (section 14.9) directive, a caching system MAY always store a successful response (see section 13.8) as a cache entry, MAY return it without validation if it is fresh, and MAY return it after successful validation.</p>
+</blockquote>
+<p>也就是说，规范里规定，如果没有受到Cache-Control这个请求头的约束，缓存系统可以在不重新验证的情况下直接返回缓存，也可以在重新验证之后再返回资源。这样看来，Chrome和Firefox都是遵循这个规范实现的。</p>
+<p>同时从这一点也可以看出，了解规范对于我们理解一些知识点和现象还是比较重要的。浏览器的表现只是对诸多规范的一种实现，不同的浏览器实现可能存在不同程度的差异。</p>
+<h4 id="2-4-Cache-Control具体策略"><a href="#2-4-Cache-Control具体策略" class="headerlink" title="2.4 Cache-Control具体策略"></a>2.4 Cache-Control具体策略</h4><p>讲了这么多，实际上我们还只用到了Cache-Control的一种策略：<code>max-age</code>。<code>max-age</code>可以设置缓存可以被保持多少秒。这里需要注意的是：<strong>当强缓存被命中，这个缓存时间就会被重置成max-age设置的时间。</strong></p>
+<p>实际上，Cache-Control的值还可以是<code>public</code>，<code>private</code>，<code>no-cache</code>，<code>no-store</code>。</p>
+<p>关于这几种策略，Google开发者文档上有一张图可以很好地描述：</p>
+<p><img src="https://haitao.nos.netease.com/b660c181-3670-4381-a58a-6235335bf3f0_595_600.png"></p>
+<ol>
+<li>如果你想完全禁用缓存，那么就设置成<code>no-store</code>。<strong>需要注意的是，这种策略会同时禁用掉协商缓存。</strong></li>
+<li>如果你想单纯禁用掉强缓存，那么就设置成<code>no-cache</code>。</li>
+<li><code>public</code>和<code>private</code>两种策略的区别是是否允许中间缓存对资源进行缓存，比如设置成<code>private</code>之后，就只有用户的浏览器可以缓存，而cdn则不行。</li>
+<li>如果你还想控制强缓存的时间，这时候就可以通过max-age来进行控制。</li>
+</ol>
+<h3 id="3-协商缓存"><a href="#3-协商缓存" class="headerlink" title="3. 协商缓存"></a>3. 协商缓存</h3><p>强缓存可以解决的问题非常明显，省去了网络请求。但是又要面临一个新的问题，如果没有网络请求，我们如何知道一个资源被更新了呢？</p>
+<p>协商缓存可以解决这个问题，而与协商缓存相关的HTTP头部有两对，<code>Last-Modified/If-Modified-Since</code>和<code>ETag/If-None-Match</code>。</p>
+<p>协商缓存的过程也很简单，每次在服务器资源变化的时候，响应头会根据资源内容生成一个ETag标记，浏览器在请求同一个资源的时候，会带上这个标记，服务器根据标记是否变化来决定是否打回<code>304 NOT Modified</code>。</p>
+<h4 id="3-1-Last-Modified-If-Modified-Since-vs-ETag-If-None-Match"><a href="#3-1-Last-Modified-If-Modified-Since-vs-ETag-If-None-Match" class="headerlink" title="3.1 Last-Modified/If-Modified-Since vs ETag/If-None-Match"></a>3.1 <code>Last-Modified/If-Modified-Since</code> vs <code>ETag/If-None-Match</code></h4><p>关于这两对HTTP头部的区别，大家可以看HTTP1.1规范中的<a href="https://www.w3.org/Protocols/rfc2616/rfc2616-sec13.html" target="_blank" rel="noopener">13.3.4 Rules for When to Use Entity Tags and Last-Modified Dates</a>。</p>
+<p><strong>TL;DR</strong></p>
+<p>以下是我的一些总结：</p>
+<ol>
+<li><code>ETag/If-None-Match</code>在HTTP1.0中不会生效，因此在HTTP1.0中只能使用<code>Last-Modified/If-Modified-Since</code>。</li>
+<li>在极少数情况下，单纯使用Last-Modified值作为验证器可能会导致一些问题（比如1. 文件被打开就会导致Last-Modified被更新 2. 服务器时间错误 3. Last-Modified的粒度只能到秒等）。因此在HTTP1.1下必须同时提供<code>ETag/If-None-Match</code>作为验证策略。</li>
+<li>在<code>ETag/If-None-Match</code>和<code>Last-Modified/If-Modified-Since</code>同时被使用的情况下，前者的优先级高于后者。但是只有在两者同时被验证通过的情况下，会允许返回<code>304 NOT Modified</code>。</li>
+<li>看完规范才知道ETag原来是entity tag的缩写（逃</li>
+</ol>
+<h4 id="3-2-ETag的实现"><a href="#3-2-ETag的实现" class="headerlink" title="3.2 ETag的实现"></a>3.2 ETag的实现</h4><p>关于ETag的具体实现，规范并没有定义。但是既然叫entity tag，肯定是根据响应的实体来生成的。</p>
+<p>如果大家感兴趣，可以看下koa-etag引用的<a href="https://github.com/jshttp/etag/blob/master/index.js" target="_blank" rel="noopener">etag库</a>实现。</p>
+<h3 id="4-缓存在工程里的实践"><a href="#4-缓存在工程里的实践" class="headerlink" title="4. 缓存在工程里的实践"></a>4. 缓存在工程里的实践</h3><p>缓存在工程中的应用策略要根据静态资源类型，业务场景来针对性的制定。</p>
+<ol>
+<li>对于html文件：也就是大部分站点的首页而言，通常是不能设置强缓存的，因为首页通常是js，css的入口，如果首页被强缓存了。那么除非用户手动清除缓存，否则这个站点会一直无法更新。因此，对于html文件建议使用no-cache配置etag的策略。同时，新版本的Chrome对于html文件的默认策略就是no-cache，即使你设置了<code>Cache-Control: max-age=10240</code>也是无效的。</li>
+<li>对于js，css，图片这种静态资源来说，每次去服务器获取的成本比较大，而且脚本更新的频率不会特别高，也没必要每次采用etag校验，因此都会设置一个时间比较长的强缓存，这样可以节省网络请求。然后在文件名中加上和文件内容相关的hash指纹，实现版本更新</li>
+<li>如果不是一些非常敏感的数据，Cache-Control可以用默认的public。这样可以利用cdn的缓存，起到网络优化和减少源站的负载压力的作用，如果cdn缓存过期，则会发起回源请求，并继续缓存。</li>
+<li>关于ajax请求，本身也只有GET方式的ajax可以被缓存，这也是get请求的一个重要优势之一。但是绝大部分的ajax请求响应体都不超过几K，所以对这种缓存的意义不大，通常不会缓存。如果是那种大批量数据的话，比如拿一个地址库，这种就可以通过协商缓存来进行缓存。</li>
+<li>缓存可能会引入一个新的问题，就是当我们发布了新的html之后，会引用旧的静态资源。当然我们现在都是非覆盖式更新（因为文件名带上了文件指纹），因此也不必担心这个问题。每次我们先部署静态资源，再部署页面就可以了。</li>
+</ol>
+<h3 id="5-现有工程改进"><a href="#5-现有工程改进" class="headerlink" title="5. 现有工程改进"></a>5. 现有工程改进</h3><p>之前一直对静态资源的缓存没有太上心，总结完了上面的内容，看看我们现有的工程是否有可以优化的点。</p>
+<p>举个例子，来看下企业购的资源请求情况：</p>
+<p><img src="https://haitao.nos.netease.com/a89f931c-6704-4b10-8e8d-4823e6415b51_3438_190.jpeg"></p>
+<ol>
+<li>我们发现首页是每次都会去服务器拿完整的资源，根据上面的总结，首页html资源我们可以加上协商缓存进行优化，可以优化请求内容大小</li>
+<li>js资源目前都是走的协商缓存，但是实际上js资源都已经带上了文件指纹，所以可以直接设置强缓存。这样可以省去网络请求的时间</li>
+</ol>
+<p>虽然以上两点的优化带来的提升是非常小的，因为本身资源就很小，而且大部分后端系统用户的网络状况也比较好。但是有了系统的总结之后，后续遇到缓存的问题我们就可以有的放矢了。</p>
+
+
+                <hr>
+
+                
+
+                <ul class="pager">
+                    
+                    
+                        <li class="next">
+                            <a href="/2018/11/19/egg-sequelize以及事务相关/" data-toggle="tooltip" data-placement="top" title="egg-sequelize以及事务相关">Next Post &rarr;</a>
+                        </li>
+                    
+                </ul>
+
+                
+
+                
+
+            </div>
+    <!-- Side Catalog Container -->
+        
+
+    <!-- Sidebar Container -->
+
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                       
+                          <a class="tag" href="/tags/#Frontend" title="Frontend">Frontend</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+                <hr>
+                <h5>FRIENDS</h5>
+                <ul class="list-inline">
+
+                    
+                        <li><a href="https://palmerye.github.io/palmer-blog/" target="_blank">Palmer Blog</a></li>
+                    
+                </ul>
+                
+            </div>
+
+        </div>
+    </div>
+</article>
+
+
+
+
+
+
+
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                
+                
+                
+                    <li>
+                        <a target="_blank" href="https://www.zhihu.com/people/yeomanyang">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa  fa-stack-1x fa-inverse">知</i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                
+
+                
+                    <li>
+                        <a target="_blank" href="https://github.com/yeomanyang">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; Yeoman&#39;s Blog 2019 
+                    <br>
+                    Theme by <a href="http://huangxuan.me">Hux</a> 
+                    <span style="display: inline-block; margin: 0 5px;">
+                        <i class="fa fa-heart"></i>
+                    </span> 
+                    Ported by <a href="http://blog.kaijun.rocks">Kaijun</a> | 
+                    <iframe style="margin-left: 2px; margin-bottom:-5px;" frameborder="0" scrolling="0" width="91px" height="20px" src="https://ghbtns.com/github-btn.html?user=kaijun&repo=hexo-theme-huxblog&type=star&count=true">
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="/js/jquery.min.js"></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="/js/bootstrap.min.js"></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/hux-blog.min.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- 
+     Because of the native support for backtick-style fenced code blocks 
+     right within the Markdown is landed in Github Pages, 
+     From V1.6, There is no need for Highlight.js, 
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0  
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/    
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("https://yeomanyang.github.io/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+
+<script>
+    // dynamic User by Hux
+    var _gaId = 'UA-90487102-1';
+    var _gaDomain = 'undefined';
+
+    // Originial
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', _gaId, _gaDomain);
+    ga('send', 'pageview');
+</script>
+
+
+
+
+<!-- Baidu Tongji -->
+
+<script>
+    // dynamic User by Hux
+    var _baId = 'c7f7936268a976be71b91508db530dfa';
+
+    // Originial
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?" + _baId;
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+</script>
+
+
+<!-- Side Catalog -->
+
+
+
+
+
+<!-- Image to hack wechat -->
+<img src="https://yeomanyang.github.io/img/icon_wechat.png" width="0" height="0" />
+<!-- Migrate from head to bottom, no longer block render and still work -->
+
+</body>
+
+</html>
