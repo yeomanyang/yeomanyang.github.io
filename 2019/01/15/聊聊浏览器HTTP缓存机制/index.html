@@ -265,12 +265,18 @@
 <li>缓存可能会引入一个新的问题，就是当我们发布了新的html之后，会引用旧的静态资源。当然我们现在都是非覆盖式更新（因为文件名带上了文件指纹），因此也不必担心这个问题。每次我们先部署静态资源，再部署页面就可以了。</li>
 </ol>
 <h3 id="5-现有工程改进"><a href="#5-现有工程改进" class="headerlink" title="5. 现有工程改进"></a>5. 现有工程改进</h3><p>之前一直对静态资源的缓存没有太上心，总结完了上面的内容，看看我们现有的工程是否有可以优化的点。</p>
-<p>举个例子，来看下企业购的资源请求情况：</p>
-<p><img src="https://haitao.nos.netease.com/a89f931c-6704-4b10-8e8d-4823e6415b51_3438_190.jpeg"></p>
+<p>举个例子，来看下企业购后台的资源请求情况：</p>
+<p><img src="https://haitao.nos.netease.com/2a1df095-29b4-46a8-b188-0ffc35bb1245_2044_288.jpeg"></p>
 <ol>
 <li>我们发现首页是每次都会去服务器拿完整的资源，根据上面的总结，首页html资源我们可以加上协商缓存进行优化，可以优化请求内容大小</li>
 <li>js资源目前都是走的协商缓存，但是实际上js资源都已经带上了文件指纹，所以可以直接设置强缓存。这样可以省去网络请求的时间</li>
 </ol>
+<h4 id="5-1-解决问题"><a href="#5-1-解决问题" class="headerlink" title="5.1 解决问题"></a>5.1 解决问题</h4><p>企业购后台是kapp项目，第一反应是难道Egg.js的默认静态资源缓存策略就是协商缓存么？</p>
+<p><code>egg-static</code>是egg的静态资源插件，这个插件是基于<code>koa-static-cache</code>这个库设置静态资源响应策略的。</p>
+<p>但是我发现<a href="`koa-static-cache`"><code>koa-static-cache</code></a>确实是设置了<code>Cache-Control</code>头部的。为了防止有人不想点链接，贴上代码：</p>
+<figure class="highlight livecodeserver"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ctx.<span class="built_in">set</span>(<span class="string">'cache-control'</span>, <span class="built_in">file</span>.cacheControl || <span class="string">'public, max-age='</span> + <span class="built_in">file</span>.maxAge)</span><br></pre></td></tr></table></figure>
+<p>显然，问题就是出在<code>egg-static</code>了，egg-static默认的max-age是0，而在prod环境下配置了一个比较大的max-age。<br><img src="https://haitao.nos.netease.com/c79ec48c-fb72-4f46-a3e6-048b4677e488_372_274.jpeg"></p>
+<p>事实上，kapp为了环境统一管理，把线上的配置改成读取config.online.js了，因此这个配置一直没有生效。就等kapp的同学发版解决了～</p>
 <p>虽然以上两点的优化带来的提升是非常小的，因为本身资源就很小，而且大部分后端系统用户的网络状况也比较好。但是有了系统的总结之后，后续遇到缓存的问题我们就可以有的放矢了。</p>
 
 
