@@ -225,7 +225,7 @@
 </blockquote>
 <p>可惜并没有找到官方的说明，不过这一点对于我们优化缓存策略来讲影响并不大。</p>
 <h4 id="2-3-默认强缓存策略"><a href="#2-3-默认强缓存策略" class="headerlink" title="2.3 默认强缓存策略"></a>2.3 默认强缓存策略</h4><p>谈到这里已经基本讲清楚了Chrome强缓存的策略，但是似乎没有提及如果没有设置Cache-Control这个头，浏览器是否会默认缓存呢。</p>
-<p>经过测试，发现Chrome会对资源进行默认强缓存，而Firefox则不会。我们尝试在规范里找到<a href="https://www.w3.org/Protocols/rfc2616/rfc2616-sec13.html" target="_blank" rel="noopener">HTTP 1.1规范的缓存部分</a>。</p>
+<p>经过测试，发现只要开启了Last-Modified头部，就算不设置Cache-Control头部，Chrome也会对资源进行默认强缓存，而Firefox则不会。我们尝试在规范里找到<a href="https://www.w3.org/Protocols/rfc2616/rfc2616-sec13.html" target="_blank" rel="noopener">HTTP 1.1规范的缓存部分</a>。</p>
 <p>其中有这么一段描述：</p>
 <blockquote>
 <p>Unless specifically constrained by a cache-control (section 14.9) directive, a caching system MAY always store a successful response (see section 13.8) as a cache entry, MAY return it without validation if it is fresh, and MAY return it after successful validation.</p>
@@ -273,7 +273,7 @@
 </ol>
 <h4 id="5-1-解决问题"><a href="#5-1-解决问题" class="headerlink" title="5.1 解决问题"></a>5.1 解决问题</h4><p>企业购后台是kapp项目，第一反应是难道Egg.js的默认静态资源缓存策略就是协商缓存么？</p>
 <p><code>egg-static</code>是egg的静态资源插件，这个插件是基于<code>koa-static-cache</code>这个库设置静态资源响应策略的。</p>
-<p>但是我发现<a href="`koa-static-cache`"><code>koa-static-cache</code></a>确实是设置了<code>Cache-Control</code>头部的。为了防止有人不想点链接，贴上代码：</p>
+<p>但是我发现<a href="https://github.com/koajs/static-cache/blob/master/index.js#L110" target="_blank" rel="noopener"><code>koa-static-cache</code></a>确实是设置了<code>Cache-Control</code>头部的。为了防止有人不想点链接，贴上代码：</p>
 <figure class="highlight livecodeserver"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ctx.<span class="built_in">set</span>(<span class="string">'cache-control'</span>, <span class="built_in">file</span>.cacheControl || <span class="string">'public, max-age='</span> + <span class="built_in">file</span>.maxAge)</span><br></pre></td></tr></table></figure>
 <p>显然，问题就是出在<code>egg-static</code>了，egg-static默认的max-age是0，而在prod环境下配置了一个比较大的max-age。<br><img src="https://haitao.nos.netease.com/c79ec48c-fb72-4f46-a3e6-048b4677e488_372_274.jpeg"></p>
 <p>事实上，kapp为了环境统一管理，把线上的配置改成读取config.online.js了，因此这个配置一直没有生效。就等kapp的同学发版解决了～</p>
