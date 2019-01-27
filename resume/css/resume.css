@@ -49,7 +49,7 @@ section {
 	color: #fff;
 	border-top: 1px solid #fff;
 	padding-top: 2px;
-	margin-top: 30px;	
+	margin-top: 30px;
 }
 .name {
 	font-size: 28px;
@@ -131,7 +131,7 @@ a:hover {
 	margin: 0px 5px;
 }
 .sec-sub-title {
-	background-color: #263238; 
+	background-color: #263238;
 	padding: 5px 10px;
 	margin: 10px 0px;
 	color: #fff;
@@ -177,6 +177,7 @@ li {
 	margin-left: 20px;
 	color: #666;
 	text-align: justify;
+    line-height: 1.8;
 }
 .qrcode {
 /*	position: absolute;
