@@ -90,13 +90,6 @@
 
                         
                         <li>
-                            <a href="/tags/">Tags</a>
-                        </li>
-                        
-                    
-
-                        
-                        <li>
                             <a href="/about/">About</a>
                         </li>
                         
@@ -105,6 +98,13 @@
                         
                         <li>
                             <a href="/archives/">Archives</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">Tags</a>
                         </li>
                         
                     
@@ -173,9 +173,9 @@
             <!-- 标签云 -->
             <div id="tag_cloud" class="tags">
                 
-                    <a href="#Tools" title="Tools" rel="3">Tools</a>
-                
                     <a href="#technique" title="technique" rel="1">technique</a>
+                
+                    <a href="#Tools" title="Tools" rel="3">Tools</a>
                 
                     <a href="#Thought" title="Thought" rel="1">Thought</a>
                 
@@ -189,6 +189,28 @@
 
             <!-- 标签列表 -->
 
+            
+            <div class="one-tag-list">
+                <span class="fa fa-tag listing-seperator" id="technique">
+                    <span class="tag-text">technique</span>
+                </span>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <div class="post-preview">
+                     <a href="/2018/01/16/0.1+0.2=0.30000000000000004/">
+                        <h2 class="post-title">
+                            从0.1+0.2=0.30000000000000004再看JS中的Number类型.md
+                        </h2>
+                        
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </div>
+                <hr>
+                
+            </div>
             
             <div class="one-tag-list">
                 <span class="fa fa-tag listing-seperator" id="Tools">
@@ -247,28 +269,6 @@
             </div>
             
             <div class="one-tag-list">
-                <span class="fa fa-tag listing-seperator" id="technique">
-                    <span class="tag-text">technique</span>
-                </span>
-                
-                  <!-- <li class="listing-item">
-                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
-                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
-                  </li> -->
-                 <div class="post-preview">
-                     <a href="/2018/01/16/0.1+0.2=0.30000000000000004/">
-                        <h2 class="post-title">
-                            从0.1+0.2=0.30000000000000004再看JS中的Number类型.md
-                        </h2>
-                        
-                    </a>
-                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
-                </div>
-                <hr>
-                
-            </div>
-            
-            <div class="one-tag-list">
                 <span class="fa fa-tag listing-seperator" id="Thought">
                     <span class="tag-text">Thought</span>
                 </span>
@@ -300,9 +300,9 @@
                   <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
                   </li> -->
                  <div class="post-preview">
-                     <a href="/2017/12/10/记组件库工程搭建/">
+                     <a href="/2017/12/13/记Chrome的性能分析工具实践/">
                         <h2 class="post-title">
-                            记组件库工程搭建
+                            记Chrome的性能分析工具实践
                         </h2>
                         
                     </a>
@@ -315,9 +315,9 @@
                   <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
                   </li> -->
                  <div class="post-preview">
-                     <a href="/2017/12/13/记Chrome的性能分析工具实践/">
+                     <a href="/2017/12/10/记组件库工程搭建/">
                         <h2 class="post-title">
-                            记Chrome的性能分析工具实践
+                            记组件库工程搭建
                         </h2>
                         
                     </a>
@@ -360,9 +360,9 @@
                   <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
                   </li> -->
                  <div class="post-preview">
-                     <a href="/2017/01/16/npm进阶学习/">
+                     <a href="/2017/09/02/从搭建工程讲到CSS-Modules/">
                         <h2 class="post-title">
-                            npm进阶学习
+                            从搭建工程讲到CSS Modules
                         </h2>
                         
                     </a>
@@ -375,9 +375,9 @@
                   <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
                   </li> -->
                  <div class="post-preview">
-                     <a href="/2017/09/02/从搭建工程讲到CSS-Modules/">
+                     <a href="/2017/01/16/npm进阶学习/">
                         <h2 class="post-title">
-                            从搭建工程讲到CSS Modules
+                            npm进阶学习
                         </h2>
                         
                     </a>
@@ -405,9 +405,9 @@
                   <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
                   </li> -->
                  <div class="post-preview">
-                     <a href="/2018/08/25/Vue源码学习-从keep-alive的bug讲起/">
+                     <a href="/2018/08/30/Vue源码学习-结合EventLoop看nextTick/">
                         <h2 class="post-title">
-                            Vue源码学习-从keep-alive的bug讲起
+                            Vue源码学习-结合EventLoop看nextTick
                         </h2>
                         
                     </a>
@@ -420,9 +420,9 @@
                   <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
                   </li> -->
                  <div class="post-preview">
-                     <a href="/2018/08/30/Vue源码学习-结合EventLoop看nextTick/">
+                     <a href="/2018/08/25/Vue源码学习-从keep-alive的bug讲起/">
                         <h2 class="post-title">
-                            Vue源码学习-结合EventLoop看nextTick
+                            Vue源码学习-从keep-alive的bug讲起
                         </h2>
                         
                     </a>
