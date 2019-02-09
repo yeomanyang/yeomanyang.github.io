@@ -40,18 +40,19 @@
 						<li class="pro-title">
 							<strong>编程技能</strong>
 						</li>
-						<li class="pro-content">了解<strong class="keypoint">Vue.js</strong>核心运行机制，定位问题基本都能带着问题深入源码或规范。</li>
+						<li class="pro-content">熟悉<strong class="keypoint">Vue.js</strong>技术栈，了解MVVM，diff策略，批量更新等核心源码。</li>
 						<li class="pro-content">读过浏览器端和Node.js的<strong class="keypoint">Event Loop</strong>规范和文档，熟悉JS异步编程。 </li>
                         <li class="pro-content">了解<strong class="keypoint">koa</strong>核心运行机制，可以基于<strong class="keypoint">Egg.js+mysql</strong>开发简单项目服务端。 </li>
-                        <li class="pro-content">了解常用前端部署方案以及可能存在的问题，了解前后端分离部署策略。</li>
-                        <li class="pro-content">CSS2.1基础较为扎实，熟悉flex布局，但由于近两年从事中后台系统开发工作，CSS可能相对生疏。</li>
+                        <li class="pro-content">了解常用前端部署方案以及前后端分离架构方案。</li>
+                        <li class="pro-content">CSS2.1基础较为扎实，熟悉flex布局，同时有过to B，to C项目的开发经验。但由于近两年从事中后台系统开发工作，CSS可能相对生疏。</li>
 						<li class="pro-title">
 							<strong>其他</strong>
 						</li>
-						<li class="pro-content">有一定代码洁癖，有比较良好的<strong class="keypoint">Git workflow</strong>意识，Mac党。</li>
-						<li class="pro-content">有过一年 <strong class="keypoint">iOS开发并上架经验。</strong></li>
-						<li class="pro-content">了解 <strong class="keypoint">HTTP协议</strong> ，<strong class="keypoint">跨域问题</strong> 解决方案。</li>
+						<li class="pro-content">有一定代码洁癖，熟悉<strong class="keypoint">Git workflow</strong>规范，Mac党。</li>
+						<li class="pro-content">有过一年 <strong class="keypoint">iOS开发并有两个App上架经验。</strong></li>
+						<li class="pro-content">了解 <strong class="keypoint">HTTP协议</strong> ，<strong class="keypoint">跨域问题</strong> 解决方案，HTTP缓存策略。</li>
                         <li class="pro-content">习惯思考业务需求的本质，合理性，投入产出比，不喜欢被产品经理牵着走（逃。</li>
+						<li class="pro-content">有写技术博客和个人总结的习惯，其中《0.1+0.2=0.30000000000000004再看JS中的Number类型》上过掘金的周报。</li>
 					</ul>
 				</section>
 				<section>
@@ -60,26 +61,25 @@
 					<ul class="resume-item">
 						<li class="pro-title"><strong class="project">WMS-前端负责人</strong></li>
                         <li class="pro-description"><strong>业务组：</strong></li>
-						<li class="pro-content">入职之初根据项目现状把WMS的技术选型从Regular迁移成Vue，在交付时间倒排的情况下，独立完成WMS项目从0到1的开发工作，之后带领2名同事开发WMS迭代工作。</li>
-						<li class="pro-content">参与制定WMS的视频录制新方案，帮助产品落地，解决了业务上的一些痛点，并在公司以第一发明人的角色申请了技术专利。</li>
-						<li class="pro-content">通过Chrome性能分析工具，顺利定位项目里的一个性能bug，修复上线</li>
-						<li class="pro-content">会主动去思考优化一些重复性的工作，封装了一些业务组件和mixin</li>
+						<li class="pro-content">入职之初，在开发初期发现Regular在开发SPA应用场景下在状态管理和路由方案上不太成熟，因此把WMS的技术选型从Regular迁移成Vue，在交付时间倒排的情况下，按时独立完成WMS项目从0到1的开发工作，之后带领2名同事开发WMS迭代工作。</li>
+						<li class="pro-content">由于之前仓库视频录制方案存在不易扩展以及和WMS系统完全隔离等痛点，参与制定了WMS的视频录制新方案，新方案采用家用普通摄像头，由MWS系统直接调用，大大节约摄像头部署成本以及系统内部对摄像头状态进行管控，过程中由于HTTPS和局域网的HTTP服务（由于考虑公网上行带宽的限制，所有视频都先存在仓库本地）存在跨域问题，快速开发了基于Electron的proxy方案解决问题。后续新开仓库都采用了这套方案进行视频录制，并在公司<strong class="keypoint">以第一发明人的角色申请了技术专利。</strong></li>
+						<li class="pro-content">项目中曾暴漏出一个性能问题，打印模块每次打印都会变卡一些，频繁打印会直接卡死。通过Chrome性能分析工具，首先排查内存泄漏问题，发现内存基本稳定之后，通过Performance工具的火焰图分析是渲染还是脚本执行导致的卡顿，然后查看耗时异常的JS调用堆栈，最终在完全没有看业务代码的前提下，准确定位到性能问题是每次添加的DOM没有被移除的问题导致的。</li>
+						<li class="pro-content">会主动去思考优化一些重复性的工作，封装了一些业务组件，比如类浏览器多窗口组件，报表组件等，因为WMS业务的报表数量比较大，因此报表组件一定程度提高了其他同事的开发效率</li>
                         <li class="pro-content">WMS项目有一些硬件设备的对接，比如打印机，称重机，摄像头等，由于BS架构的一些局限性，使用Electron解决一些硬件设备的接入问题</li>
-                        <li class="pro-content">接入Sentry异常收集平台，根据平台收集到的数据给产品提了一些业务优化建议，并被采纳。</li>
+                        <li class="pro-content">接入Sentry异常收集平台，除了收集解决脚本异常，同时根据平台收集到的接口报错信息以及报错频率，给产品提了一些业务优化建议，并被采纳。</li>
                         <p></p>
                         <li class="pro-description"><strong>前端组：</strong></li>
-                        <li class="pro-content">参与组内nei-ui组件库的2.0版本升级开发工作</li>
-                        <li class="pro-content">推动组内基于BFF层的disconf接入工作，解决应用机器在变更，扩容等场景下需要手动修改nginx配置的痛点。</li>
-                        <li class="pro-content">负责规划组内半年学习计划，平均1-2个月一个主题，基本每个人都有博客输出，并组织组内分享，培养组内技术氛围</li>
+                        <li class="pro-content">推动组内基于BFF层的disconf接入工作，把项目从nginx proxy的方案迁移到disconf+node proxy的方案。解决应用机器在变更，扩容等场景下需要手动维护nginx配置的痛点。</li>
+                        <li class="pro-content">参与组内nek-ui组件库的2.0版本升级开发工作，参考了element-ui以及antd组件库，给一些组件新增了一些常用feature。</li>
+                        <li class="pro-content">负责规划组内半年学习计划，平均1-2个月一个主题，基本每个人都有博客输出，并组织组内分享，带动组内技术氛围</li>
                         <li class="pro-content">负责小组内2018Q1招聘工作，HC完成度较好</li>
 					</ul>
 					<h4 class="sec-sub-title"><span>杭州艾草科技有限公司<span class="label"> (公司合伙人变更，和医诺是同一个开发团队)</span></span><span>2016/8 ~ 2017/2</span></h4>
 					<ul class="resume-item">
 						<li class="pro-title"><strong class="project">彩虹云直播-前端开发</strong></li>
 						<li class="pro-content">快速学习直播相关技术并进行实践踩坑，选定微信端采用hls拉流协议，PC端采用rtmp拉流协议的方案，并使用开源的 <strong class="keypoint">video.js</strong> 作为直播播放器。</li>
-						<li class="pro-content">搭建iOS推流端Demo，并结合 <strong class="keypoint">LeanCloud IM服务</strong>，搭建完成一个完整的直播流程。</li>
-						<li class="pro-content">项目中积累了微信直播以及电商相关的项目经验，以及解决了一些问题。（包括微信X5同层播放的问题）</li>
-						<li class="pro-content">独立负责用户端前端开发，根据产品和设计的调整快速进行版本迭代，按时完成工作指标。</li>
+						<li class="pro-content">搭建iOS推流端，并结合 <strong class="keypoint">LeanCloud IM服务</strong>，搭建完成一个完整的直播流程。</li>
+						<li class="pro-content">负责项目用户端前端开发，参考有赞的店铺装修模块，开发了一个简化版的店铺装修模块，可以让用户自定义自己的店铺展示风格，以及绑定商品关系。</li>
 					</ul>
 					<h4 class="sec-sub-title"><span>杭州医诺健康科技有限公司</span><span>2015/2 ~ 2016/7</span></h4>
 					<ul class="resume-item">
@@ -89,9 +89,9 @@
 					</ul>
 					<ul class="resume-item">
 						<li class="pro-title"><strong class="project">花萌-iOS工程师</strong></li>
+						<li class="pro-content">该项目是公司内部孵化项目，也是个人毕设项目。</li>
 						<li class="pro-content">作为iOS主力工程师，负责首页展示和个人模块，前期快速学习并使用 <strong class="keypoint">LeanCloud的BaaS服务进行开发。</strong> </li>
-						<li class="pro-content">项目中采用代码和xib文件配合的形式完成产品界面搭建，学习使用 <strong class="keypoint">AutoLayout</strong> 技术做响应式布局。</li>
-						<li class="pro-content">封装DataSource统一管理应用Model层。</li>
+						<li class="pro-content">封装DataSource统一管理应用Model层，理解代码封层解耦合的重要性。</li>
 					</ul>
 				</section>
 			</article>
