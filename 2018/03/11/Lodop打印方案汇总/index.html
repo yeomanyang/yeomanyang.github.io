@@ -205,7 +205,7 @@
 </blockquote>
 <p>基于以上几点原因，必须要借助打印机控件来完成，而多方了解之后，目前各大公司WMS的打印业务大部分采用的都是Lodop的方案。</p>
 <h5 id="Q-Lodop是如何完成上述的这些功能的？"><a href="#Q-Lodop是如何完成上述的这些功能的？" class="headerlink" title="Q: Lodop是如何完成上述的这些功能的？"></a>Q: Lodop是如何完成上述的这些功能的？</h5><p>A：我们都知道，浏览器环境对于系统设备的控制能力是比较弱的，或者说浏览器的BOM接口对于设备调用这方面暴露给开发者的功能都是阉割版的，包括摄像头调用，打印机设备调用等等。而如果是CS架构的系统对于设备调用就轻松多了，而Lodop就是浏览器和设备之间的桥梁。我画了一个简单的图，大致代表Lodop的工作方式：</p>
-<p><img src="http://oksj4hknl.bkt.clouddn.com/Lodop.png"></p>
+<p><img src="https://haitao.nos.netease.com/b521abb7-1186-4d55-9f21-30c97b654a18_1044_284.png"></p>
 <ol>
 <li>Lodop是一个客户端，需要在打印机主机上安装，运行的时候会起一个http服务。</li>
 <li>浏览器端需要去加载这个http服务上的一个JS文件，这个JS文件中会建立浏览器和Lodop客户端的websocket链接</li>

@@ -62,15 +62,15 @@
 						<li class="pro-title"><strong class="project">WMS-前端负责人</strong></li>
                         <li class="pro-description"><strong>业务组：</strong></li>
 						<li class="pro-content">入职之初，在开发初期发现Regular在开发SPA应用场景下在状态管理和路由方案上不太成熟，因此把WMS的技术选型从Regular迁移成Vue，在交付时间倒排的情况下，按时独立完成WMS项目从0到1的开发工作，之后带领2名同事开发WMS迭代工作。</li>
-						<li class="pro-content">由于之前仓库视频录制方案存在不易扩展以及和WMS系统完全隔离等痛点，参与制定了WMS的视频录制新方案，新方案采用家用普通摄像头，由MWS系统直接调用，大大节约摄像头部署成本以及系统内部对摄像头状态进行管控，过程中由于HTTPS和局域网的HTTP服务（由于考虑公网上行带宽的限制，所有视频都先存在仓库本地）存在跨域问题，快速开发了基于Electron的proxy方案解决问题。后续新开仓库都采用了这套方案进行视频录制，并在公司<strong class="keypoint">以第一发明人的角色申请了技术专利。</strong></li>
-						<li class="pro-content">项目中曾暴漏出一个性能问题，打印模块每次打印都会变卡一些，频繁打印会直接卡死。通过Chrome性能分析工具，首先排查内存泄漏问题，发现内存基本稳定之后，通过Performance工具的火焰图分析是渲染还是脚本执行导致的卡顿，然后查看耗时异常的JS调用堆栈，最终在完全没有看业务代码的前提下，准确定位到性能问题是每次添加的DOM没有被移除的问题导致的。</li>
+						<li class="pro-content">由于之前仓库视频录制方案存在不易扩展以及和WMS系统完全隔离等痛点，参与制定了WMS的视频录制新方案，新方案采用家用普通摄像头，由WMS系统直接调用，大大节约摄像头部署成本以及系统内部对摄像头状态进行管控，过程中由于HTTPS和局域网的HTTP服务（由于考虑公网上行带宽的限制，所有视频都先存在仓库本地）存在跨域问题，快速开发了基于Electron的proxy方案解决问题。后续新开仓库都采用了这套方案进行视频录制，并在公司<strong class="keypoint">以第一发明人的角色申请了技术专利。</strong></li>
+						<li class="pro-content">项目中曾暴露出一个性能问题，打印模块每次打印都会变卡一些，频繁打印会直接卡死。通过Chrome性能分析工具，首先排查内存泄漏问题，发现内存基本稳定之后，通过Performance工具的火焰图分析是渲染还是脚本执行导致的卡顿，然后查看耗时异常的JS调用堆栈，最终在完全没有看业务代码的前提下，准确定位到性能问题是每次添加的DOM没有被移除的问题导致的。</li>
 						<li class="pro-content">会主动去思考优化一些重复性的工作，封装了一些业务组件，比如类浏览器多窗口组件，报表组件等，因为WMS业务的报表数量比较大，因此报表组件一定程度提高了其他同事的开发效率</li>
                         <li class="pro-content">WMS项目有一些硬件设备的对接，比如打印机，称重机，摄像头等，由于BS架构的一些局限性，使用Electron解决一些硬件设备的接入问题</li>
                         <li class="pro-content">接入Sentry异常收集平台，除了收集解决脚本异常，同时根据平台收集到的接口报错信息以及报错频率，给产品提了一些业务优化建议，并被采纳。</li>
                         <p></p>
                         <li class="pro-description"><strong>前端组：</strong></li>
                         <li class="pro-content">推动组内基于BFF层的disconf接入工作，把项目从nginx proxy的方案迁移到disconf+node proxy的方案。解决应用机器在变更，扩容等场景下需要手动维护nginx配置的痛点。</li>
-                        <li class="pro-content">参与组内nek-ui组件库的2.0版本升级开发工作，参考了element-ui以及antd组件库，给一些组件新增了一些常用feature。</li>
+                        <li class="pro-content">参与组内nek-ui组件库的2.0版本升级开发工作，参考了element-ui以及antd组件库，给一些组件新增了一些常用feature，引入scss和bem重构了组件库的CSS，比较大程度提升了CSS的可读性和可维护性。</li>
                         <li class="pro-content">负责规划组内半年学习计划，平均1-2个月一个主题，基本每个人都有博客输出，并组织组内分享，带动组内技术氛围</li>
                         <li class="pro-content">负责小组内2018Q1招聘工作，HC完成度较好</li>
 					</ul>

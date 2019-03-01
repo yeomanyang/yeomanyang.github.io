@@ -246,7 +246,7 @@ tarball: &apos;https://registry.npmjs.org/vue/-/vue-2.1.8.tgz&apos; }
 </code></pre><p>然后在shell中可以直接运行<code>npm run test</code>，就相当于<code>node ***/app.js</code>，可以把和这个项目的shell命令统一交给npm来管理。</p>
 <h2 id="创建和发布"><a href="#创建和发布" class="headerlink" title="创建和发布"></a>创建和发布</h2><h3 id="npm-init-y"><a href="#npm-init-y" class="headerlink" title="npm init -y"></a><code>npm init -y</code></h3><p>初始化一个仓库，-y或者-f参数会根据npm的默认配置来生成仓库。</p>
 <h3 id="npm-adduser"><a href="#npm-adduser" class="headerlink" title="npm adduser"></a><code>npm adduser</code></h3><p>使用在npm上注册的账号密码来登陆命令行，获取后续的发布操作的授权。</p>
-<h3 id="npm-publish"><a href="#npm-publish" class="headerlink" title="npm publish"></a><code>npm publish</code></h3><p>发布到npm仓库，在发布仓库的时候一个常见的需求是过滤想发布的目录和文件。我们可以通过<code>.npmignore</code>和<code>.gitignore</code>来过滤不想上传的目录。但是有些文件是不受配置文件影响的：<br><img src="http://oksj4hknl.bkt.clouddn.com/npm.jpg"></p>
+<h3 id="npm-publish"><a href="#npm-publish" class="headerlink" title="npm publish"></a><code>npm publish</code></h3><p>发布到npm仓库，在发布仓库的时候一个常见的需求是过滤想发布的目录和文件。我们可以通过<code>.npmignore</code>和<code>.gitignore</code>来过滤不想上传的目录。但是有些文件是不受配置文件影响的：<br><img src="https://haitao.nos.netease.com/061e3f9d-cd57-426c-92e3-9ebfa1bdb308_1288_1472.jpg"></p>
 <blockquote>
 <p>但是很多时候我们其实只要上传指定的目录和文件，最方便的做法是在<code>package.json</code>中配置<code>files: []</code>属性，数组内是需要发布的目录，当配置了这个属性之后，是不会被<code>.npmignore</code>和<code>.gitignore</code>过滤的，也就是优先级高于<code>.npmignore</code>和<code>.gitignore</code>。</p>
 </blockquote>
