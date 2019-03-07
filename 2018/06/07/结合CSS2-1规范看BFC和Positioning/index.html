@@ -13,11 +13,11 @@
 
     <title>
         
-          聊聊个人任务管理 - Yeoman的博客 | Yeoman&#39;s Blog
+          结合CSS2.1规范看BFC和Positioning - Yeoman的博客 | Yeoman&#39;s Blog
         
     </title>
 
-    <link rel="canonical" href="https://yeomanyang.github.io/2018/08/03/聊聊个人任务管理/">
+    <link rel="canonical" href="https://yeomanyang.github.io/2018/06/07/结合CSS2-1规范看BFC和Positioning/">
 
     <!-- Bootstrap Core CSS -->
     <link rel="stylesheet" href="/css/bootstrap.min.css">
@@ -168,14 +168,14 @@
                 <div class="post-heading">
                     <div class="tags">
                         
-                          <a class="tag" href="/tags/#Tools" title="Tools">Tools</a>
+                          <a class="tag" href="/tags/#Frontend" title="Frontend">Frontend</a>
                         
                     </div>
-                    <h1>聊聊个人任务管理</h1>
+                    <h1>结合CSS2.1规范看BFC和Positioning</h1>
                     <h2 class="subheading"></h2>
                     <span class="meta">
                         Posted by Yeoman on
-                        2018-08-03
+                        2018-06-07
                     </span>
                 </div>
             </div>
@@ -194,85 +194,133 @@
                 col-md-10 col-md-offset-1
                 post-container">
 
-                <h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>Q2季度事情非常多而杂，尤其端午那段时间整个人的状态非常混乱。感觉急需一个科学合理的个人任务管理工具。于是在工作节奏缓过来之后，看了一些这方面的文章，然后发现了一个科技类博主JailbreakHum的<a href="https://www.zhihu.com/lives/823230794934947840" target="_blank" rel="noopener">知乎Live</a>，Live有两期，分成入门和进阶，仔细听完之后比较认同作者看问题看本质的思维方式。</p>
-<p>这篇文章主要就是记录下Live的听后感以及自己的一些实践。</p>
-<h2 id="Why？"><a href="#Why？" class="headerlink" title="Why？"></a>Why？</h2><p>个人任务管理应该是一个私人定制化比较强的事情，但是做这个事情我们要解决的问题应该是一致的。</p>
+                <h3 id="1-写在前面"><a href="#1-写在前面" class="headerlink" title="1. 写在前面"></a>1. 写在前面</h3><p>做前端开发已经有一段时间了，想着可以开始对一些CSS知识做一些总结了。CSS2.1中，我认为最基础也最重要的概念，莫过于定位和布局了，CSS已经给人一种比较玄学的感觉，本文尝试结合W3C规范中的一些重要概念来做一些总结。</p>
+<h3 id="2-CSS控制盒"><a href="#2-CSS控制盒" class="headerlink" title="2. CSS控制盒"></a>2. CSS控制盒</h3><p>在讲CSS的定位之前，需要先了解CSS的两种基本元素，<em>Block-level elements-块级元素</em>和 <em>Inline-level elements-内联元素</em>。</p>
+<h4 id="2-1-块级元素和块盒"><a href="#2-1-块级元素和块盒" class="headerlink" title="2.1 块级元素和块盒"></a>2.1 块级元素和块盒</h4><p>规范中有很多晦涩的描述，我们只看比较重要的部分。</p>
+<blockquote>
+<p>Block-level elements are those elements of the source document that are formatted visually as blocks (e.g., paragraphs). The following values of the ‘display’ property make an element block-level: ‘block’, ‘list-item’, and ‘table’.</p>
+<p>Block-level boxes are boxes that participate in a block formatting context.</p>
+</blockquote>
+<p><code>&#39;display&#39;</code>设置成这三种值 <code>&#39;block&#39;, &#39;list-item&#39;, and &#39;table&#39;</code>，可以把一个元素变成块元素，同时参与BFC（block formatting context）。</p>
+<h4 id="2-2-内联元素和内联盒"><a href="#2-2-内联元素和内联盒" class="headerlink" title="2.2 内联元素和内联盒"></a>2.2 内联元素和内联盒</h4><blockquote>
+<p> The following values of the ‘display’ property make an element inline-level: ‘inline’, ‘inline-table’, and ‘inline-block’. Inline-level elements generate inline-level boxes, which are boxes that participate in an inline formatting context.</p>
+<p>An inline box is one that is both inline-level and whose contents participate in its containing inline formatting context.</p>
+</blockquote>
+<p><code>&#39;display&#39;</code>设置成这三种值 <code>&#39;inline&#39;, &#39;inline-table&#39;, and &#39;inline-block&#39;</code>，可以把一个元素变成行内元素，同时参与IFC（inline formatting context）。</p>
+<h3 id="3-CSS的display属性"><a href="#3-CSS的display属性" class="headerlink" title="3. CSS的display属性"></a>3. CSS的display属性</h3><p>我们知道display属性可以决定块的类型，总结下display的各个属性和作用：</p>
+<table>
+<thead>
+<tr>
+<th>display</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>none</td>
+<td>当设置了这个属性之后，不会生成一个不可见的盒子，而是根本不会生成任何盒子。</td>
+</tr>
+<tr>
+<td>block</td>
+<td>生成一个块级盒子</td>
+</tr>
+<tr>
+<td>inline</td>
+<td>生成一个或多个内联盒</td>
+</tr>
+<tr>
+<td>inline-block</td>
+<td>生成一个<em>inline-level block container</em>，盒子内部会被格式化成一个块级盒，本身则被格式化成内联盒</td>
+</tr>
+<tr>
+<td>list-item</td>
+<td>像li标签这样的会生成一个<em>principal block box -主块级盒</em>和一个<em>marker box-标记盒</em></td>
+</tr>
+<tr>
+<td>table类</td>
+<td>会让一个元素表现的像表格元素</td>
+</tr>
+</tbody>
+</table>
+<h5 id="块级元素的特性"><a href="#块级元素的特性" class="headerlink" title="块级元素的特性"></a>块级元素的特性</h5><ul>
+<li>块级元素会占用一行，并尽可能占据整行。</li>
+<li>可以设置width/height/margin/padding属性。</li>
+<li>当两个相邻的块级元素都有margin属性的时候，会发生margin collapse。</li>
+</ul>
+<h5 id="内联元素的特性"><a href="#内联元素的特性" class="headerlink" title="内联元素的特性"></a>内联元素的特性</h5><ul>
+<li>在同一行上从左向右排列，但是当几个内联元素换行之后，会存在间隙问题。</li>
+<li>设置width/height无效，可以通过设置display为inline-block来解决这个需求。</li>
+<li>只能设置水平方向的margin和padding， 垂直方向设置无效。</li>
+</ul>
+<h3 id="4-CSS定位方案（Positioning-schemes）"><a href="#4-CSS定位方案（Positioning-schemes）" class="headerlink" title="4. CSS定位方案（Positioning schemes）"></a>4. CSS定位方案（Positioning schemes）</h3><p>在CSS2.1中，一个盒子有三种定位方案:</p>
+<ul>
+<li>Normal flow（普通流），其中包含了块格式化的块级盒子；行内格式化的行内盒子；以及采用相对定位的块级或者行内盒子。<ul>
+<li>在一个块格式化上下文中，盒在竖直方向一个接一个地放置，从包含块的顶部开始。两个兄弟盒之间的竖直距离由’margin’属性决定。同一个块格式化上下文中的相邻块级盒之间的竖直margin会发生崩塌（合并）。</li>
+<li>在一个内联格式化上下文中，盒在水平方向上一个接一个放置，从包含块的顶部开始。这些盒之间的水平margin，border和padding都有效。盒可能以不同的方式垂直对齐：以它们的底部或者顶部或者以文本的<em>baselines</em>（基线）对齐。包含来自同一行的盒的矩形区域叫做<em>line box</em>。</li>
+</ul>
+</li>
+<li>Float（浮动），在浮动模型中，盒子会先根据普通流来排版，然后「out of the flow」，尽可能地往左右偏移。其他内容可能会延着浮动盒的一侧排列。</li>
+<li>Absolute positioning（绝对定位），在绝对定位模型中，盒子会从普通流中完全移除「out of the flow」然后根据它的包含块来确定位置。</li>
+</ul>
+<h4 id="4-1-如何确定包含块"><a href="#4-1-如何确定包含块" class="headerlink" title="4.1 如何确定包含块"></a>4.1 如何确定包含块</h4><p>positioning定位的元素会根据他的包含块来进行定位，那么元素的包含块是如何确定的呢？</p>
+<p><img src="https://haitao.nos.netease.com/1b349ae0-7d47-4247-95f8-ae7d258e9b4c_720_540.png"></p>
 <ol>
-<li>会经常被各种琐碎的事情打断，常常理不清任务的优先级</li>
-<li>会经常彻底忘记掉一些不是当下需要马上处理的事情</li>
-<li>脑子里经常惦记着几件重要的事，导致无法安心处理手里的工作</li>
-<li>对于一些生活中的小事养成了一拖再拖的习惯</li>
+<li>如果 position 属性为 static 或 relative ，包含块就是由它的最近的祖先块元素（比如说inline-block, block 或 list-item元素）或格式化上下文(比如说 a table container, flex container, grid container, or the block container itself)的内容区的边缘组成的。</li>
+<li>如果 position 属性为 absolute ，包含块就是由它的最近的 position 的值不是 static （也就是值为fixed, absolute, relative 或 sticky）的祖先元素的内边距区的边缘组成。</li>
+<li>如果 position 属性是 fixed，包含块就是由 viewport (in the case of continuous media) 或是组成的。</li>
 </ol>
-<p>上面这四点是我列出的我个人的痛点，其中第三点是我觉得最严重的一点。当同时有好几件重要的事情来临的时候，如果没有好好规划任务，就很容易导致效率变得更低。</p>
-<p>如果大家没有上述这些痛点的话，那么恭喜你，你的个人任务管理能力已经非常棒了～OR，你的工作还没有对你进行足够的摧残。</p>
-<h2 id="关于GTD"><a href="#关于GTD" class="headerlink" title="关于GTD"></a>关于GTD</h2><p>谈到任务管理，很多人都会想到GTD（getting things done），但是一去查GTD的内容就会觉得不就是个任务管理么，为什么搞得这么复杂！（摔</p>
-<p><img src="https://haitao.nos.netease.com/f20bb737-e62d-42e6-a3d1-27fa89591905_440_331.jpg"></p>
-<p>Live的作者认为，之所以GTD让人觉得复杂，主要是以下几个原因：</p>
-<ol>
-<li>GTD不是单纯的任务管理，是一个本身就很复杂的体系，但是我们在日常任务管理上不需要那么复杂的概念</li>
-<li>GTD那本书的内容和现代的任务管理工具严重脱节</li>
-<li>很多工具套用了GTD里面的概念，但是对于相同的功能使用了不同的名字，让使用者困惑</li>
-</ol>
-<p>总之，我们首先要明确一点，任务管理不复杂，甚至很简单！</p>
-<h2 id="GTD的5个步骤"><a href="#GTD的5个步骤" class="headerlink" title="GTD的5个步骤"></a>GTD的5个步骤</h2><p>我们来看下GTD的五个核心步骤：</p>
-<p><img src="https://haitao.nos.netease.com/5869554f-4c0a-4894-b9f0-b0097ca353b8_486_890.png"></p>
-<h3 id="3-1-收集"><a href="#3-1-收集" class="headerlink" title="3.1 收集"></a>3.1 收集</h3><ol>
-<li>收集任务的时候不要去整理，要<em>批量收集</em>，<em>批量处理</em>。（比如说，我们在写博客的时候，需要收集很多图片，但是我们不想被打断思路，这时候就应该在写文章的时候先打上标记，最后批量收集图片）</li>
-<li>收集任务的时候一定要尽可能多的记录任务的细节，否则一段时间过后就会忘记。</li>
-<li>GTD的原则是收集任务的时候如果碰到一些可以马上做掉的小任务尽量马上做掉。</li>
-</ol>
-<h3 id="3-2-处理"><a href="#3-2-处理" class="headerlink" title="3.2 处理"></a>3.2 处理</h3><ol>
-<li>确保收集的任务是切实可行的，如果不是，则需要及时删掉。</li>
-<li>如果你的任务只需要几分钟就可以完成，可以搭上标记。（比如可以打上@easy的标签）。然后可以在零碎的时间去完成它们。</li>
-</ol>
-<h3 id="3-3-组织"><a href="#3-3-组织" class="headerlink" title="3.3 组织"></a>3.3 组织</h3><p>组织是比较重要的一步了，这个关系到后面我们如何去找到我们的要做的任务。</p>
-<p>组织任务主要有两个维度：列表和标签。</p>
-<h4 id="3-3-1-列表"><a href="#3-3-1-列表" class="headerlink" title="3.3.1 列表"></a>3.3.1 列表</h4><ol>
-<li>列表在各个工具里有不同的名字，比如list，listGroup，project。</li>
-<li>列表可以有层级。</li>
-</ol>
-<p>举个例子，这是我的列表：<br><img src="https://haitao.nos.netease.com/11ff914b-2b6e-4d24-891a-dcab786cbc03_363_315.jpeg"></p>
-<h4 id="3-3-2-标签"><a href="#3-3-2-标签" class="headerlink" title="3.3.2 标签"></a>3.3.2 标签</h4><p>这是一些常用的标签类型，其中日期，优先级，任务状态这些都是我们平时比较常用的。</p>
-<p><img src="https://haitao.nos.netease.com/2fa28520-cca4-4d3e-8da8-d6fedf183182_904_406.png"></p>
-<p>同样的，我也贴一下自己的一些标签：</p>
-<p><img src="https://haitao.nos.netease.com/62071673-1b29-4690-b365-ebcbdfac7454_304_638.jpeg"></p>
-<p>其实很多同学在做任务管理的时候，都只做到了这个维度。形式上主要是记在笔记本上，或者是用一些check list工具来记录。</p>
-<h3 id="3-4-归档"><a href="#3-4-归档" class="headerlink" title="3.4 归档"></a>3.4 归档</h3><p>归档这一步其实是被挺多同学忽略的一步，我觉得归档带来的好处还是显而易见的：</p>
-<ol>
-<li>是对过去一段时间工作的回顾和整理</li>
-<li>在汇报工作的时候可以拿出一份比较完整的报告</li>
-<li>要区分归档和删除，对于没有保留意义的内容应该是删除而不是归档</li>
-</ol>
-<h3 id="3-5-执行"><a href="#3-5-执行" class="headerlink" title="3.5 执行"></a>3.5 执行</h3><p>关于执行，Live的作者主要给出了下面这几条做事情的tips：</p>
-<ol>
-<li>使用定时器（比如番茄工作法）来记录自己能集中注意力的时间，不断的调整，理想状态是达到1个小时</li>
-<li>尽可能批量地去完成同类的任务</li>
-<li>大部分事情尽量都在当下就去完成，因为过了当下就需要花更多精力去找到当时的那个上下文</li>
-<li>合理拖延，在精神状态不到位的时候，无法处理重要事件，这时候可以先去处理一些简单的任务，减轻焦虑</li>
-</ol>
-<h2 id="过滤"><a href="#过滤" class="headerlink" title="过滤"></a>过滤</h2><p>讲了这么多，接下来要讲的这个功能才是重头戏，概念非常简单，但却是现代任务管理工具的核心功能。（Live作者这么认为，我也非常认同～）</p>
-<h3 id="4-1-为什么过滤很重要"><a href="#4-1-为什么过滤很重要" class="headerlink" title="4.1 为什么过滤很重要"></a>4.1 为什么过滤很重要</h3><p>过滤这个功能是传统纸币系统所不能企及的现代任务管理的核心，它可以让我们在任何情境下都可以最快的找到我们当下需要处理的任务。列表和标签本质上都是为了过滤的两个维度。</p>
-<h3 id="4-2-三大工具"><a href="#4-2-三大工具" class="headerlink" title="4.2 三大工具"></a>4.2 三大工具</h3><p>谈到任务管理工具，不得不提三大任务管理工具：omniFocus，2do，todoist，过滤这个功能在这三个软件里分别叫：透视，智能列表，过滤。（things不在讨论范围，因为things在过滤这一块功能比较弱）</p>
-<h4 id="omniFocus"><a href="#omniFocus" class="headerlink" title="omniFocus"></a>omniFocus</h4><p>其中omniFocus应该是名气最大的，尤其是以它的复杂而著称。据说这个软件基本没有差评，如果在使用过程中发现不好用，那用户也会觉得是自己不会用这个软件- -（不明觉厉</p>
-<p>但是这个作者毫无留情地diss了这个软件- -</p>
-<h4 id="2do"><a href="#2do" class="headerlink" title="2do"></a>2do</h4><p>2do这个软件功能比较完备，iOS和mac平台都支持，用户体验也比较好。而且是这三者中过滤器语法支持最全的。唯一的缺憾是同步需要通过Dropbox。</p>
-<p>这是2do的<a href="https://www.2doapp.com/kb/article/how-do-i-use-the-search-feature-to-look-for-tags-actions-and-other-stuff.html" target="_blank" rel="noopener">过滤器语法</a>，可以发现作者确实是把过滤作为非常重要的一个功能来开发的，考虑得非常细。</p>
-<h4 id="todoist"><a href="#todoist" class="headerlink" title="todoist"></a>todoist</h4><p>但是Live的作者推荐的是todoist这个软件，这个软件符合上面说的所有功能，同步也是通过他们官方的服务器，同时支持api扩展其他服务的调用。但是这个软件是按年收费的。</p>
-<h3 id="4-3-my-choice"><a href="#4-3-my-choice" class="headerlink" title="4.3 my choice"></a>4.3 my choice</h3><p>首先，omniFocus肯定不在选择的范畴。虽然作者是极力推荐todoist这个软件，但是todoist比2do擅长的部分我并没有什么需求，而2do已经完全能满足我的日常需求，而且我访问了国内和美国的App Store，2do的评分都比todoist要高。</p>
-<p>因此我选择一次性消费，咬咬牙买了2do的license（难道不是因为穷？</p>
-<p>分享两个我目前主力的智能列表：</p>
-<h4 id="4-3-1-今日列表"><a href="#4-3-1-今日列表" class="headerlink" title="4.3.1 今日列表"></a>4.3.1 今日列表</h4><p>这个列表就是我每天工作关注的内容，我只要从上往下依次往下做就可以，完全不用考虑其他事情，因为任务内容，优先级等等已经在收集，处理，组织那几步完成了。</p>
-<p>过滤器语法：<br><code>groups: work type: today OR overdue OR inprogress</code></p>
-<p><img src="https://haitao.nos.netease.com/112a459f-c371-4871-95d0-e8f18f57c5ab_2880_1724.jpeg"></p>
-<h4 id="4-3-2-总结列表"><a href="#4-3-2-总结列表" class="headerlink" title="4.3.2 总结列表"></a>4.3.2 总结列表</h4><p>然后是我的周归档列表，这个列表可是我每周写周报时候的利器，每周做了什么一目了然呢，呀比！</p>
-<p><img src="https://haitao.nos.netease.com/a2efea4e-77f1-4ed9-89ac-8dc2601776a4_2880_1724.jpeg"></p>
-<p>过滤这个功能是非常强大的，这也只是我一小段时间内的实践，毕竟除了上班也没啥别的事情了。但是大家可以根据自己的生活习惯，定制很多实用的智能列表～</p>
-<h2 id="one-more-thing"><a href="#one-more-thing" class="headerlink" title="one more thing"></a>one more thing</h2><p>Live的作者最后有提到一点，信任。我觉得这个词非常得恰当了，我们要足够信任我们的任务管理工具。让他去帮我们找出我们当下应该做的事情，这样我们就可以更专注于我们该做的事情上了。</p>
-<h2 id="感谢"><a href="#感谢" class="headerlink" title="感谢"></a>感谢</h2><p>感谢JailbreakHum的知乎Live。附上大佬两个的Live链接：</p>
-<p><a href="https://www.zhihu.com/lives/823230794934947840" target="_blank" rel="noopener">个人任务管理入门：基本概念与基础工具
-</a></p>
-<p><a href="https://www.zhihu.com/lives/823240334342492160" target="_blank" rel="noopener">个人任务管理进阶：任务过滤和进阶工具
-</a></p>
+<h4 id="4-2-CSS的position属性"><a href="#4-2-CSS的position属性" class="headerlink" title="4.2 CSS的position属性"></a>4.2 CSS的position属性</h4><p>一个盒可能会根据三种定位方案来布局:</p>
+<table>
+<thead>
+<tr>
+<th>position</th>
+<th>定位机制</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>static</td>
+<td>盒子根据Normal flow进行排列，’top’,’right’,’bottom’,’left’属性设置无效。</td>
+</tr>
+<tr>
+<td>relative</td>
+<td>盒子A的位置根据普通流来计算，如果设置了偏移属性，则根据盒子A在普通流的默认位置进行偏移。如果有一个盒子B相对盒子A进行定位，则以盒子A偏移前的位置为准。</td>
+</tr>
+<tr>
+<td>absolute</td>
+<td>盒子根据’top’,’right’,’bottom’,’left’来进行定位，偏移量是相对于这个盒子的包含块而言的。显然Absolute定位是脱离普通流的，这意味这它不会影响后面元素的布局。虽然absolute positioning有margins属性，但不会因为别的元素的margins而崩塌（原因在后文的BFC中会提到）。</td>
+</tr>
+<tr>
+<td>fixed</td>
+<td>盒子参照某些固定的参考系，然后根据上述absolute的方式进行定位。同样的，它的margins属性不会因为别的元素的margins而崩塌。当媒体类型为「handheld，projection，screen，tty和tv」的情况下，该盒相对于viewport固定，并且滚动时不会移动。当媒体类型为「print」时，这个盒子相对page box固定，并且在每个页面都会渲染。可以用@media媒体查询来进行区分。</td>
+</tr>
+</tbody>
+</table>
+<p>从上述表格来看，position为static/relative的盒子遵循Normal flow，而position为absulute/fixed的盒子则属于Absulute position。</p>
+<h3 id="5-BFC是什么"><a href="#5-BFC是什么" class="headerlink" title="5. BFC是什么"></a>5. BFC是什么</h3><p>前端从业人员对于BFC这个词估计都不陌生了，但是关于它的作用还是需要花一些心思来理解清楚的。</p>
+<p>BFC(block formatting context)直译为”块级格式化上下文”。前文提到，只有块元素会参与到BFC的渲染。它规定了在BFC中，块级盒的布局规则：</p>
+<ul>
+<li>在一个块格式化上下文中，盒在垂直方向一个接一个地放置，从包含块的顶部开始。</li>
+<li>两个兄弟盒之间的垂直距离由’margin’属性决定，属于同一个BFC的两个相邻盒的margin会发生重叠 ，由此可以看出，上文提到的margin collapse现象正是由于两个块是在同一个BFC导致的</li>
+<li>在一个块格式化上下文中，每个盒的左外边界挨着包含块的左外边界，即使存在浮动也是如此。</li>
+<li>BFC的区域不会与float box重叠，但是浮动元素参与计算BFC的高度。</li>
+</ul>
+<h4 id="生成BFC的条件"><a href="#生成BFC的条件" class="headerlink" title="生成BFC的条件"></a>生成BFC的条件</h4><ul>
+<li>根元素</li>
+<li>float属性不为none</li>
+<li>position为absolute或fixed</li>
+<li>display为inline-block, table-cell, table-caption, flex, inline-flex，grid，inline-grid等</li>
+<li>overflow不为visible</li>
+</ul>
+<h4 id="BFC可以解决的一些问题"><a href="#BFC可以解决的一些问题" class="headerlink" title="BFC可以解决的一些问题"></a>BFC可以解决的一些问题</h4><p>现象1：两个block box的margin collapse问题</p>
+<p>解决办法：给其中一个或两个block box通过上述方式（通常是设置overflow）生成新的BFC</p>
+<p>现象2：让父容器不会被内部的float元素撑高(清除内部浮动)</p>
+<p>解决办法：前文提到，float元素也是参与BFC的高度计算的，因此也可以通过触发父元素的BFC来达到这个效果</p>
+<p>现象3：元素会被浮动元素覆盖</p>
+<p>解决办法：可以给元素触发BFC，这样元素会通过压缩宽度来达到和float元素并列布局</p>
+<blockquote>
+<p>一个新的 display 属性的值，它可以创建无副作用的BFC。在父级块中使用 display: flow-root 可以创建新的BFC</p>
+</blockquote>
 
 
                 <hr>
@@ -282,12 +330,12 @@
                 <ul class="pager">
                     
                         <li class="previous">
-                            <a href="/2018/08/20/Vue源码学习-聊聊Vue实例是怎么来的/" data-toggle="tooltip" data-placement="top" title="Vue源码学习-聊聊Vue实例是怎么来的">&larr; Previous Post</a>
+                            <a href="/2018/08/03/聊聊个人任务管理/" data-toggle="tooltip" data-placement="top" title="聊聊个人任务管理">&larr; Previous Post</a>
                         </li>
                     
                     
                         <li class="next">
-                            <a href="/2018/06/07/结合CSS2-1规范看BFC和Positioning/" data-toggle="tooltip" data-placement="top" title="结合CSS2.1规范看BFC和Positioning">Next Post &rarr;</a>
+                            <a href="/2018/01/16/0.1+0.2=0.30000000000000004/" data-toggle="tooltip" data-placement="top" title="从0.1+0.2=0.30000000000000004再看JS中的Number类型.md">Next Post &rarr;</a>
                         </li>
                     
                 </ul>
@@ -314,7 +362,7 @@
                     <h5><a href="/tags/">FEATURED TAGS</a></h5>
                     <div class="tags">
                        
-                          <a class="tag" href="/tags/#Tools" title="Tools">Tools</a>
+                          <a class="tag" href="/tags/#Frontend" title="Frontend">Frontend</a>
                         
                     </div>
                 </section>
